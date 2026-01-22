@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CashReward App</title>
+    <title>Secure Earn</title>
     
     <!-- Aapka Naya Ad Code -->
     <script src='//libtl.com/sdk.js' data-zone='10495819' data-sdk='show_10495819'></script>
@@ -23,7 +23,7 @@
         .btn-accent:hover { background-color: #e67e00; }
         .btn-outline-accent { border: 1px solid #ff8c00; color: #ff8c00; }
         .btn-outline-accent:hover { background-color: #ff8c00; color: #121212; }
-        .input-field { background-color: #2c2c2c; border: 1px solid #444; }
+        .input-field { background-color: #2c2c2c; border: 1px solid #444; color: white; }
         .main-page { display: none; }
         .main-page.active { display: flex; animation: fadeIn 0.5s ease-in-out; }
         .sub-page { display: none; }
@@ -34,6 +34,9 @@
             background-color: #ef4444; border-radius: 50%; border: 2px solid #121212; display: none;
         }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* Modal Styles */
+        .modal-overlay { background-color: rgba(0, 0, 0, 0.8); }
     </style>
 </head>
 <body class="max-w-md mx-auto">
@@ -45,7 +48,7 @@
 
     <!-- Authentication Section -->
     <div id="auth-section" class="min-h-screen p-6 flex-col justify-center main-page">
-        <h1 class="text-4xl font-bold text-center mb-2 text-accent">CashReward</h1>
+        <h1 class="text-4xl font-bold text-center mb-2 text-accent">Secure Earn</h1>
         <p class="text-center text-gray-400 mb-8">Jaari rakhne ke liye Login ya Signup karein</p>
         <div id="auth-container">
             <div id="login-view">
@@ -66,8 +69,8 @@
 
     <!-- Main App Container -->
     <div id="app-container" class="min-h-screen flex-col main-page">
-        <header class="flex items-center justify-between p-4 sticky top-0 bg-opacity-80 backdrop-blur-md z-10 dark-bg">
-            <h1 class="text-xl font-bold">CashReward</h1>
+        <header class="flex items-center justify-between p-4 sticky top-0 bg-opacity-80 backdrop-blur-md z-40 dark-bg border-b border-gray-800">
+            <h1 class="text-xl font-bold text-accent">Secure Earn</h1>
             <div class="flex items-center space-x-4">
                 <div id="notification-bell" class="relative cursor-pointer">
                     <i data-lucide="bell" class="w-6 h-6"></i>
@@ -124,10 +127,22 @@
                     <p class="text-sm text-gray-400 mb-1">Current Balance: <span class="font-bold text-accent"><span id="wallet-coin-balance">0</span> Coins</span></p>
                     <p class="text-sm text-gray-400 mb-2">Minimum Withdrawal: <span id="min-withdrawal-info">...</span> Coins</p>
                     <p class="text-sm text-gray-400 mb-4 font-semibold" id="coin-value-info">...</p>
-                    <input id="withdraw-amount" type="number" placeholder="Coin amount daalein" class="w-full p-3 rounded-lg input-field mb-3">
-                    <select id="withdraw-method" class="w-full p-3 rounded-lg input-field mb-3"></select>
-                    <div id="payment-details-container"></div>
-                    <button id="withdraw-btn" class="w-full p-3 rounded-lg btn-accent mt-3">Request Withdrawal</button>
+                    
+                    <!-- Standard Withdrawal Form -->
+                    <div class="border-b border-gray-700 pb-4 mb-4">
+                        <input id="withdraw-amount" type="number" placeholder="Coin amount daalein" class="w-full p-3 rounded-lg input-field mb-3">
+                        <select id="withdraw-method" class="w-full p-3 rounded-lg input-field mb-3"></select>
+                        <div id="payment-details-container"></div>
+                        <button id="withdraw-btn" class="w-full p-3 rounded-lg btn-accent mt-3">Request Withdrawal</button>
+                    </div>
+
+                    <!-- NEW: Redeem Code Option -->
+                    <div class="pt-2">
+                         <h4 class="font-semibold mb-2 text-sm text-gray-300">Other Methods</h4>
+                         <button onclick="openRedeemModal()" class="w-full p-3 rounded-lg btn-outline-accent flex justify-center items-center gap-2">
+                             <i data-lucide="gift" class="w-5 h-5"></i> Withdraw via Redeem Code
+                         </button>
+                    </div>
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold mb-3">Withdrawal History</h3>
@@ -172,7 +187,7 @@
             </div>
         </main>
 
-        <nav class="bottom-nav sticky bottom-0 grid grid-cols-4 items-center text-center py-2 card-bg">
+        <nav class="bottom-nav sticky bottom-0 grid grid-cols-4 items-center text-center py-2 card-bg border-t border-gray-800">
             <a href="#" class="nav-link" data-page="home-page"><i data-lucide="home" class="mx-auto w-6 h-6"></i><span class="text-xs">Home</span></a>
             <a href="#" class="nav-link" data-page="wallet-page"><i data-lucide="wallet" class="mx-auto w-6 h-6"></i><span class="text-xs">Wallet</span></a>
             <a href="#" class="nav-link" data-page="refer-page"><i data-lucide="users" class="mx-auto w-6 h-6"></i><span class="text-xs">Refer & Earn</span></a>
@@ -180,10 +195,56 @@
         </nav>
     </div>
     
-    <div id="custom-alert" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <!-- Custom Alert -->
+    <div id="custom-alert" class="hidden fixed inset-0 modal-overlay flex items-center justify-center z-[60] p-4">
         <div class="bg-gray-800 rounded-lg p-6 w-full max-w-sm text-center">
             <p id="alert-message" class="mb-4"></p>
             <button id="alert-ok-btn" class="btn-accent px-6 py-2 rounded-lg">OK</button>
+        </div>
+    </div>
+
+    <!-- NEW: Force Update Modal (Cannot Close) -->
+    <div id="update-modal" class="hidden fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-[70] p-6">
+        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-sm text-center border border-accent shadow-2xl">
+            <div class="mb-4 flex justify-center">
+                <div class="p-3 bg-gray-700 rounded-full">
+                    <i data-lucide="download-cloud" class="w-10 h-10 text-accent"></i>
+                </div>
+            </div>
+            <h2 class="text-2xl font-bold mb-2 text-white">New Version Available!</h2>
+            <p class="text-gray-400 text-sm mb-6">Please update the app to continue using Secure Earn.</p>
+            
+            <div class="bg-gray-700 p-4 rounded-lg text-left text-sm mb-6 border border-gray-600">
+                <p class="font-bold text-accent mb-2">New Version: <span id="update-version-text" class="text-white"></span></p>
+                <p class="font-semibold text-gray-300 mb-1">What's New:</p>
+                <p id="update-features-text" class="text-gray-400 text-xs leading-relaxed"></p>
+            </div>
+            
+            <a id="update-download-btn" href="#" class="block w-full p-4 rounded-lg btn-accent font-bold text-lg hover:no-underline">
+                Update Now
+            </a>
+        </div>
+    </div>
+
+    <!-- NEW: Redeem Code Form Modal -->
+    <div id="redeem-modal" class="hidden fixed inset-0 modal-overlay flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-800 rounded-lg p-6 w-full max-w-sm">
+            <h3 class="text-xl font-bold text-center mb-4">Redeem Code Request</h3>
+            <p class="text-sm text-gray-400 mb-4 text-center">Redeem Code paane ke liye details bharein</p>
+            
+            <label class="block text-xs text-gray-400 mb-1">Coin Amount</label>
+            <input id="redeem-amount" type="number" placeholder="Coins (e.g., 5000)" class="w-full p-3 rounded-lg input-field mb-3">
+            
+            <label class="block text-xs text-gray-400 mb-1">Apna Naam</label>
+            <input id="redeem-name" type="text" placeholder="Naam Daalein" class="w-full p-3 rounded-lg input-field mb-3">
+            
+            <label class="block text-xs text-gray-400 mb-1">Mobile Number</label>
+            <input id="redeem-mobile" type="number" placeholder="Mobile Number Daalein" class="w-full p-3 rounded-lg input-field mb-4">
+            
+            <div class="flex gap-2">
+                <button onclick="closeRedeemModal()" class="w-1/2 p-3 rounded-lg border border-gray-600">Cancel</button>
+                <button id="submit-redeem-btn" class="w-1/2 p-3 rounded-lg btn-accent">Submit</button>
+            </div>
         </div>
     </div>
 
@@ -204,6 +265,10 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+
+        // --- APP VERSION CONFIGURATION ---
+        const CURRENT_APP_VERSION = "1.0"; // Change this whenever you deploy a new code version
+        // ---------------------------------
 
         let currentUser = null;
         let userData = null;
@@ -234,14 +299,24 @@
             if (user) {
                 loader.style.display = 'flex';
                 currentUser = user;
+                
+                // Fetch Config FIRST to check for updates
+                await fetchAppConfig();
+                
+                // If update modal is shown, do NOT proceed
+                if (!document.getElementById('update-modal').classList.contains('hidden')) {
+                    loader.style.display = 'none';
+                    return; 
+                }
+
                 await fetchUserData();
-                if (userData.isBlocked) {
+                if (userData && userData.isBlocked) {
                     showAlert("Aapka account block kar diya gaya hai.");
                     await signOut(auth);
                     loader.style.display = 'none';
                     return;
                 }
-                await fetchAppConfig();
+                
                 await checkNewNotifications();
                 updateUI();
                 showMainPage('app-container');
@@ -283,11 +358,37 @@
             const configRef = doc(db, "config", "main");
             try {
                 const configSnap = await getDoc(configRef);
-                appConfig = configSnap.exists() ? configSnap.data() : { minWithdrawal: 5000, paymentMethods: ["UPI", "Paytm"], dailyAdLimit: 10, coinValueCoins: 1000, coinValueInr: 10 };
+                if (configSnap.exists()) {
+                    appConfig = configSnap.data();
+                    checkForForceUpdate(appConfig); // Check for update here
+                } else {
+                    appConfig = { minWithdrawal: 5000, paymentMethods: ["UPI", "Paytm"], dailyAdLimit: 10, coinValueCoins: 1000, coinValueInr: 10 };
+                }
             } catch (error) {
                 console.error("Error fetching app config:", error);
             }
         }
+
+        // --- UPDATE CHECK FUNCTION ---
+        function checkForForceUpdate(config) {
+            const latestVersion = config.latestVersion || CURRENT_APP_VERSION;
+            
+            // Simple comparison: If latestVersion in DB is different from CURRENT_APP_VERSION
+            if (latestVersion !== CURRENT_APP_VERSION) {
+                document.getElementById('update-version-text').textContent = latestVersion;
+                document.getElementById('update-features-text').textContent = config.updateFeatures || "Improvements and bug fixes.";
+                document.getElementById('update-download-btn').href = config.downloadLink || "#";
+                
+                // Show modal and hide everything else
+                document.getElementById('update-modal').classList.remove('hidden');
+                document.getElementById('loader').style.display = 'none';
+                
+                // Ensure auth section or app container is hidden to prevent interaction
+                document.getElementById('auth-section').style.display = 'none';
+                document.getElementById('app-container').style.display = 'none';
+            }
+        }
+        // -----------------------------
         
         function updateUI() {
             if (!userData) return;
@@ -328,6 +429,9 @@
         }
 
         function showMainPage(pageId) {
+            // If update modal is active, do not switch pages
+            if (!document.getElementById('update-modal').classList.contains('hidden')) return;
+
             document.querySelectorAll('.main-page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
         }
@@ -360,10 +464,75 @@
             document.getElementById('copy-code-btn').addEventListener('click', copyReferralCode);
             document.getElementById('share-btn').addEventListener('click', shareReferralCode);
             document.getElementById('withdraw-btn').addEventListener('click', handleWithdrawal);
+            
+            // Listeners for Redeem Code feature
+            document.getElementById('submit-redeem-btn').addEventListener('click', handleRedeemCodeSubmit);
+            
             document.getElementById('home-withdraw-btn').addEventListener('click', () => navigateTo('wallet-page'));
             document.getElementById('apply-referral-btn').addEventListener('click', handleApplyReferralCode);
             withdrawMethodSelect.addEventListener('change', updateDynamicPaymentFields);
         }
+        
+        // --- NEW FUNCTIONS FOR REDEEM CODE ---
+        window.openRedeemModal = function() {
+            document.getElementById('redeem-modal').classList.remove('hidden');
+        }
+        
+        window.closeRedeemModal = function() {
+            document.getElementById('redeem-modal').classList.add('hidden');
+        }
+
+        async function handleRedeemCodeSubmit() {
+            const amount = parseInt(document.getElementById('redeem-amount').value);
+            const name = document.getElementById('redeem-name').value;
+            const mobile = document.getElementById('redeem-mobile').value;
+            const minWithdrawal = appConfig.minWithdrawal || 5000;
+
+            if (!amount || amount <= 0) return showAlert("Kripya valid coin amount daalein.");
+            if (amount < minWithdrawal) return showAlert(`Minimum withdrawal ${minWithdrawal} coins hai.`);
+            if (amount > userData.balance) return showAlert("Insufficient balance.");
+            if (!name) return showAlert("Kripya apna naam daalein.");
+            if (!mobile || mobile.length < 10) return showAlert("Kripya valid mobile number daalein.");
+
+            closeRedeemModal();
+            loader.style.display = 'flex';
+
+            try {
+                // Deduct balance
+                await updateBalance(-amount);
+                
+                // Add to Firestore withdrawals
+                // Saving specific fields 'name' and 'mobile' so Admin panel can show them
+                await addDoc(collection(db, "withdrawals"), {
+                    userId: currentUser.uid, 
+                    userName: userData.name, 
+                    userEmail: userData.email,
+                    amount: amount, 
+                    method: "Redeem Code", // Special Method Type
+                    name: name, // Specific field for Redeem Code
+                    mobile: mobile, // Specific field for Redeem Code
+                    paymentDetail: `Name: ${name}, Mobile: ${mobile}`, // Backup string
+                    status: "pending", 
+                    requestedAt: serverTimestamp()
+                });
+                
+                // --- MODIFIED POPUP MESSAGE ---
+                showAlert("Apko redeem code 24 hr me apke WhatsApp ya message me chala jayega.");
+                
+                // Reset inputs
+                document.getElementById('redeem-amount').value = '';
+                document.getElementById('redeem-name').value = '';
+                document.getElementById('redeem-mobile').value = '';
+                
+                loadWithdrawalHistory(); // Refresh history
+            } catch (error) {
+                showAlert("Request submit karne mein error: " + error.message);
+                await updateBalance(amount); // Refund if error
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+        // -------------------------------------
 
         async function handleSignup() {
             const name = document.getElementById('signup-name').value;
@@ -397,7 +566,6 @@
         async function checkNewNotifications() {
             const lastCheck = userData.lastNotificationCheck;
             if (!lastCheck || typeof lastCheck.seconds === 'undefined') {
-                console.log("lastNotificationCheck is not a valid timestamp yet. Skipping check.");
                 return;
             }
             const q = query(collection(db, "notifications"), where("createdAt", ">", lastCheck), limit(1));
@@ -429,6 +597,7 @@
             }
         }
 
+        // --- UPDATED FUNCTION FOR HISTORY WITH ADMIN MESSAGE ---
         async function loadWithdrawalHistory() {
             const historyList = document.getElementById('withdrawal-history-list');
             historyList.innerHTML = '<p class="text-gray-400">History load ho rahi hai...</p>';
@@ -449,13 +618,39 @@
                     if (status === 'approved') statusColor = 'text-green-400';
                     else if (status === 'rejected') statusColor = 'text-red-400';
                     const date = request.requestedAt ? request.requestedAt.toDate().toLocaleDateString() : 'N/A';
-                    historyList.innerHTML += `<div class="card-bg p-3 rounded-lg flex items-center justify-between"><div><p class="font-semibold">${request.amount} Coins - ${request.method}</p><p class="text-xs text-gray-400">${date}</p></div><p class="font-bold ${statusColor} capitalize">${status}</p></div>`;
+                    
+                    // Show specific details for Redeem Code
+                    let details = request.paymentDetail;
+                    if(request.method === "Redeem Code") {
+                       details = `Redeem Code (${request.mobile})`;
+                    }
+                    
+                    // Admin Message Logic
+                    let adminMessageHtml = '';
+                    if(request.adminMessage) {
+                        adminMessageHtml = `<div class="mt-2 p-2 bg-gray-800 rounded text-xs text-gray-300 border-l-2 border-accent">
+                            <span class="font-bold text-accent">Admin:</span> ${request.adminMessage}
+                        </div>`;
+                    }
+
+                    historyList.innerHTML += `
+                        <div class="card-bg p-3 rounded-lg mb-3">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-semibold">${request.amount} Coins - ${request.method}</p>
+                                    <p class="text-xs text-gray-400">${date}</p>
+                                </div>
+                                <p class="font-bold ${statusColor} capitalize">${status}</p>
+                            </div>
+                            ${adminMessageHtml}
+                        </div>`;
                 });
             } catch (error) {
                 console.error("Error fetching withdrawal history: ", error);
                 historyList.innerHTML = '<p class="text-red-400">History load karne mein error aayi.</p>';
             }
         }
+        // -----------------------------------------------------
         
         async function handleApplyReferralCode() {
             if (userData.referredBy) return showAlert("Aap pehle hi ek referral code istemal kar chuke hain.");
@@ -523,6 +718,7 @@
                 showAlert("Withdrawal request safaltapoorvak submit ho gayi hai!");
                 document.getElementById('withdraw-amount').value = '';
                 paymentDetailInput.value = '';
+                loadWithdrawalHistory();
             } catch (error) {
                 showAlert("Request submit karne mein error: " + error.message);
                 await updateBalance(amount);
@@ -546,9 +742,9 @@
         }
         
         function shareReferralCode() {
-            const text = `CashReward join karein aur paise kamayein! Bonus paane ke liye mera referral code use karein: ${userData.referralCode}`;
+            const text = `Secure Earn join karein aur paise kamayein! Bonus paane ke liye mera referral code use karein: ${userData.referralCode}`;
             if (navigator.share) {
-                navigator.share({ title: 'CashReward Join Karein!', text: text, url: window.location.href })
+                navigator.share({ title: 'Secure Earn Join Karein!', text: text, url: window.location.href })
                     .catch((error) => console.error("Share failed:", error));
             } else {
                 copyReferralCode();
@@ -599,7 +795,7 @@
                 
                 let rewardAmount = 0;
                 if (taskType === 'miniApp') {
-                    rewardAmount = 100; // Mini App ka zyada reward
+                    rewardAmount = 100;
                 } else if (taskType !== 'inApp') {
                     rewardAmount = 50;
                 }
