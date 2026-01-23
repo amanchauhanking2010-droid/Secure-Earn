@@ -6,6 +6,7 @@
     <title>Secure Earn</title>
     
     <!-- Aapka Naya Ad Code -->
+    <!-- Monetag SDK ab bhi load hoga, lekin 'inApp' task iska istemal seedhe nahi karega -->
     <script src='//libtl.com/sdk.js' data-zone='10495819' data-sdk='show_10495819'></script>
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -108,7 +109,8 @@
                             <button class="bg-white text-black font-bold px-6 py-2 rounded-lg text-sm btn" onclick="claimReward('popup')">Claim</button>
                         </div>
                          <div class="card-bg p-3 rounded-lg flex items-center justify-between">
-                            <div class="flex items-center space-x-3"><span class="text-3xl">👀</span><div><h3 class="font-semibold">Watch a Video</h3><p class="text-xs text-gray-400">In-App Interstitial</p></div></div>
+                            <div class="flex items-center space-x-3"><span class="text-3xl">👀</span><div><h3 class="font-semibold">Tasks</h3><!-- 'Watch a Video' se 'Tasks' kiya gaya --><p class="text-xs text-gray-400">More Coin</p><!-- 'In-App Interstitial' se 'More Coin' kiya gaya --></div></div>
+                            <!-- Yeh button 'inApp' taskType ke saath claimReward function ko call karta hai -->
                             <button class="bg-gray-700 text-white font-bold px-6 py-2 rounded-lg text-sm btn" onclick="claimReward('inApp')">Start</button>
                         </div>
                         <div class="card-bg p-3 rounded-lg flex items-center justify-between">
@@ -752,6 +754,19 @@
             }
         }
 
+        // showAlert फंक्शन को अब एक optional callback फंक्शन accept karne ke liye modify kiya gaya hai
+        function showAlert(message, okCallback = null) {
+            document.getElementById('alert-message').textContent = message;
+            document.getElementById('custom-alert').classList.remove('hidden');
+            document.getElementById('alert-ok-btn').onclick = () => {
+                document.getElementById('custom-alert').classList.add('hidden');
+                if (okCallback && typeof okCallback === 'function') {
+                    okCallback(); // Agar callback function provide kiya gaya hai, to use execute karein
+                }
+            };
+        }
+        window.showAlert = showAlert; // Global scope mein available rakhein
+
         window.claimReward = async function(taskType) {
             const today = new Date().toISOString().split('T')[0];
             const userRef = doc(db, "users", currentUser.uid);
@@ -766,60 +781,77 @@
                 return showAlert("Aapki aaj ki ad dekhne ki seema poori ho gayi hai.");
             }
             
-            if (typeof window.show_10495819 !== 'function') {
-                return showAlert("Ad service abhi uplabdh nahi hai. Kripya baad mein prayas karein.");
-            }
-            
-            let adPromise;
-            switch(taskType) {
-                case 'interstitial':
-                    adPromise = window.show_10495819();
-                    break;
-                case 'popup':
-                    adPromise = window.show_10495819('pop');
-                    break;
-                case 'inApp':
-                    adPromise = window.show_10495819({ type: 'inApp', inAppSettings: { frequency: 2, capping: 0.1, interval: 30, timeout: 5, everyPage: false } });
-                    break;
-                case 'miniApp':
-                    adPromise = window.show_10495819();
-                    break;
-                default:
-                    return;
-            }
-
-            adPromise.then(async () => {
-                const newCount = (userData.dailyAdCount || 0) + 1;
-                await updateDoc(userRef, { dailyAdCount: newCount });
-                userData.dailyAdCount = newCount;
-                
+            // Monetag ad types (interstitial, popup, miniApp) ke liye original logic
+            if (taskType === 'interstitial' || taskType === 'popup' || taskType === 'miniApp') {
+                 if (typeof window.show_10495819 !== 'function') {
+                    return showAlert("Ad service abhi uplabdh nahi hai. Kripya baad mein prayas karein.");
+                }
+                let adPromise;
                 let rewardAmount = 0;
-                if (taskType === 'miniApp') {
-                    rewardAmount = 100;
-                } else if (taskType !== 'inApp') {
-                    rewardAmount = 50;
+
+                switch(taskType) {
+                    case 'interstitial':
+                        adPromise = window.show_10495819();
+                        rewardAmount = 50;
+                        break;
+                    case 'popup':
+                        adPromise = window.show_10495819('pop');
+                        rewardAmount = 50;
+                        break;
+                    case 'miniApp':
+                        adPromise = window.show_10495819();
+                        rewardAmount = 100;
+                        break;
+                    default:
+                        return;
                 }
 
-                if (rewardAmount > 0) {
-                    updateBalance(rewardAmount);
-                    showAlert(`Badhai ho! Aapne ${rewardAmount} coins jeete hain.`);
-                }
-                updateAdsLeftCount();
-            }).catch(e => {
-                console.error("Ad error:", e);
-                showAlert('Ad nahi dikhaya ja saka. Kripya baad mein prayas karein.');
-            });
+                adPromise.then(async () => {
+                    const newCount = (userData.dailyAdCount || 0) + 1;
+                    await updateDoc(userRef, { dailyAdCount: newCount });
+                    userData.dailyAdCount = newCount;
+                    
+                    if (rewardAmount > 0) {
+                        updateBalance(rewardAmount);
+                        showAlert(`Badhai ho! Aapne ${rewardAmount} coins jeete hain.`);
+                    }
+                    updateAdsLeftCount();
+                }).catch(e => {
+                    console.error(`${taskType} Ad error:`, e);
+                    showAlert(`Ad nahi dikhaya ja saka (${taskType}). Kripya baad mein prayas karein.`);
+                });
+            }
+            else if (taskType === 'inApp') { // 'Tasks' button ke liye naya logic
+                showAlert("1 min use karo aur back aao reward paao 10 coin", async () => {
+                    // User ne "OK" par click kar diya hai
+                    // ***************************************************************
+                    // Yahan aapka naya link daala gaya hai
+                    window.open('https://otieu.com/4/10502742', '_blank'); 
+                    // ***************************************************************
+                    
+                    loader.style.display = 'flex'; // Loader dikhayein
+                    showAlert("कृपया 30 सेकंड प्रतीक्षा करें...", null); // User ko wait karne ka message
+                    
+                    setTimeout(async () => {
+                        // 30 seconds baad reward dein
+                        const newCount = (userData.dailyAdCount || 0) + 1;
+                        await updateDoc(userRef, { dailyAdCount: newCount });
+                        userData.dailyAdCount = newCount;
+                        
+                        const rewardAmount = 100; // Is task ke liye 100 coins
+                        await updateBalance(rewardAmount);
+                        
+                        showAlert(`Badhai ho! Aapne ${rewardAmount} coins jeete hain.`);
+                        updateAdsLeftCount();
+                        loader.style.display = 'none'; // Loader chupayein
+                    }, 30 * 1000); // 30 seconds (30000 milliseconds)
+                });
+            }
+            else {
+                // Agar koi unknown taskType aata hai
+                return;
+            }
         }
-
-        function showAlert(message) {
-            document.getElementById('alert-message').textContent = message;
-            document.getElementById('custom-alert').classList.remove('hidden');
-            document.getElementById('alert-ok-btn').onclick = () => {
-                document.getElementById('custom-alert').classList.add('hidden');
-            };
-        }
-        window.showAlert = showAlert;
-
     </script>
 </body>
 </html>
