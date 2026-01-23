@@ -38,6 +38,26 @@
         
         /* Modal Styles */
         .modal-overlay { background-color: rgba(0, 0, 0, 0.8); }
+
+        /* NEW: Glow effect for the Start button */
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px #ff8c00, 0 0 10px #ff8c00, 0 0 15px #ff8c00; }
+            50% { box-shadow: 0 0 10px #e67e00, 0 0 20px #e67e00, 0 0 30px #e67e00; }
+            100% { box-shadow: 0 0 5px #ff8c00, 0 0 10px #ff8c00, 0 0 15px #ff8c00; }
+        }
+
+        .btn-glow {
+            animation: glow 1.5s infinite alternate;
+        }
+
+        /* NEW: Style for disabled 'Tasks' button */
+        .btn-disabled-limit {
+            background-color: #4a4a4a !important; /* Darker grey */
+            color: #a0a0a0 !important; /* Lighter grey text */
+            cursor: not-allowed;
+            text-decoration: line-through; /* Strikethrough effect */
+            animation: none !important; /* Remove glow */
+        }
     </style>
 </head>
 <body class="max-w-md mx-auto">
@@ -74,10 +94,10 @@
             <h1 class="text-xl font-bold text-accent">Secure Earn</h1>
             <div class="flex items-center space-x-4">
                 <div id="notification-bell" class="relative cursor-pointer">
-                    <i data-lucide="bell" class="w-6 h-6"></i>
+                    <i data-lucide="bell" class="mx-auto w-6 h-6"></i>
                     <div id="notification-dot" class="notification-dot"></div>
                 </div>
-                <i data-lucide="user" class="w-6 h-6 cursor-pointer" onclick="navigateTo('profile-page')"></i>
+                <i data-lucide="user" class="mx-auto w-6 h-6 cursor-pointer" onclick="navigateTo('profile-page')"></i>
             </div>
         </header>
 
@@ -109,9 +129,9 @@
                             <button class="bg-white text-black font-bold px-6 py-2 rounded-lg text-sm btn" onclick="claimReward('popup')">Claim</button>
                         </div>
                          <div class="card-bg p-3 rounded-lg flex items-center justify-between">
-                            <div class="flex items-center space-x-3"><span class="text-3xl">👀</span><div><h3 class="font-semibold">Tasks</h3><!-- 'Watch a Video' se 'Tasks' kiya gaya --><p class="text-xs text-gray-400">More Coin</p><!-- 'In-App Interstitial' se 'More Coin' kiya gaya --></div></div>
+                            <div class="flex items-center space-x-3"><span class="text-3xl">👀</span><div><h3 class="font-semibold">Tasks</h3><!-- 'Watch a Video' se 'Tasks' kiya gaya --><p id="inApp-task-description" class="text-xs text-gray-400">More Coin</p><!-- 'In-App Interstitial' se 'More Coin' kiya गया --></div></div>
                             <!-- Yeh button 'inApp' taskType ke saath claimReward function ko call karta hai -->
-                            <button class="bg-gray-700 text-white font-bold px-6 py-2 rounded-lg text-sm btn" onclick="claimReward('inApp')">Start</button>
+                            <button id="inApp-task-start-btn" class="bg-gray-700 text-white font-bold px-6 py-2 rounded-lg text-sm btn btn-glow" onclick="claimReward('inApp', event)">Start</button>
                         </div>
                         <div class="card-bg p-3 rounded-lg flex items-center justify-between">
                             <div class="flex items-center space-x-3"><span class="text-3xl">🎮</span><div><h3 class="font-semibold">Play Mini App</h3><p class="text-xs text-gray-400">Get a big reward!</p></div></div>
@@ -142,7 +162,7 @@
                     <div class="pt-2">
                          <h4 class="font-semibold mb-2 text-sm text-gray-300">Other Methods</h4>
                          <button onclick="openRedeemModal()" class="w-full p-3 rounded-lg btn-outline-accent flex justify-center items-center gap-2">
-                             <i data-lucide="gift" class="w-5 h-5"></i> Withdraw via Redeem Code
+                             <i data-lucide="gift" class="mx-auto w-5 h-5"></i> Withdraw via Redeem Code
                          </button>
                     </div>
                 </div>
@@ -159,7 +179,7 @@
                      <p class="text-gray-400 mb-2">Aapka Referral Code</p>
                      <div class="bg-gray-800 p-3 rounded-lg flex items-center justify-center mb-4">
                          <span id="referral-code" class="text-2xl font-bold tracking-widest">LOADING...</span>
-                         <button id="copy-code-btn" class="ml-4"><i data-lucide="copy" class="w-6 h-6 text-gray-400"></i></button>
+                         <button id="copy-code-btn" class="ml-4"><i data-lucide="copy" class="mx-auto w-6 h-6 text-gray-400"></i></button>
                      </div>
                      <p class="text-sm text-gray-300">Apne dosto ke saath code share karein.</p>
                  </div>
@@ -210,7 +230,7 @@
         <div class="bg-gray-800 rounded-xl p-6 w-full max-w-sm text-center border border-accent shadow-2xl">
             <div class="mb-4 flex justify-center">
                 <div class="p-3 bg-gray-700 rounded-full">
-                    <i data-lucide="download-cloud" class="w-10 h-10 text-accent"></i>
+                    <i data-lucide="download-cloud" class="mx-auto w-10 h-10 text-accent"></i>
                 </div>
             </div>
             <h2 class="text-2xl font-bold mb-2 text-white">New Version Available!</h2>
@@ -288,18 +308,19 @@
         const notificationDot = document.getElementById('notification-dot');
         const adsLeftCountEl = document.getElementById('ads-left-count');
         const paymentDetailsContainer = document.getElementById('payment-details-container');
+        const inAppTaskStartBtn = document.getElementById('inApp-task-start-btn'); // 'Tasks' button
+        const inAppTaskDescriptionEl = document.getElementById('inApp-task-description'); // 'Tasks' description text
 
         window.onload = () => {
             lucide.createIcons();
             setupEventListeners();
-            showMainPage('auth-section');
-            loader.style.display = 'none';
             onAuthStateChanged(auth, handleAuthStateChange);
         };
 
         async function handleAuthStateChange(user) {
+            loader.style.display = 'flex'; // Ensure loader is shown at the start of handling auth state
+
             if (user) {
-                loader.style.display = 'flex';
                 currentUser = user;
                 
                 // Fetch Config FIRST to check for updates
@@ -307,7 +328,7 @@
                 
                 // If update modal is shown, do NOT proceed
                 if (!document.getElementById('update-modal').classList.contains('hidden')) {
-                    loader.style.display = 'none';
+                    loader.style.display = 'none'; // Ensure loader is hidden if update modal takes over
                     return; 
                 }
 
@@ -315,7 +336,7 @@
                 if (userData && userData.isBlocked) {
                     showAlert("Aapka account block kar diya gaya hai.");
                     await signOut(auth);
-                    loader.style.display = 'none';
+                    loader.style.display = 'none'; // Hide loader if user is blocked
                     return;
                 }
                 
@@ -323,11 +344,12 @@
                 updateUI();
                 showMainPage('app-container');
                 navigateTo('home-page');
-                loader.style.display = 'none';
+                loader.style.display = 'none'; // Hide loader after app content is displayed
             } else {
                 currentUser = null;
                 userData = null;
                 showMainPage('auth-section');
+                loader.style.display = 'none'; // *** Fix: Ensure loader is hidden when showing auth section ***
             }
         }
 
@@ -338,14 +360,20 @@
                 const userSnap = await getDoc(userRef);
                 if (userSnap.exists()) {
                     userData = userSnap.data();
+                    // Ensure new fields are initialized for existing users if they don't exist
+                    userData.dailyInAppTaskCount = userData.dailyInAppTaskCount || 0;
+                    userData.lastInAppTaskDate = userData.lastInAppTaskDate || new Date().toISOString().split('T')[0];
                 } else {
                     const ownReferralCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+                    const todayIsoString = new Date().toISOString().split('T')[0];
                     const defaultUserData = {
                         uid: currentUser.uid, name: currentUser.email.split('@')[0], email: currentUser.email,
                         balance: 50, referralCode: ownReferralCode, referredBy: null,
                         lastNotificationCheck: new Date(),
                         createdAt: serverTimestamp(),
-                        dailyAdCount: 0, lastAdWatchDate: new Date().toISOString().split('T')[0], isBlocked: false
+                        dailyAdCount: 0, lastAdWatchDate: todayIsoString,
+                        dailyInAppTaskCount: 0, lastInAppTaskDate: todayIsoString, // NEW: Specific for 'inApp' tasks
+                        isBlocked: false
                     };
                     await setDoc(userRef, defaultUserData);
                     userData = defaultUserData;
@@ -353,6 +381,7 @@
             } catch (error) {
                 console.error("Error fetching user data:", error);
                 showAlert("User data load karne mein error aayi.");
+                loader.style.display = 'none'; // Ensure loader is hidden on error
             }
         }
 
@@ -362,12 +391,32 @@
                 const configSnap = await getDoc(configRef);
                 if (configSnap.exists()) {
                     appConfig = configSnap.data();
+                    // Ensure dailyAdLimit and dailyInAppTaskLimit are updated if present in config, otherwise use default
+                    appConfig.dailyAdLimit = appConfig.dailyAdLimit || 5; // Default to 5 for general ads
+                    appConfig.dailyInAppTaskLimit = appConfig.dailyInAppTaskLimit || 5; // NEW: Default to 5 for 'inApp' tasks
                     checkForForceUpdate(appConfig); // Check for update here
                 } else {
-                    appConfig = { minWithdrawal: 5000, paymentMethods: ["UPI", "Paytm"], dailyAdLimit: 10, coinValueCoins: 1000, coinValueInr: 10 };
+                    // Default configuration with daily limits
+                    appConfig = { 
+                        minWithdrawal: 5000, 
+                        paymentMethods: ["UPI", "Paytm"], 
+                        dailyAdLimit: 5, // Default for general ads
+                        dailyInAppTaskLimit: 5, // Default for 'inApp' tasks
+                        coinValueCoins: 1000, 
+                        coinValueInr: 10 
+                    };
                 }
             } catch (error) {
                 console.error("Error fetching app config:", error);
+                // Fallback config if there's an error fetching from Firestore
+                appConfig = { 
+                    minWithdrawal: 5000, 
+                    paymentMethods: ["UPI", "Paytm"], 
+                    dailyAdLimit: 5, 
+                    dailyInAppTaskLimit: 5, // Fallback for 'inApp' tasks
+                    coinValueCoins: 1000, 
+                    coinValueInr: 10 
+                };
             }
         }
 
@@ -383,7 +432,7 @@
                 
                 // Show modal and hide everything else
                 document.getElementById('update-modal').classList.remove('hidden');
-                document.getElementById('loader').style.display = 'none';
+                document.getElementById('loader').style.display = 'none'; // Hide loader when update modal is shown
                 
                 // Ensure auth section or app container is hidden to prevent interaction
                 document.getElementById('auth-section').style.display = 'none';
@@ -411,16 +460,49 @@
             });
             updateDynamicPaymentFields();
             updateAdsLeftCount();
+            updateInAppTaskButtonState(); // NEW: Update 'Tasks' button state
         }
 
         function updateAdsLeftCount() {
             const today = new Date().toISOString().split('T')[0];
+            // Reset dailyAdCount if it's a new day
             if (userData.lastAdWatchDate !== today) {
                 userData.dailyAdCount = 0;
             }
-            const adsLeft = Math.max(0, (appConfig.dailyAdLimit || 10) - userData.dailyAdCount);
+            const adsLeft = Math.max(0, (appConfig.dailyAdLimit || 5) - userData.dailyAdCount);
             adsLeftCountEl.textContent = adsLeft;
         }
+
+        // NEW: Function to manage the 'inApp' task button state
+        function updateInAppTaskButtonState() {
+            if (!inAppTaskStartBtn || !inAppTaskDescriptionEl || !userData) return;
+
+            const today = new Date().toISOString().split('T')[0];
+            const inAppTaskLimit = appConfig.dailyInAppTaskLimit || 5;
+
+            // Reset dailyInAppTaskCount if it's a new day
+            if (userData.lastInAppTaskDate !== today) {
+                userData.dailyInAppTaskCount = 0;
+                // No Firestore update here; it will be done on the first interaction of the day
+            }
+            
+            const tasksCompleted = userData.dailyInAppTaskCount || 0;
+
+            if (tasksCompleted >= inAppTaskLimit) {
+                inAppTaskStartBtn.disabled = true;
+                inAppTaskStartBtn.textContent = "Your limit end";
+                inAppTaskStartBtn.classList.remove('btn-accent', 'btn-glow'); // Remove active styling
+                inAppTaskStartBtn.classList.add('bg-gray-700', 'text-gray-400', 'btn-disabled-limit'); // Add disabled styling
+                inAppTaskDescriptionEl.textContent = "Please try again 24 hr"; // Update descriptive text
+            } else {
+                inAppTaskStartBtn.disabled = false;
+                inAppTaskStartBtn.textContent = "Start";
+                inAppTaskStartBtn.classList.remove('bg-gray-700', 'text-gray-400', 'btn-disabled-limit'); // Remove disabled styling
+                inAppTaskStartBtn.classList.add('btn-accent', 'btn-glow'); // Add active styling
+                inAppTaskDescriptionEl.textContent = "More Coin"; // Reset descriptive text
+            }
+        }
+
 
         function updateDynamicPaymentFields() {
             const selectedMethod = withdrawMethodSelect.value.toLowerCase();
@@ -767,17 +849,19 @@
         }
         window.showAlert = showAlert; // Global scope mein available rakhein
 
-        window.claimReward = async function(taskType) {
+        window.claimReward = async function(taskType, event) { // 'event' parameter add kiya gaya hai
             const today = new Date().toISOString().split('T')[0];
             const userRef = doc(db, "users", currentUser.uid);
 
+            // General Ad Limit (for interstitial, popup, miniApp)
             if (userData.lastAdWatchDate !== today) {
                 await updateDoc(userRef, { dailyAdCount: 0, lastAdWatchDate: today });
                 userData.dailyAdCount = 0;
                 userData.lastAdWatchDate = today;
             }
 
-            if (userData.dailyAdCount >= (appConfig.dailyAdLimit || 10)) {
+            // General Ad Limit Check
+            if (taskType !== 'inApp' && userData.dailyAdCount >= (appConfig.dailyAdLimit || 5)) {
                 return showAlert("Aapki aaj ki ad dekhne ki seema poori ho gayi hai.");
             }
             
@@ -800,7 +884,7 @@
                         break;
                     case 'miniApp':
                         adPromise = window.show_10495819();
-                        rewardAmount = 100;
+                        rewardAmount = 60; // <--- यहाँ 100 से 60 किया गया
                         break;
                     default:
                         return;
@@ -822,33 +906,87 @@
                 });
             }
             else if (taskType === 'inApp') { // 'Tasks' button ke liye naya logic
-                showAlert("1 min use karo aur back aao reward paao 10 coin", async () => {
-                    // User ne "OK" par click kar diya hai
-                    // ***************************************************************
-                    // Yahan aapka naya link daala gaya hai
-                    window.open('https://otieu.com/4/10502742', '_blank'); 
-                    // ***************************************************************
-                    
-                    loader.style.display = 'flex'; // Loader dikhayein
-                    showAlert("कृपया 30 सेकंड प्रतीक्षा करें...", null); // User ko wait karne ka message
-                    
-                    setTimeout(async () => {
-                        // 30 seconds baad reward dein
-                        const newCount = (userData.dailyAdCount || 0) + 1;
-                        await updateDoc(userRef, { dailyAdCount: newCount });
-                        userData.dailyAdCount = newCount;
-                        
-                        const rewardAmount = 100; // Is task ke liye 100 coins
-                        await updateBalance(rewardAmount);
-                        
-                        showAlert(`Badhai ho! Aapne ${rewardAmount} coins jeete hain.`);
-                        updateAdsLeftCount();
-                        loader.style.display = 'none'; // Loader chupayein
-                    }, 30 * 1000); // 30 seconds (30000 milliseconds)
+                const inAppTaskLimit = appConfig.dailyInAppTaskLimit || 5;
+
+                // Reset dailyInAppTaskCount if it's a new day
+                if (userData.lastInAppTaskDate !== today) {
+                    await updateDoc(userRef, { dailyInAppTaskCount: 0, lastInAppTaskDate: today });
+                    userData.dailyInAppTaskCount = 0;
+                    userData.lastInAppTaskDate = today;
+                }
+                
+                // Check 'inApp' task limit BEFORE proceeding
+                if (userData.dailyInAppTaskCount >= inAppTaskLimit) {
+                    updateInAppTaskButtonState(); // Ensure button reflects the limit
+                    return showAlert("Aapki aaj ki Tasks ki seema poori ho gayi hai. Kripya 24 ghante baad prayas karein.");
+                }
+
+                const taskStartButton = event.target; // 'event.target' se button element milta hai
+                taskStartButton.disabled = true; // बटन को तुरंत अक्षम करें ताकि डबल-क्लिक न हो
+                taskStartButton.classList.remove('btn-glow'); // Stop glow immediately
+
+                // पहला अलर्ट: यूज़र को निर्देश दें
+                showAlert("आपको एक नया वेब पेज खुलेगा, आपको उसे 30 सेकंड तक उपयोग करना है और उसके बाद ही वापस आना है।", () => {
+                    // यह कॉलबैक तब चलता है जब यूज़र पहले अलर्ट पर 'OK' क्लिक करता है।
+                    const externalUrl = 'https://otieu.com/4/10502742';
+                    const newWindow = window.open(externalUrl, '_blank'); 
+
+                    // यदि पॉपअप ब्लॉक हो गया है या पेज नहीं खुल पाया
+                    if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                        taskStartButton.disabled = false; // बटन को फिर से सक्षम करें
+                        taskStartButton.classList.add('btn-glow'); // Glow effect wapas lagayein
+                        loader.style.display = 'none'; // लोडर को छुपाएं
+                        updateInAppTaskButtonState(); // Update state to ensure it's correct
+                        return showAlert("पॉपअप ब्लॉक कर दिया गया है या पेज खोलने में त्रुटि हुई। कृपया पॉपअप ब्लॉकर अक्षम करें।");
+                    }
+
+                    loader.style.display = 'flex'; // लोडर दिखाएं
+
+                    const startTime = Date.now();
+                    const requiredTime = 30 * 1000; // 30 सेकंड मिलीसेकंड्स में
+                    let intervalId;
+
+                    intervalId = setInterval(async () => {
+                        const currentTime = Date.now();
+                        const elapsedTime = currentTime - startTime;
+
+                        if (elapsedTime >= requiredTime) {
+                            // कार्य सफलतापूर्वक पूरा हुआ (30 सेकंड बीत गए)
+                            clearInterval(intervalId); // इंटरवल बंद करें
+                            loader.style.display = 'none'; // लोडर छुपाएं
+                            
+                            // कॉइन देने से पहले फिर से दैनिक सीमा जांचें (अत्यधिक सुरक्षा के लिए)
+                            if (userData.dailyInAppTaskCount >= inAppTaskLimit) {
+                                showAlert("आज की आपकी कार्य सीमा पूरी हो गई है।");
+                                updateInAppTaskButtonState(); // Update button state
+                                return;
+                            }
+
+                            const newInAppCount = (userData.dailyInAppTaskCount || 0) + 1;
+                            await updateDoc(userRef, { dailyInAppTaskCount: newInAppCount, lastInAppTaskDate: today });
+                            userData.dailyInAppTaskCount = newInAppCount; // लोकल डेटा भी अपडेट करें
+                            
+                            const rewardAmount = 200; // इस टास्क के लिए 200 कॉइन्स
+                            await updateBalance(rewardAmount); // बैलेंस अपडेट करें (यह UI भी अपडेट करेगा)
+                            
+                            showAlert("आपका कार्य पूरा हो गया है! यह लो 200 Rs।");
+                            updateInAppTaskButtonState(); // 'Tasks' बटन को रिफ्रेश करें
+                            
+                            // newWindow.close(); // वैकल्पिक: यदि आप चाहते हैं कि इनाम के बाद नया विंडो अपने आप बंद हो जाए
+                        } else if (newWindow.closed) {
+                            // नया विंडो 30 सेकंड पूरे होने से पहले बंद कर दिया गया
+                            clearInterval(intervalId); // इंटरवल बंद करें
+                            loader.style.display = 'none'; // लोडर छुपाएं
+                            // अपडेट किया गया मैसेज
+                            showAlert("Apko reward nahi milega ap time se aphle aagye ."); 
+                            // कोई कॉइन नहीं दिए जाएंगे, dailyInAppTaskCount भी नहीं बढ़ाया जाएगा।
+                            updateInAppTaskButtonState(); // बटन को फिर से सक्षम करें और उसकी सही स्थिति दिखाएं
+                        }
+                    }, 1000); // हर 1 सेकंड में स्थिति जांचें
                 });
             }
             else {
-                // Agar koi unknown taskType aata hai
+                // यदि कोई अज्ञात taskType आता है
                 return;
             }
         }
