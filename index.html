@@ -128,8 +128,8 @@
                             <button class="bg-white text-orange-500 font-bold px-6 py-2 rounded-lg text-sm btn" onclick="claimReward('interstitial')">Claim</button>
                         </div>
                         <div class="card-bg p-3 rounded-lg flex items-center justify-between">
-                            <div class="flex items-center space-x-3"><span class="text-3xl">😎</span><div><h3 class="font-semibold">Click for Reward</h3><p class="text-xs text-gray-400">Rewarded Popup</p></div></div>
-                            <button class="bg-white text-black font-bold px-6 py-2 rounded-lg text-sm btn" onclick="claimReward('popup')">Claim</button>
+                            <div class="flex items-center space-x-3"><span class="text-3xl">😎</span><div><h3 class="font-semibold">Watch Rewarded Ad</h3><p class="text-xs text-gray-400">Watch & Earn</p></div></div>
+                            <button class="bg-white text-black font-bold px-6 py-2 rounded-lg text-sm btn" onclick="claimReward('rewardedVideo')">Claim</button>
                         </div>
                          <div class="card-bg p-3 rounded-lg flex items-center justify-between">
                             <div class="flex items-center space-x-3"><span class="text-3xl">👀</span><div><h3 class="font-semibold">Tasks</h3><!-- 'Watch a Video' se 'Tasks' kiya गया --><p id="inApp-task-description" class="text-xs text-gray-400">More Coin</p><!-- 'In-App Interstitial' se 'More Coin' kiya गया --></div></div>
@@ -856,7 +856,7 @@
             const today = new Date().toISOString().split('T')[0];
             const userRef = doc(db, "users", currentUser.uid);
 
-            // General Ad Limit (for interstitial, popup, miniApp)
+            // General Ad Limit (for interstitial, rewardedVideo, miniApp)
             if (userData.lastAdWatchDate !== today) {
                 await updateDoc(userRef, { dailyAdCount: 0, lastAdWatchDate: today });
                 userData.dailyAdCount = 0;
@@ -868,44 +868,58 @@
                 return showAlert("Aapki aaj ki ad dekhne ki seema poori ho gayi hai.");
             }
             
-            // Monetag ad types (interstitial, popup, miniApp) ke liye original logic
-            if (taskType === 'interstitial' || taskType === 'popup' || taskType === 'miniApp') {
+            // Monetag ad types (interstitial, rewardedVideo, miniApp) ke liye original logic
+            if (taskType === 'interstitial' || taskType === 'rewardedVideo' || taskType === 'miniApp') {
                  if (typeof window.show_10495819 !== 'function') {
                     return showAlert("Ad service abhi uplabdh nahi hai. Kripya baad mein prayas karein.");
                 }
                 let adPromise;
                 let rewardAmount = 0;
+                const requiredAdWatchTime = 14 * 1000; // 14 seconds in milliseconds
+                const startTime = Date.now(); // Start timer when ad is initiated
 
                 switch(taskType) {
                     case 'interstitial':
                         adPromise = window.show_10495819();
                         rewardAmount = 50;
                         break;
-                    case 'popup':
-                        adPromise = window.show_10495819('pop');
+                    case 'rewardedVideo':
+                        adPromise = window.show_10495819();
                         rewardAmount = 50;
                         break;
                     case 'miniApp':
                         adPromise = window.show_10495819();
-                        rewardAmount = 60; // <--- यहाँ 100 से 60 किया गया
+                        rewardAmount = 60; 
                         break;
                     default:
                         return;
                 }
 
                 adPromise.then(async () => {
+                    const elapsedTime = Date.now() - startTime; // Calculate elapsed time
+                    
                     const newCount = (userData.dailyAdCount || 0) + 1;
                     await updateDoc(userRef, { dailyAdCount: newCount });
                     userData.dailyAdCount = newCount;
-                    
-                    if (rewardAmount > 0) {
-                        updateBalance(rewardAmount);
-                        showAlert(`Badhai ho! Aapne ${rewardAmount} coins jeete hain.`);
+
+                    if (elapsedTime >= requiredAdWatchTime) {
+                        if (rewardAmount > 0) {
+                            updateBalance(rewardAmount);
+                            showAlert(`Badhai ho! Aapne ${rewardAmount} coins jeete hain.`);
+                        }
+                    } else {
+                        showAlert("Apko reward nahi milega ap time se pahle aagye.");
                     }
                     updateAdsLeftCount();
                 }).catch(e => {
                     console.error(`${taskType} Ad error:`, e);
                     showAlert(`Ad nahi dikhaya ja saka (${taskType}). Kripya baad mein prayas karein.`);
+                    
+                    // Even if ad fails, increment count to prevent infinite retries for a broken ad
+                    const newCount = (userData.dailyAdCount || 0) + 1;
+                    updateDoc(userRef, { dailyAdCount: newCount });
+                    userData.dailyAdCount = newCount;
+                    updateAdsLeftCount();
                 });
             }
             else if (taskType === 'inApp') { // 'Tasks' button ke liye naya logic
