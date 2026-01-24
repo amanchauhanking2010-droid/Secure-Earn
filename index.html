@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secure Earn</title>
     
-    <!-- Aapka Naya Ad Code -->
-    <!-- Monetag SDK ab bhi load hoga, lekin 'inApp' task iska istemal seedhe nahi karega -->
+    <!-- Rewarded Ad Code - Monetag SDK -->
+    <!-- Yeh script rewarded ads load karega jab user "Claim" button par click karega. -->
+    <!-- Monetag dashboard mein is zone (10495819) ko 'Rewarded Interstitial' ya 'Rewarded Video' ke liye configure karein. -->
     <script src='//libtl.com/sdk.js' data-zone='10495819' data-sdk='show_10495819'></script>
     
-    <!-- Monetag Ad Scripts - Yahan jode gaye hain -->
-    <script src="https://3nbf4.com/act/files/tag.min.js?z=10506080" data-cfasync="false" async></script>
-    <script>(function(s){s.dataset.zone='10506087',s.src='https://gizokraijaw.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-    <!-- Monetag Ad Scripts End -->
+    <!-- Puraane pop-up/vignette ad scripts hata diye gaye hain taaki sirf rewarded ads dikhe. -->
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
@@ -134,7 +132,7 @@
                             <button class="bg-white text-black font-bold px-6 py-2 rounded-lg text-sm btn" onclick="claimReward('popup')">Claim</button>
                         </div>
                          <div class="card-bg p-3 rounded-lg flex items-center justify-between">
-                            <div class="flex items-center space-x-3"><span class="text-3xl">👀</span><div><h3 class="font-semibold">Tasks</h3><!-- 'Watch a Video' se 'Tasks' kiya gaya --><p id="inApp-task-description" class="text-xs text-gray-400">More Coin</p><!-- 'In-App Interstitial' se 'More Coin' kiya गया --></div></div>
+                            <div class="flex items-center space-x-3"><span class="text-3xl">👀</span><div><h3 class="font-semibold">Tasks</h3><!-- 'Watch a Video' se 'Tasks' kiya गया --><p id="inApp-task-description" class="text-xs text-gray-400">More Coin</p><!-- 'In-App Interstitial' se 'More Coin' kiya गया --></div></div>
                             <!-- Yeh button 'inApp' taskType ke saath claimReward function ko call karta hai -->
                             <button id="inApp-task-start-btn" class="bg-gray-700 text-white font-bold px-6 py-2 rounded-lg text-sm btn btn-glow" onclick="claimReward('inApp', event)">Start</button>
                         </div>
