@@ -9,6 +9,9 @@
     <!-- Monetag SDK ab bhi load hoga, lekin 'inApp' task iska istemal seedhe nahi karega -->
     <script src='//libtl.com/sdk.js' data-zone='10495819' data-sdk='show_10495819'></script>
     
+    <!-- GigaPub SDK (ONLY FOR TASKS SECTION) -->
+    <script src="https://ad.gigapub.tech/script?id=5424"></script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -154,7 +157,7 @@
                             <p>Short Ads: <span id="monetag-interstitial-count">...</span>/<span id="monetag-interstitial-limit">...</span></p>
                             <p>Click for Reward: <span id="adsterra-native-count">...</span>/<span id="adsterra-native-limit">...</span></p>
                             <p>Mini Apps: <span id="monetag-miniApp-count">...</span>/<span id="monetag-miniApp-limit">...</span></p>
-                            <!-- In-App Task count display if a limit is added -->
+                            <!-- In-App Task count display for GigaPub Tasks -->
                             <p>Tasks: <span id="inApp-task-count">...</span>/<span id="inApp-task-limit">...</span></p>
                         </div>
                     </div>
@@ -190,7 +193,8 @@
                         </div>
                          <div class="card-bg p-3 rounded-lg flex items-center justify-between shadow-lg">
                             <div class="flex items-center space-x-3"><span class="text-3xl">👀</span><div><h3 class="font-semibold">Tasks</h3><p class="text-xs text-gray-400">More Reward</p></div></div>
-                            <button id="claim-inApp-btn" class="bg-gray-700 text-white font-bold px-6 py-2 rounded-lg text-sm btn ad-button" onclick="claimReward('inApp')">Start</button>
+                            <!-- MODIFIED: Call new GigaPub handler -->
+                            <button id="claim-inApp-btn" class="bg-gray-700 text-white font-bold px-6 py-2 rounded-lg text-sm btn ad-button" onclick="handleGigaPubTaskClick()">Start</button>
                         </div>
                         <div class="card-bg p-3 rounded-lg flex items-center justify-between shadow-lg">
                             <div class="flex items-center space-x-3"><span class="text-3xl">🎮</span><div><h3 class="font-semibold">Play Mini App</h3><p class="text-xs text-gray-400">Get a big reward!</p></div></div>
@@ -392,7 +396,7 @@
         const strikeDisplayEl = document.getElementById('strike-display'); 
         const currentActivityLevelEl = document.getElementById('current-activity-level'); // New: Activity level element
 
-        // --- NEW COOLDOWN/RESTRICTION VARIABLES ---
+        // --- COOLDOWN/RESTRICTION VARIABLES FOR NON-TASK ADS ---
         let lastNonTaskAdClaimTime = 0; // Timestamp of last successful non-Tasks ad claim
         const EARLY_ACCESS_RESTRICTION_DURATION = 14 * 1000; // 14 seconds
         const AD_COOLDOWN_DURATION = 5 * 1000; // 5 seconds
@@ -401,7 +405,7 @@
         const adCooldownMessageEl = document.getElementById('ad-cooldown-message');
         // ------------------------------------------
 
-        // --- NEW ADSTERRA REWARD LOGIC VARIABLES ---
+        // --- ADSTERRA REWARD LOGIC VARIABLES ---
         const ADSTERRA_REWARD_TIMER_DURATION = 15; // seconds
         const ADSTERRA_LOAD_TIMEOUT = 5000; // 5 seconds for ad to load
         let adsterraTimer = null;
@@ -424,6 +428,9 @@
         let pageFocusListener = null;
         // ---------------------------------------------
 
+        // GigaPub specific variables (using existing inAppTask for counts/limits)
+        const claimInAppBtn = document.getElementById('claim-inApp-btn');
+        const GIGAPUB_TASK_REWARD_AMOUNT = 100; // Reward amount for GigaPub Task (adjust as needed)
 
         window.onload = () => {
             lucide.createIcons();
@@ -488,7 +495,7 @@
                         lastAdsterraNativeDate: new Date().toISOString().split('T')[0],
                         monetagMiniAppCount: 0,
                         lastMonetagMiniAppDate: new Date().toISOString().split('T')[0],
-                        inAppTaskCount: 0, // Added for consistency, can be adapted
+                        inAppTaskCount: 0, // Used for GigaPub Tasks
                         lastInAppTaskDate: new Date().toISOString().split('T')[0],
 
                         isBlocked: false,
@@ -525,7 +532,7 @@
                     userData.lastMonetagMiniAppDate = today;
                     updatePromises.push(updateDoc(userRef, { monetagMiniAppCount: 0, lastMonetagMiniAppDate: today }));
                 }
-                if (userData.lastInAppTaskDate !== today) {
+                if (userData.lastInAppTaskDate !== today) { // For GigaPub Tasks
                     userData.inAppTaskCount = 0;
                     userData.lastInAppTaskDate = today;
                     updatePromises.push(updateDoc(userRef, { inAppTaskCount: 0, lastInAppTaskDate: today }));
@@ -548,8 +555,7 @@
                     appConfig.monetagInterstitialLimit = appConfig.monetagInterstitialLimit || 50;
                     appConfig.adsterraNativeLimit = appConfig.adsterraNativeLimit || 50;
                     appConfig.monetagMiniAppLimit = appConfig.monetagMiniAppLimit || 50;
-                    appConfig.inAppTaskLimit = appConfig.inAppTaskLimit || 5; // Default limit for inApp task
-
+                    appConfig.inAppTaskLimit = appConfig.inAppTaskLimit || 50; // UPDATED: Default limit for GigaPub Tasks (50 as per requirement)
                     checkForForceUpdate(appConfig); // Check for update here
                 } else {
                     appConfig = { 
@@ -560,7 +566,7 @@
                         monetagInterstitialLimit: 50,
                         adsterraNativeLimit: 50,
                         monetagMiniAppLimit: 50,
-                        inAppTaskLimit: 5
+                        inAppTaskLimit: 50 // UPDATED: Default limit for GigaPub Tasks (50 as per requirement)
                     };
                 }
             } catch (error) {
@@ -598,8 +604,8 @@
             profileNameEl.textContent = userData.name || 'N/A';
             profileEmailEl.textContent = userData.email || 'N/A';
             referralCodeEl.textContent = userData.referralCode || '...';
-            minWithdrawalInfoEl.textContent = `${appConfig.minWithdrawal || 5000}`; // Removed "Coins"
-            coinValueInfoEl.textContent = `${appConfig.coinValueCoins || 1000} = ₹${appConfig.coinValueInr || 10}`; // Removed "Coins"
+            minWithdrawalInfoEl.textContent = `${appConfig.minWithdrawal || 5000}`; 
+            coinValueInfoEl.textContent = `${appConfig.coinValueCoins || 1000} = ₹${appConfig.coinValueInr || 10}`; 
             withdrawMethodSelect.innerHTML = '';
             (appConfig.paymentMethods || []).forEach(method => {
                 const option = document.createElement('option');
@@ -608,64 +614,89 @@
                 withdrawMethodSelect.appendChild(option);
             });
             updateDynamicPaymentFields();
-            updateAllAdsLeftCounts(); // Updated function call
-            updateStrikeDisplay(); // New: Update strike display
+            updateAllAdsLeftCounts(); 
+            updateStrikeDisplay(); 
         }
 
-        // New function to update all ad counts and button states
+        // Function to update all ad counts and button states
         function updateAllAdsLeftCounts() {
-            document.getElementById('monetag-interstitial-count').textContent = (appConfig.monetagInterstitialLimit || 0) - (userData.monetagInterstitialCount || 0);
-            document.getElementById('monetag-interstitial-limit').textContent = appConfig.monetagInterstitialLimit || 0;
+            // Monetag Interstitial
+            const monetagInterstitialCountEl = document.getElementById('monetag-interstitial-count');
+            const monetagInterstitialLimitEl = document.getElementById('monetag-interstitial-limit');
+            const claimInterstitialBtn = document.getElementById('claim-interstitial-btn');
+
+            monetagInterstitialCountEl.textContent = (appConfig.monetagInterstitialLimit || 0) - (userData.monetagInterstitialCount || 0);
+            monetagInterstitialLimitEl.textContent = appConfig.monetagInterstitialLimit || 0;
             if ((userData.monetagInterstitialCount || 0) >= (appConfig.monetagInterstitialLimit || 0)) {
-                document.getElementById('claim-interstitial-btn').disabled = true;
-                document.getElementById('claim-interstitial-btn').textContent = "Limit Reached";
+                claimInterstitialBtn.disabled = true;
+                claimInterstitialBtn.textContent = "Limit Reached";
             } else {
-                document.getElementById('claim-interstitial-btn').disabled = false;
-                document.getElementById('claim-interstitial-btn').textContent = "Claim";
+                if (!adCooldownIntervalId && !isAdsterraAdActive) { // Only re-enable if not globally disabled by cooldown or Adsterra
+                    claimInterstitialBtn.disabled = false;
+                    claimInterstitialBtn.textContent = "Claim";
+                }
             }
 
-            document.getElementById('adsterra-native-count').textContent = (appConfig.adsterraNativeLimit || 0) - (userData.adsterraNativeCount || 0);
-            document.getElementById('adsterra-native-limit').textContent = appConfig.adsterraNativeLimit || 0;
+            // Adsterra Native
+            const adsterraNativeCountEl = document.getElementById('adsterra-native-count');
+            const adsterraNativeLimitEl = document.getElementById('adsterra-native-limit');
+            
+            adsterraNativeCountEl.textContent = (appConfig.adsterraNativeLimit || 0) - (userData.adsterraNativeCount || 0);
+            adsterraNativeLimitEl.textContent = appConfig.adsterraNativeLimit || 0;
             if ((userData.adsterraNativeCount || 0) >= (appConfig.adsterraNativeLimit || 0)) {
-                document.getElementById('claim-adsterra-btn').disabled = true;
-                document.getElementById('claim-adsterra-btn').textContent = "Limit Reached";
+                claimAdsterraBtn.disabled = true;
+                claimAdsterraBtn.textContent = "Limit Reached";
             } else {
-                document.getElementById('claim-adsterra-btn').disabled = false;
-                document.getElementById('claim-adsterra-btn').textContent = "Claim";
+                 if (!adCooldownIntervalId && !isAdsterraAdActive) { // Only re-enable if not globally disabled by cooldown or Adsterra
+                    claimAdsterraBtn.disabled = false;
+                    claimAdsterraBtn.textContent = "Claim";
+                 }
             }
 
-            document.getElementById('monetag-miniApp-count').textContent = (appConfig.monetagMiniAppLimit || 0) - (userData.monetagMiniAppCount || 0);
-            document.getElementById('monetag-miniApp-limit').textContent = appConfig.monetagMiniAppLimit || 0;
+            // Monetag Mini App
+            const monetagMiniAppCountEl = document.getElementById('monetag-miniApp-count');
+            const monetagMiniAppLimitEl = document.getElementById('monetag-miniApp-limit');
+            const claimMiniAppBtn = document.getElementById('claim-miniApp-btn');
+
+            monetagMiniAppCountEl.textContent = (appConfig.monetagMiniAppLimit || 0) - (userData.monetagMiniAppCount || 0);
+            monetagMiniAppLimitEl.textContent = appConfig.monetagMiniAppLimit || 0;
             if ((userData.monetagMiniAppCount || 0) >= (appConfig.monetagMiniAppLimit || 0)) {
-                document.getElementById('claim-miniApp-btn').disabled = true;
-                document.getElementById('claim-miniApp-btn').textContent = "Limit Reached";
+                claimMiniAppBtn.disabled = true;
+                claimMiniAppBtn.textContent = "Limit Reached";
             } else {
-                document.getElementById('claim-miniApp-btn').disabled = false;
-                document.getElementById('claim-miniApp-btn').textContent = "Play";
+                if (!adCooldownIntervalId && !isAdsterraAdActive) { // Only re-enable if not globally disabled by cooldown or Adsterra
+                    claimMiniAppBtn.disabled = false;
+                    claimMiniAppBtn.textContent = "Play";
+                }
             }
 
-            document.getElementById('inApp-task-count').textContent = (appConfig.inAppTaskLimit || 0) - (userData.inAppTaskCount || 0);
-            document.getElementById('inApp-task-limit').textContent = appConfig.inAppTaskLimit || 0;
+            // GigaPub Task specific button (independent of other cooldowns)
+            const inAppTaskCountEl = document.getElementById('inApp-task-count');
+            const inAppTaskLimitEl = document.getElementById('inApp-task-limit');
+
+            inAppTaskCountEl.textContent = (appConfig.inAppTaskLimit || 0) - (userData.inAppTaskCount || 0);
+            inAppTaskLimitEl.textContent = appConfig.inAppTaskLimit || 0;
             if ((userData.inAppTaskCount || 0) >= (appConfig.inAppTaskLimit || 0)) {
-                document.getElementById('claim-inApp-btn').disabled = true;
-                document.getElementById('claim-inApp-btn').textContent = "Limit Reached";
+                claimInAppBtn.disabled = true;
+                claimInAppBtn.textContent = "Limit Reached";
             } else {
-                document.getElementById('claim-inApp-btn').disabled = false;
-                document.getElementById('claim-inApp-btn').textContent = "Start";
+                // This button's state is managed primarily by its own handler (handleGigaPubTaskClick)
+                // and should remain enabled unless its own limit is reached or an ad is active.
+                if (!claimInAppBtn.disabled) { // Only enable if not already disabled by active ad process
+                    claimInAppBtn.textContent = "Start";
+                }
             }
         }
 
-        // New: Function to update strike display
+        // Function to update strike display
         function updateStrikeDisplay() {
             const strikeCount = userData.strikeCount || 0;
-            // Update the main strike display next to coins
             if (strikeCount > 0) {
                 strikeDisplayEl.textContent = `🔥 x${strikeCount}`;
                 strikeDisplayEl.classList.remove('hidden');
             } else {
                 strikeDisplayEl.classList.add('hidden');
             }
-            // Update the new Activity Level indicator
             if (currentActivityLevelEl) {
                 currentActivityLevelEl.textContent = strikeCount;
             }
@@ -680,7 +711,6 @@
         }
 
         function showMainPage(pageId) {
-            // If update modal is active, do not switch pages
             if (!document.getElementById('update-modal').classList.contains('hidden')) return;
 
             document.querySelectorAll('.main-page').forEach(p => p.classList.remove('active'));
@@ -695,14 +725,11 @@
                 if (link.dataset.page === pageId) link.classList.add('active', 'text-accent');
             });
 
-            // New: Load specific content for top-page
             if (pageId === 'top-page') {
                 loadTopEarners();
             }
-            // Existing: Load specific content for wallet-page
             if (pageId === 'wallet-page') loadWithdrawalHistory();
-            // No specific load for profile-page needed, updateUI handles it.
-            lucide.createIcons(); // Re-render lucide icons for newly visible page
+            lucide.createIcons(); 
         }
         window.navigateTo = navigateTo;
 
@@ -711,23 +738,21 @@
             document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('signup-view').classList.add('hidden'); document.getElementById('login-view').classList.remove('hidden'); });
             document.getElementById('signup-btn').addEventListener('click', handleSignup);
             document.getElementById('login-btn').addEventListener('click', handleLogin);
-            // Logout button is now part of profile-page
             document.getElementById('logout-btn').addEventListener('click', handleLogout); 
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
                     const pageId = link.dataset.page;
                     if (pageId === 'wallet-page') loadWithdrawalHistory();
-                    if (pageId === 'top-page') loadTopEarners(); // Ensure top earners load
+                    if (pageId === 'top-page') loadTopEarners(); 
                     navigateTo(pageId);
                 });
             });
             document.getElementById('notification-bell').addEventListener('click', () => { navigateTo('notifications-page'); loadNotifications(); });
             document.getElementById('copy-code-btn').addEventListener('click', copyReferralCode);
-            // Modified share button event listener
             document.getElementById('share-btn').addEventListener('click', () => {
                 showAlert("अगर आपका दोस्त इस लिंक से साइन अप करेगा तो आपको 200 coin मिलेंगे", () => {
-                    const shareLink = "https://t.me/Secure_Earn_Robotes";
+                    const shareLink = "https://t.me/Secure_Earn_Robotes"; // Placeholder for actual share link
                     if (navigator.share) {
                         navigator.share({
                             title: 'Secure Earn Join Karein!',
@@ -735,8 +760,6 @@
                             url: shareLink
                         }).catch((error) => console.error("Share failed:", error));
                     } else {
-                        // Fallback for browsers that don't support Web Share API
-                        // Simply opening the link, or copying it. For simplicity, we'll open.
                         window.open(shareLink, '_blank');
                         showAlert("Share feature available nahi hai. Link naye tab mein khol diya gaya hai!");
                     }
@@ -744,18 +767,15 @@
             });
             document.getElementById('withdraw-btn').addEventListener('click', handleWithdrawal);
             
-            // Listeners for Redeem Code feature
             document.getElementById('submit-redeem-btn').addEventListener('click', handleRedeemCodeSubmit);
             
             document.getElementById('home-withdraw-btn').addEventListener('click', () => navigateTo('wallet-page'));
             document.getElementById('apply-referral-btn').addEventListener('click', handleApplyReferralCode);
             withdrawMethodSelect.addEventListener('change', updateDynamicPaymentFields);
 
-            // NEW: Listener for Adsterra button
             claimAdsterraBtn.addEventListener('click', startAdsterraRewardProcess);
         }
         
-        // --- NEW FUNCTIONS FOR REDEEM CODE ---
         window.openRedeemModal = function() {
             document.getElementById('redeem-modal').classList.remove('hidden');
         }
@@ -780,41 +800,35 @@
             loader.style.display = 'flex';
 
             try {
-                // Deduct balance
                 await updateBalance(-amount);
                 
-                // Add to Firestore withdrawals
-                // Saving specific fields 'name' and 'mobile' so Admin panel can show them
                 await addDoc(collection(db, "withdrawals"), {
                     userId: currentUser.uid, 
                     userName: userData.name, 
                     userEmail: userData.email,
                     amount: amount, 
-                    method: "Redeem Code", // Special Method Type
-                    name: name, // Specific field for Redeem Code
-                    mobile: mobile, // Specific field for Redeem Code
-                    paymentDetail: `Name: ${name}, Mobile: ${mobile}`, // Backup string
+                    method: "Redeem Code", 
+                    name: name, 
+                    mobile: mobile, 
+                    paymentDetail: `Name: ${name}, Mobile: ${mobile}`, 
                     status: "pending", 
                     requestedAt: serverTimestamp()
                 });
                 
-                // --- MODIFIED POPUP MESSAGE ---
                 showAlert("Apko redeem code 24 hr me apke WhatsApp ya message me chala jayega.");
                 
-                // Reset inputs
                 document.getElementById('redeem-amount').value = '';
                 document.getElementById('redeem-name').value = '';
                 document.getElementById('redeem-mobile').value = '';
                 
-                loadWithdrawalHistory(); // Refresh history
+                loadWithdrawalHistory(); 
             } catch (error) {
                 showAlert("Request submit karne mein error: " + error.message);
-                await updateBalance(amount); // Refund if error
+                await updateBalance(amount); 
             } finally {
                 loader.style.display = 'none';
             }
         }
-        // -------------------------------------
 
         async function handleSignup() {
             const name = document.getElementById('signup-name').value.trim();
@@ -828,7 +842,6 @@
             loader.style.display = 'flex';
 
             try {
-                // Step 1: Check for duplicate name
                 const nameQuery = query(collection(db, "users"), where("name", "==", name));
                 const nameSnapshot = await getDocs(nameQuery);
                 if (!nameSnapshot.empty) {
@@ -837,15 +850,13 @@
                     return;
                 }
 
-                // Step 2: Create user with Firebase Authentication
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const newUser = userCredential.user;
 
-                // Step 3: Save user data to Firestore, including the custom name
                 const ownReferralCode = Math.random().toString(36).substring(2, 8).toUpperCase();
                 const defaultUserData = {
                     uid: newUser.uid, 
-                    name: name, // Use the name from signup form
+                    name: name, 
                     email: newUser.email,
                     balance: 50, 
                     referralCode: ownReferralCode, 
@@ -865,11 +876,6 @@
                     lastStrikeDate: null 
                 };
                 await setDoc(doc(db, "users", newUser.uid), defaultUserData);
-
-                // No need for separate update to userData, handleAuthStateChange will fetch it
-                // and update UI.
-                
-                // showAlert("Signup successful!"); // handleAuthStateChange will implicitly show app content
             } catch (error) {
                 showAlert(error.message);
             } finally {
@@ -902,37 +908,17 @@
             }
         }
         
-        // NEW: Handle Password Change (Placeholder)
         async function handlePasswordChange() {
-            // Firebase allows updating password of the currently signed-in user.
-            // You might want to ask the user for their current password for re-authentication
-            // before allowing them to set a new one, for security reasons.
-            // Example:
-            // const newPassword = prompt("Naya password daalein:");
-            // if (newPassword && newPassword.length >= 6) {
-            //     try {
-            //         await updatePassword(auth.currentUser, newPassword);
-            //         showAlert("Password safaltapoorvak badal gaya hai!");
-            //     } catch (error) {
-            //         console.error("Password badalne mein error:", error);
-            //         // Handle errors like 'auth/requires-recent-login' (user needs to re-authenticate)
-            //         showAlert("Password badalne mein error aayi. Kripya dobara login karke prayas karein.");
-            //     }
-            // } else if (newPassword !== null) { // If user didn't cancel prompt
-            //     showAlert("Password kam se kam 6 akshar ka hona chahiye.");
-            // }
             showAlert("Password badalne ka vikalp jald hi aayega. Suraksha ke liye, aap Firebase console ya app ke authentication section ka upyog kar sakte hain.", null);
         }
-        window.handlePasswordChange = handlePasswordChange; // Make it globally accessible
+        window.handlePasswordChange = handlePasswordChange; 
 
-        // NEW: Function to open help chat
         function openHelpChat() {
             showAlert("Kya aap app ke owner se baat karna chahte hai?", () => {
-                // If user clicks OK (Yes), open the Telegram link
                 window.open('https://t.me/secure_earn1', '_blank');
             });
         }
-        window.openHelpChat = openHelpChat; // Make it globally accessible
+        window.openHelpChat = openHelpChat; 
 
         async function checkNewNotifications() {
             const lastCheck = userData.lastNotificationCheck;
@@ -968,7 +954,6 @@
             }
         }
 
-        // --- UPDATED FUNCTION FOR HISTORY WITH ADMIN MESSAGE ---
         async function loadWithdrawalHistory() {
             const historyList = document.getElementById('withdrawal-history-list');
             historyList.innerHTML = '<p class="text-gray-400">History load ho rahi hai...</p>';
@@ -990,13 +975,11 @@
                     else if (status === 'rejected') statusColor = 'text-red-400';
                     const date = request.requestedAt ? request.requestedAt.toDate().toLocaleDateString() : 'N/A';
                     
-                    // Show specific details for Redeem Code
                     let details = request.paymentDetail;
                     if(request.method === "Redeem Code") {
                        details = `Redeem Code (${request.mobile})`;
                     }
                     
-                    // Admin Message Logic
                     let adminMessageHtml = '';
                     if(request.adminMessage) {
                         adminMessageHtml = `<div class="mt-2 p-2 bg-gray-800 rounded text-xs text-gray-300 border-l-2 border-accent">
@@ -1021,20 +1004,17 @@
                 historyList.innerHTML = '<p class="text-red-400">History load karne mein error aayi.</p>';
             }
         }
-        // -----------------------------------------------------
 
-        // New: Function to load top earners for the leaderboard
         async function loadTopEarners() {
             const leaderboardList = document.getElementById('leaderboard-list');
             leaderboardList.innerHTML = '<p class="text-gray-400 text-center">Loading Top Strikers...</p>';
             
             try {
-                // Order by strikeCount instead of balance
                 const topUsersQuery = query(collection(db, "users"), orderBy("strikeCount", "desc"), limit(10)); 
                 const querySnapshot = await getDocs(topUsersQuery);
                 
                 let topEarners = [];
-                let currentUserRank = -1; // To store current user's actual rank
+                let currentUserRank = -1; 
                 let foundCurrentUserInTop = false;
 
                 querySnapshot.forEach((doc, index) => {
@@ -1046,7 +1026,7 @@
                     }
                 });
                 
-                leaderboardList.innerHTML = ''; // Clear loading message
+                leaderboardList.innerHTML = ''; 
 
                 if (topEarners.length === 0) {
                     leaderboardList.innerHTML = '<p class="text-gray-400 text-center">Koi top striker nahi mila.</p>';
@@ -1057,7 +1037,6 @@
                     let rankDisplayHtml = '';
                     let userNameClass = 'text-white';
                     
-                    // Username Formatting
                     let displayUsername = user.name || user.email || 'Unknown User';
                     if (displayUsername.includes('@gmail.com')) {
                         displayUsername = displayUsername.replace('@gmail.com', '');
@@ -1079,7 +1058,6 @@
                         rankDisplayHtml = `<span class="text-lg font-bold w-8 text-center">${user.rank}</span>`;
                     }
                     
-                    // Highlight current user's entry
                     const isCurrentUser = user.uid === currentUser.uid;
                     const cardBorderClass = isCurrentUser ? 'border border-accent' : '';
                     const usernameHighlightClass = isCurrentUser ? ' border-l-2 border-accent pl-2' : '';
@@ -1095,12 +1073,7 @@
                     `;
                 });
 
-                // If current user is not in top 10, display their info separately at the bottom
                 if (!foundCurrentUserInTop && currentUser && userData) {
-                    // To get the actual rank of the current user if not in top 10,
-                    // you would need to count all users with higher strikeCount, which can be expensive.
-                    // For now, we'll show a placeholder rank and their own strike count.
-                    // If a precise rank is needed, another query to count users with higher strikeCount is required.
                     leaderboardList.innerHTML += `
                         <div class="card-bg p-3 rounded-lg flex items-center justify-between mt-4 border border-blue-400 shadow-lg">
                             <div class="flex items-center space-x-3">
@@ -1112,13 +1085,12 @@
                     `;
                 }
 
-                lucide.createIcons(); // Re-render lucide icons after adding new HTML
+                lucide.createIcons(); 
             } catch (error) {
                 console.error("Error loading top earners:", error);
                 leaderboardList.innerHTML = '<p class="text-red-400 text-center">Top strikers load karne mein error aayi.</p>';
             }
         }
-        // -----------------------------------------------------
         
         async function handleApplyReferralCode() {
             if (userData.referredBy) return showAlert("Aap pehle hi ek referral code istemal kar chuke hain.");
@@ -1141,15 +1113,12 @@
                     const referrerDoc = querySnapshot.docs[0];
                     const referrerRef = doc(db, "users", referrerDoc.id);
                     const referrerData = referrerDoc.data();
-                    // Referrer gets 200 coins
                     await updateDoc(referrerRef, { balance: (referrerData.balance || 0) + 200 }); 
                     
                     const newUserRef = doc(db, "users", currentUser.uid);
-                    // New user gets 100 coins
                     await updateDoc(newUserRef, { balance: (userData.balance || 0) + 100, referredBy: referrerCode });
                     
-                    // Update local userData for immediate UI reflection
-                    userData.balance += 100; // New user gets 100 coins
+                    userData.balance += 100; 
                     userData.referredBy = referrerCode;
                     updateUI();
                     if(isManualApply) showAlert("Code safaltapoorvak apply ho gaya! Aapko 100 mile hain aur aapke dost ko 200.");
@@ -1215,33 +1184,40 @@
             document.body.removeChild(textArea);
         }
         
-        // Original shareReferralCode function is replaced by the event listener logic
-        // No need for a separate shareReferralCode function if the event listener handles it directly.
-
-        // showAlert फंक्शन को अब एक optional callback फंक्शन accept karne ke liye modify kiya gaya hai
         function showAlert(message, okCallback = null) {
             document.getElementById('alert-message').textContent = message;
             document.getElementById('custom-alert').classList.remove('hidden');
             document.getElementById('alert-ok-btn').onclick = () => {
                 document.getElementById('custom-alert').classList.add('hidden');
                 if (okCallback && typeof okCallback === 'function') {
-                    okCallback(); // Agar callback function provide kiya gaya hai, to use execute karein
+                    okCallback(); 
                 }
             };
         }
-        window.showAlert = showAlert; // Global scope mein available rakhein
+        window.showAlert = showAlert; 
 
         /**
-         * Disables all ad buttons (except 'inApp' if it has no limits) and displays a message.
-         * Used for general cooldowns or when an ad process is active.
+         * Disables/enables ad buttons (excluding the GigaPub Tasks button from general cooldowns).
          * @param {boolean} disabled True to disable, false to enable.
-         * @param {string} message Optional message to display.
-         * @param {string} excludeButtonId Optional: ID of a button to NOT disable (e.g., if it's currently managing its own state)
+         * @param {string} message Optional message to display in the cooldown area.
+         * @param {string} excludeButtonId Optional: ID of a button to NOT disable (e.g., if it's currently managing its own state).
          */
         function setAllAdButtonsState(disabled, message = '', excludeButtonId = null) {
             document.querySelectorAll('.ad-button').forEach(button => {
-                if (button.id === excludeButtonId) return; // Don't touch the excluded button
-
+                // If this button is the excluded one, skip general disable/enable logic
+                if (button.id === excludeButtonId) {
+                    // For claim-inApp-btn specifically, ensure it stays enabled unless its own limit is reached
+                    if (button.id === 'claim-inApp-btn' && (userData.inAppTaskCount || 0) < (appConfig.inAppTaskLimit || 0)) {
+                        button.disabled = false;
+                        button.textContent = "Start";
+                    } else if (button.id === 'claim-inApp-btn' && (userData.inAppTaskCount || 0) >= (appConfig.inAppTaskLimit || 0)) {
+                        button.disabled = true;
+                        button.textContent = "Limit Reached";
+                    }
+                    return; 
+                }
+                
+                // General logic for other ad buttons
                 if (button.id === 'claim-interstitial-btn') {
                     if (!disabled && (userData.monetagInterstitialCount || 0) >= (appConfig.monetagInterstitialLimit || 0)) {
                         button.disabled = true;
@@ -1258,18 +1234,7 @@
                         button.disabled = disabled;
                         button.textContent = disabled ? "Wait..." : "Play";
                     }
-                } else if (button.id === 'claim-inApp-btn') {
-                    // For inApp, it's 'Start'/'Limit Reached'
-                    if (!disabled && (userData.inAppTaskCount || 0) >= (appConfig.inAppTaskLimit || 0)) {
-                        button.disabled = true;
-                        button.textContent = "Limit Reached";
-                    } else {
-                        button.disabled = disabled;
-                        button.textContent = disabled ? "Wait..." : "Start";
-                    }
                 } else if (button.id === 'claim-adsterra-btn') {
-                     // Adsterra button state is managed by its own `startAdsterraRewardProcess`
-                     // but here we ensure it respects the global cooldown.
                      if (!disabled && (userData.adsterraNativeCount || 0) >= (appConfig.adsterraNativeLimit || 0)) {
                         button.disabled = true;
                         button.textContent = "Limit Reached";
@@ -1292,27 +1257,26 @@
          * Starts the 5-second cooldown timer after a non-Tasks ad is successfully watched.
          */
         function startAdCooldown() {
-            let timeLeft = AD_COOLDOWN_DURATION / 1000; // in seconds
-            setAllAdButtonsState(true, `Next ad available in ${timeLeft}s...`); // Use the new function
+            let timeLeft = AD_COOLDOWN_DURATION / 1000; 
+            // Exclude the 'inApp' (GigaPub Tasks) button from this general cooldown
+            setAllAdButtonsState(true, `Next ad available in ${timeLeft}s...`, 'claim-inApp-btn');
 
-            if (adCooldownIntervalId) clearInterval(adCooldownIntervalId); // Clear any previous timer
+            if (adCooldownIntervalId) clearInterval(adCooldownIntervalId); 
 
             adCooldownIntervalId = setInterval(() => {
                 timeLeft--;
                 if (timeLeft > 0) {
-                    setAllAdButtonsState(true, `Next ad available in ${timeLeft}s...`);
+                    setAllAdButtonsState(true, `Next ad available in ${timeLeft}s...`, 'claim-inApp-btn');
                 } else {
                     clearInterval(adCooldownIntervalId);
                     adCooldownIntervalId = null;
-                    // Only enable non-Adsterra buttons if Adsterra ad is NOT active
                     if (!isAdsterraAdActive) {
-                       setAllAdButtonsState(false, ''); // Re-enable buttons and clear message
+                       setAllAdButtonsState(false, ''); 
                     } else {
-                        // If Adsterra ad is active, just clear the message but keep other buttons disabled
                         adCooldownMessageEl.textContent = '';
                         adCooldownMessageEl.style.display = 'none';
                     }
-                    updateAllAdsLeftCounts(); // Refresh counts and enable/disable buttons based on limits
+                    updateAllAdsLeftCounts(); 
                 }
             }, 1000);
         }
@@ -1325,12 +1289,10 @@
                 return showAlert("Login karein ya signup karein.");
             }
 
-            // Daily Ad Limit Check for Adsterra
             if ((userData.adsterraNativeCount || 0) >= (appConfig.adsterraNativeLimit || 0)) {
                 return showAlert("Aapki aaj ki 'Click for Reward' ad dekhne ki seema poori ho gayi hai.");
             }
 
-            // Early Access Restriction Check (14 seconds) for ALL non-Tasks ads
             const timeSinceLastAd = Date.now() - lastNonTaskAdClaimTime;
             if (lastNonTaskAdClaimTime !== 0 && timeSinceLastAd < EARLY_ACCESS_RESTRICTION_DURATION) {
                 return showAlert("⏳ Aap time se pehle aa gaye ho, please thoda wait karein.");
@@ -1340,34 +1302,30 @@
                 return showAlert("Ek ad pehle se active hai. Kripya pura karein ya page refresh karein.");
             }
 
-            // Disable all other ad buttons during this process
+            // Disable all other ad buttons during this process (excluding GigaPub Tasks)
             setAllAdButtonsState(true, 'Ad load ho raha hai...', 'claim-adsterra-btn');
-            claimAdsterraBtn.disabled = true; // Disable its own button
+            claimAdsterraBtn.disabled = true; 
             claimAdsterraBtn.textContent = "Loading...";
 
             isAdsterraAdActive = true;
-            adsterraRewardGrantedForCurrentAttempt = false; // Reset for new attempt
+            adsterraRewardGrantedForCurrentAttempt = false; 
             adsterraTimeLeft = ADSTERRA_REWARD_TIMER_DURATION;
 
-            // Show the ad container and status message
-            adsterraAdContainer.style.display = 'flex'; // Use flex for centering child
+            adsterraAdContainer.style.display = 'flex'; 
             adsterraLoadingText.style.display = 'block';
-            adsterraTimerDisplay.classList.add('hidden'); // Hide timer initially
+            adsterraTimerDisplay.classList.add('hidden'); 
             adsterraStatusMessageEl.classList.remove('hidden');
             adsterraStatusMessageEl.textContent = "Ad loading...";
 
-
-            // Clear previous Adsterra ad content
             let adsterraRenderDiv = document.getElementById('container-672b63be9fb2075930c092f8318d528c');
             if (adsterraRenderDiv) {
-                adsterraRenderDiv.innerHTML = ''; // Clear previous ad content
+                adsterraRenderDiv.innerHTML = ''; 
             } else {
                 adsterraRenderDiv = document.createElement('div');
                 adsterraRenderDiv.id = 'container-672b63be9fb2075930c092f8318d528c';
                 adsterraAdContainer.appendChild(adsterraRenderDiv);
             }
 
-            // Inject the Adsterra Native Banner script if not already done
             if (!hasAdsterraAdScriptLoaded) {
                 const adScript = document.createElement('script');
                 adScript.async = true;
@@ -1376,11 +1334,9 @@
                 adsterraAdContainer.appendChild(adScript); 
                 hasAdsterraAdScriptLoaded = true;
             } else {
-                 // For subsequent ads, re-execute the invoke.js.
-                 // This is a common pattern for Adsterra native banners to ensure a new ad impression.
                  const existingScript = document.querySelector('script[src="https://pl28561145.effectivegatecpm.com/672b63be9fb2075930c092f8318d528c/invoke.js"]');
                  if (existingScript) {
-                     existingScript.remove(); // Remove old script to prevent duplicates
+                     existingScript.remove(); 
                  }
                  const newScript = document.createElement('script');
                  newScript.async = true;
@@ -1389,8 +1345,7 @@
                  adsterraAdContainer.appendChild(newScript);
             }
 
-            // Start ad load timeout
-            clearTimeout(adLoadTimeoutId); // Clear any previous timeout
+            clearTimeout(adLoadTimeoutId); 
             adLoadTimeoutId = setTimeout(() => {
                 clearInterval(adLoadCheckInterval);
                 adsterraStatusMessageEl.textContent = "Ad failed to load. Please try again.";
@@ -1398,26 +1353,24 @@
                 resetAdsterraRewardProcess();
             }, ADSTERRA_LOAD_TIMEOUT);
 
-            // Start checking for ad loaded state
-            clearInterval(adLoadCheckInterval); // Clear any previous interval
+            clearInterval(adLoadCheckInterval); 
             adLoadCheckInterval = setInterval(() => {
                 const adContentDiv = document.getElementById('container-672b63be9fb2075930c092f8318d528c');
-                // Heuristic for ad loaded: check if the container has children (ad content) or has a significant height.
-                if (adContentDiv && (adContentDiv.children.length > 0 || adContentDiv.offsetHeight > 50)) { // 50px as a minimum height indicator
+                if (adContentDiv && (adContentDiv.children.length > 0 || adContentDiv.offsetHeight > 50)) {
                     clearTimeout(adLoadTimeoutId);
                     clearInterval(adLoadCheckInterval);
                     startAdsterraRewardTimer();
                 }
-            }, 500); // Check every 0.5 seconds
+            }, 500); 
         }
 
         function startAdsterraRewardTimer() {
-            adsterraLoadingText.style.display = 'none'; // Hide loading text
-            adsterraStatusMessageEl.classList.add('hidden'); // Hide status message
-            adsterraTimerDisplay.classList.remove('hidden'); // Show timer
+            adsterraLoadingText.style.display = 'none'; 
+            adsterraStatusMessageEl.classList.add('hidden'); 
+            adsterraTimerDisplay.classList.remove('hidden'); 
             adsterraTimerDisplay.textContent = `Ad dekhein: ${adsterraTimeLeft}s`;
-            claimAdsterraBtn.textContent = "Watching Ad..."; // Update button text
-            claimAdsterraBtn.disabled = true; // Ensure button remains disabled
+            claimAdsterraBtn.textContent = "Watching Ad..."; 
+            claimAdsterraBtn.disabled = true; 
 
             adsterraTimer = setInterval(async () => {
                 adsterraTimeLeft--;
@@ -1427,21 +1380,17 @@
                     clearInterval(adsterraTimer);
                     adsterraTimer = null;
                     if (!adsterraRewardGrantedForCurrentAttempt) {
-                        await grantAdsterraReward(); // Grant reward if timer finishes
+                        await grantAdsterraReward(); 
                     }
-                    resetAdsterraRewardProcess(); // Reset UI and state
+                    resetAdsterraRewardProcess(); 
                 }
             }, 1000);
 
-            // Attach visibility and focus listeners
             pageVisibilityListener = document.addEventListener('visibilitychange', handleAdsterraVisibilityChange);
             pageBlurListener = window.addEventListener('blur', handleAdsterraBlur);
             pageFocusListener = window.addEventListener('focus', handleAdsterraFocus);
         }
 
-        /**
-         * Handles page visibility changes for Adsterra rewarded ads.
-         */
         function handleAdsterraVisibilityChange() {
             if (document.hidden && isAdsterraAdActive) {
                 resetAdsterraRewardProcess();
@@ -1449,9 +1398,6 @@
             }
         }
 
-        /**
-         * Handles window blur event for Adsterra rewarded ads.
-         */
         function handleAdsterraBlur() {
             if (isAdsterraAdActive) {
                 resetAdsterraRewardProcess();
@@ -1459,40 +1405,31 @@
             }
         }
         
-        /**
-         * Handles window focus event (does nothing, but good to have if we need to resume later).
-         */
         function handleAdsterraFocus() {
             // For now, any blur/hidden state cancels the reward.
         }
 
-        /**
-         * Grants the Adsterra reward if conditions are met.
-         */
         async function grantAdsterraReward() {
-            if (adsterraRewardGrantedForCurrentAttempt) return; // Prevent double reward
+            if (adsterraRewardGrantedForCurrentAttempt) return; 
 
             const userRef = doc(db, "users", currentUser.uid);
 
-            // Reward logic
-            const rewardAmount = 50; // Coins for Adsterra Native Banner
+            const rewardAmount = 50; 
             await updateBalance(rewardAmount);
 
-            // Adsterra Ad Count update
             const newCount = (userData.adsterraNativeCount || 0) + 1;
             await updateDoc(userRef, { adsterraNativeCount: newCount, lastAdsterraNativeDate: new Date().toISOString().split('T')[0] });
             userData.adsterraNativeCount = newCount;
 
-            // Strike logic
             let newStrikeCount = userData.strikeCount || 0;
             const today = new Date().toISOString().split('T')[0];
             const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0];
 
-            if (userData.lastStrikeDate !== today) { // Only increment if not already incremented today for *any* ad
+            if (userData.lastStrikeDate !== today) { 
                 if (userData.lastStrikeDate === yesterday) {
-                    newStrikeCount += 1; // Continue streak
+                    newStrikeCount += 1; 
                 } else {
-                    newStrikeCount = 1; // New streak
+                    newStrikeCount = 1; 
                 }
             }
             userData.strikeCount = newStrikeCount;
@@ -1501,17 +1438,14 @@
             updateStrikeDisplay();
 
             showAlert(`Badhai ho! Aapne ${rewardAmount} jeete hain.`);
-            updateAllAdsLeftCounts(); // Refresh counts and enable/disable buttons based on limits
+            updateAllAdsLeftCounts(); 
 
-            lastNonTaskAdClaimTime = Date.now(); // Update timestamp for early access check
-            startAdCooldown(); // Start the general 5-second cooldown
+            lastNonTaskAdClaimTime = Date.now(); 
+            startAdCooldown(); 
 
-            adsterraRewardGrantedForCurrentAttempt = true; // Mark reward as granted
+            adsterraRewardGrantedForCurrentAttempt = true; 
         }
 
-        /**
-         * Resets the Adsterra rewarded ad process state and UI.
-         */
         function resetAdsterraRewardProcess() {
             clearInterval(adsterraTimer);
             adsterraTimer = null;
@@ -1521,32 +1455,107 @@
             adsterraTimeLeft = ADSTERRA_REWARD_TIMER_DURATION;
 
             adsterraTimerDisplay.classList.add('hidden');
-            adsterraTimerDisplay.textContent = ''; // Clear timer text
+            adsterraTimerDisplay.textContent = ''; 
             adsterraStatusMessageEl.classList.add('hidden');
             adsterraStatusMessageEl.textContent = '';
             adsterraLoadingText.style.display = 'none';
 
-            // Clear Adsterra ad content
             const adsterraDiv = document.getElementById('container-672b63be9fb2075930c092f8318d528c');
             if (adsterraDiv) {
-                adsterraDiv.innerHTML = ''; // Clear the ad content
+                adsterraDiv.innerHTML = ''; 
             }
-            adsterraAdContainer.style.display = 'none'; // Hide the ad container
+            adsterraAdContainer.style.display = 'none'; 
 
             isAdsterraAdActive = false;
-            adsterraRewardGrantedForCurrentAttempt = false; // Reset for next attempt
+            adsterraRewardGrantedForCurrentAttempt = false; 
 
-            // Remove event listeners
             document.removeEventListener('visibilitychange', handleAdsterraVisibilityChange);
             window.removeEventListener('blur', handleAdsterraBlur);
             window.removeEventListener('focus', handleAdsterraFocus);
             
-            // Re-enable all other buttons, respecting their individual limits
             setAllAdButtonsState(false); 
-            updateAllAdsLeftCounts(); // Ensure the buttons are correctly enabled/disabled based on current counts
+            updateAllAdsLeftCounts(); 
         }
 
+        // --- GigaPub Task Integration ---
+        // FIX: Make handleGigaPubTaskClick globally accessible
+        window.handleGigaPubTaskClick = async function() { 
+            if (!currentUser || !userData) {
+                return showAlert("Kripya login karein ya signup karein.");
+            }
 
+            // Profile incomplete check (assuming name and email are essential fields for "profile complete")
+            if (!userData.name || !userData.email) {
+                return showAlert("Kripya sabhi fields bharein. Aapka profile incomplete hai.");
+            }
+
+            // Daily limit check for GigaPub Tasks
+            const today = new Date().toISOString().split('T')[0];
+            if ((userData.inAppTaskCount || 0) >= (appConfig.inAppTaskLimit || 0)) {
+                claimInAppBtn.disabled = true;
+                claimInAppBtn.textContent = "Limit Reached";
+                return showAlert("Aaj ke Tasks ads complete ho gaye. Kal dobara aaiye.");
+            }
+
+            claimInAppBtn.disabled = true;
+            claimInAppBtn.textContent = "Loading Ad...";
+
+            try {
+                // The global window.showGiga() is provided by the GigaPub SDK.
+                // It returns a Promise that resolves on ad completion/reward and rejects on failure/close/skip.
+                await window.showGiga();
+                
+                // If the promise resolves, the ad was completed successfully
+                await grantGigaPubTaskReward();
+                showAlert(`Badhai ho! Aapne ${GIGAPUB_TASK_REWARD_AMOUNT} jeete hain.`);
+
+            } catch (error) {
+                console.error("GigaPub Ad failed, closed, or skipped:", error);
+                // As per requirement: "Agar ad load fail / close / skip ho → reward na mile."
+                showAlert("Ad load nahi ho paya, skip kiya gaya, ya band kar diya gaya. Reward nahi milega.");
+            } finally {
+                // Always re-enable button and update counts regardless of success or failure
+                claimInAppBtn.disabled = false;
+                claimInAppBtn.textContent = "Start";
+                updateAllAdsLeftCounts(); // This will re-check the limit and set button text appropriately
+            }
+        }
+
+        async function grantGigaPubTaskReward() {
+            const userRef = doc(db, "users", currentUser.uid);
+            const today = new Date().toISOString().split('T')[0];
+            const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0];
+
+            // 1. Task count +1
+            const newCount = (userData.inAppTaskCount || 0) + 1;
+            await updateDoc(userRef, { inAppTaskCount: newCount, lastInAppTaskDate: today });
+            userData.inAppTaskCount = newCount;
+            userData.lastInAppTaskDate = today;
+
+            // 2. User balance update
+            await updateBalance(GIGAPUB_TASK_REWARD_AMOUNT);
+
+            // 3. Strike logic (same as other rewarded ads)
+            let newStrikeCount = userData.strikeCount || 0;
+            if (userData.lastStrikeDate !== today) { 
+                if (userData.lastStrikeDate === yesterday) {
+                    newStrikeCount += 1;
+                } else {
+                    newStrikeCount = 1; // New streak
+                }
+            }
+            userData.strikeCount = newStrikeCount;
+            userData.lastStrikeDate = today;
+            await updateDoc(userRef, { strikeCount: newStrikeCount, lastStrikeDate: today });
+            updateStrikeDisplay(); // Update UI for strike count
+
+            // As per requirement: "Tasks section me GigaPub Rewarded Interstitial ad integrate karna hai." and "sirf Tasks, baaki sections se independent".
+            // So, no lastNonTaskAdClaimTime update or startAdCooldown for GigaPub.
+        }
+        // --- END GigaPub Task Integration ---
+
+
+        // Original claimReward function (now only for Monetag/Adsterra other than GigaPub)
         window.claimReward = async function(taskType) {
             if (!currentUser || !userData) {
                 return showAlert("Login karein ya signup karein.");
@@ -1556,15 +1565,14 @@
             const today = new Date().toISOString().split('T')[0];
             const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0];
 
-
-            // Early Access Restriction Check (14 seconds)
+            // Early Access Restriction Check (14 seconds) for NON-TASK ads
             const timeSinceLastAd = Date.now() - lastNonTaskAdClaimTime;
             if (lastNonTaskAdClaimTime !== 0 && timeSinceLastAd < EARLY_ACCESS_RESTRICTION_DURATION) {
                 showAlert("⏳ Aap time se pehle aa gaye ho, please thoda wait karein.");
                 return;
             }
 
-            // Disable all other ad buttons while one is active
+            // Disable all other ad buttons while one is active (excluding GigaPub Tasks)
             setAllAdButtonsState(true, 'Loading Ad...');
 
             let rewardAmount = 0;
@@ -1612,8 +1620,8 @@
 
                         showAlert(`Badhai ho! Aapne ${rewardAmount} jeete hain.`);
                         updateAllAdsLeftCounts();
-                        lastNonTaskAdClaimTime = Date.now();
-                        startAdCooldown();
+                        lastNonTaskAdClaimTime = Date.now(); // Update timestamp for early access check
+                        startAdCooldown(); // Start the general 5-second cooldown
                     }).catch(e => {
                         console.error(`${taskType} Ad error:`, e);
                         showAlert('Ad nahi dikhaya ja saka. Kripya baad mein prayas karein.');
@@ -1659,63 +1667,14 @@
 
                         showAlert(`Badhai ho! Aapne ${rewardAmount} jeete hain.`);
                         updateAllAdsLeftCounts();
-                        lastNonTaskAdClaimTime = Date.now();
-                        startAdCooldown();
+                        lastNonTaskAdClaimTime = Date.now(); // Update timestamp for early access check
+                        startAdCooldown(); // Start the general 5-second cooldown
                     }).catch(e => {
                         console.error(`${taskType} Ad error:`, e);
                         showAlert('Ad nahi dikhaya ja saka. Kripya baad mein prayas karein.');
                         setAllAdButtonsState(false, '');
                     });
                     break;
-
-                case 'inApp':
-                    currentCountField = 'inAppTaskCount';
-                    lastWatchDateField = 'lastInAppTaskDate';
-                    limitField = 'inAppTaskLimit';
-                    rewardAmount = 100; // In-App task reward
-                    if ((userData[currentCountField] || 0) >= (appConfig[limitField] || 0)) {
-                        setAllAdButtonsState(false); // Re-enable if limit reached
-                        return showAlert("Aapki aaj ki 'Tasks' dekhne ki seema poori ho gayi hai.");
-                    }
-                    showAlert("2 min wait karo uske baad back aao reward paao", async () => {
-                        window.open('https://otieu.com/4/10502742', '_blank'); // Open the task in a new tab
-                        loader.style.display = 'flex';
-                        adCooldownMessageEl.textContent = "कृपया 2 मिनट प्रतीक्षा करें..."; // Show custom message in cooldown area
-                        adCooldownMessageEl.style.display = 'block';
-                        setAllAdButtonsState(true, adCooldownMessageEl.textContent); // Keep all buttons disabled with message
-
-                        setTimeout(async () => {
-                            // Reward logic for inApp task
-                            updatePayload[currentCountField] = (userData[currentCountField] || 0) + 1;
-                            updatePayload[lastWatchDateField] = today;
-                            await updateDoc(userRef, updatePayload);
-                            userData[currentCountField] = updatePayload[currentCountField];
-                            userData[lastWatchDateField] = updatePayload[lastWatchDateField];
-                            
-                            await updateBalance(rewardAmount);
-                            // Strike logic for inApp task (same as other ads)
-                            let newStrikeCount = userData.strikeCount || 0;
-                            if (userData.lastStrikeDate !== today) { 
-                                if (userData.lastStrikeDate === yesterday) {
-                                    newStrikeCount += 1;
-                                } else {
-                                    newStrikeCount = 1;
-                                }
-                            }
-                            userData.strikeCount = newStrikeCount;
-                            userData.lastStrikeDate = today;
-                            await updateDoc(userRef, { strikeCount: newStrikeCount, lastStrikeDate: today });
-                            updateStrikeDisplay(); 
-
-                            showAlert(`Badhai ho! Aapne ${rewardAmount} jeete hain.`);
-                            updateAllAdsLeftCounts();
-                            loader.style.display = 'none';
-                            adCooldownMessageEl.style.display = 'none'; // Clear the message
-                            setAllAdButtonsState(false); // Re-enable all buttons
-                        }, 2 * 60 * 1000); // 2 minutes
-                    });
-                    break;
-
                 default:
                     setAllAdButtonsState(false, ''); // Re-enable buttons if taskType is unknown
                     return;
