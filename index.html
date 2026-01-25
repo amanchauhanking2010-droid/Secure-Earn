@@ -9,7 +9,7 @@
     <!-- Monetag SDK ab bhi load hoga, lekin 'inApp' task iska istemal seedhe nahi karega -->
     <script src='//libtl.com/sdk.js' data-zone='10495819' data-sdk='show_10495819'></script>
     
-    <!-- GigaPub SDK (ONLY FOR TASKS SECTION) -->
+    <!-- GigaPub SDK (ONLY FOR TASKS SECTION AND PLAY MINI APP SECTION) -->
     <script src="https://ad.gigapub.tech/script?id=5424"></script>
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -77,6 +77,14 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+        }
+
+        /* Mini Game Iframe Styles */
+        #mini-game-iframe {
+            width: 100%;
+            height: calc(100vh - 250px); /* Adjust height as needed */
+            min-height: 400px; /* Minimum height for the game */
+            background-color: #000;
         }
     </style>
 </head>
@@ -156,7 +164,8 @@
                         <div class="text-sm text-gray-400">
                             <p>Short Ads: <span id="monetag-interstitial-count">...</span>/<span id="monetag-interstitial-limit">...</span></p>
                             <p>Click for Reward: <span id="adsterra-native-count">...</span>/<span id="adsterra-native-limit">...</span></p>
-                            <p>Mini Apps: <span id="monetag-miniApp-count">...</span>/<span id="monetag-miniApp-limit">...</span></p>
+                            <!-- UPDATED: For Play Mini App, it's now unlimited via GigaPub -->
+                            <p>Mini Apps: <span id="monetag-miniApp-count" class="font-bold text-green-400">Unlimited</span></p>
                             <!-- In-App Task count display for GigaPub Tasks -->
                             <p>Tasks: <span id="inApp-task-count">...</span>/<span id="inApp-task-limit">...</span></p>
                         </div>
@@ -198,10 +207,29 @@
                         </div>
                         <div class="card-bg p-3 rounded-lg flex items-center justify-between shadow-lg">
                             <div class="flex items-center space-x-3"><span class="text-3xl">🎮</span><div><h3 class="font-semibold">Play Mini App</h3><p class="text-xs text-gray-400">Get a big reward!</p></div></div>
-                            <button id="claim-miniApp-btn" class="bg-blue-500 text-white font-bold px-6 py-2 rounded-lg text-sm btn ad-button" onclick="claimReward('miniApp')">Play</button>
+                            <!-- UPDATED: Call openMiniGame function -->
+                            <button id="claim-miniApp-btn" class="bg-blue-500 text-white font-bold px-6 py-2 rounded-lg text-sm btn" onclick="openMiniGame()">Play</button>
                         </div>
                     </div>
                 </section>
+            </div>
+
+            <!-- Mini Game Page - NEW -->
+            <div id="mini-game-page" class="p-4 space-y-4 sub-page">
+                <div class="flex items-center justify-between mb-4">
+                    <button onclick="navigateTo('home-page')" class="btn-outline-accent px-4 py-2 rounded-lg flex items-center gap-2">
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i> Back
+                    </button>
+                    <h2 class="text-xl font-bold text-accent">Play Mini App – Unlimited</h2>
+                </div>
+                
+                <div class="card-bg p-4 rounded-lg flex flex-col items-center justify-center text-center shadow-lg min-h-[300px]">
+                    <p id="mini-game-status-message" class="text-gray-400 mb-4 text-sm">Ad dekhne ke baad game start hoga.</p>
+                    <button id="start-mini-game-btn" class="btn-accent px-8 py-3 rounded-lg text-lg font-bold mb-4">Play Game (Watch Ad)</button>
+                    <div id="mini-game-cooldown-timer" class="text-accent font-semibold mb-2" style="display: none;"></div>
+
+                    <iframe id="mini-game-iframe" src="" frameborder="0" class="w-full h-[calc(100vh-250px)] rounded-lg" style="display: none;"></iframe>
+                </div>
             </div>
 
             <!-- Wallet Page -->
@@ -428,9 +456,21 @@
         let pageFocusListener = null;
         // ---------------------------------------------
 
-        // GigaPub specific variables (using existing inAppTask for counts/limits)
+        // GigaPub specific variables for "Tasks" section (using existing inAppTask for counts/limits)
         const claimInAppBtn = document.getElementById('claim-inApp-btn');
         const GIGAPUB_TASK_REWARD_AMOUNT = 100; // Reward amount for GigaPub Task (adjust as needed)
+
+        // --- GigaPub Mini Game specific variables ---
+        let miniGameCooldownIntervalId = null;
+        let miniGameTimeLeft = 0;
+        const MINIGAME_COOLDOWN_DURATION = 10; // 10 seconds as per requirement (5-10s)
+        const MINIGAME_GIGAPUB_REWARD = 100; // Reward for GigaPub ad in Play Mini App section (adjust as needed)
+
+        const miniGameIframe = document.getElementById('mini-game-iframe');
+        const startMiniGameBtn = document.getElementById('start-mini-game-btn');
+        const miniGameStatusMessageEl = document.getElementById('mini-game-status-message');
+        const miniGameCooldownTimerEl = document.getElementById('mini-game-cooldown-timer');
+        // -------------------------------------------
 
         window.onload = () => {
             lucide.createIcons();
@@ -493,9 +533,8 @@
                         lastMonetagInterstitialDate: new Date().toISOString().split('T')[0],
                         adsterraNativeCount: 0,
                         lastAdsterraNativeDate: new Date().toISOString().split('T')[0],
-                        monetagMiniAppCount: 0,
-                        lastMonetagMiniAppDate: new Date().toISOString().split('T')[0],
-                        inAppTaskCount: 0, // Used for GigaPub Tasks
+                        // monetagMiniAppCount and lastMonetagMiniAppDate removed, as Play Mini App now uses GigaPub and is unlimited
+                        inAppTaskCount: 0, // Used for GigaPub Tasks (for "Tasks" section)
                         lastInAppTaskDate: new Date().toISOString().split('T')[0],
 
                         isBlocked: false,
@@ -527,12 +566,8 @@
                     userData.lastAdsterraNativeDate = today;
                     updatePromises.push(updateDoc(userRef, { adsterraNativeCount: 0, lastAdsterraNativeDate: today }));
                 }
-                if (userData.lastMonetagMiniAppDate !== today) {
-                    userData.monetagMiniAppCount = 0;
-                    userData.lastMonetagMiniAppDate = today;
-                    updatePromises.push(updateDoc(userRef, { monetagMiniAppCount: 0, lastMonetagMiniAppDate: today }));
-                }
-                if (userData.lastInAppTaskDate !== today) { // For GigaPub Tasks
+                // Removed monetagMiniAppDate reset as Play Mini App now uses GigaPub and is unlimited
+                if (userData.lastInAppTaskDate !== today) { // For GigaPub Tasks (for "Tasks" section)
                     userData.inAppTaskCount = 0;
                     userData.lastInAppTaskDate = today;
                     updatePromises.push(updateDoc(userRef, { inAppTaskCount: 0, lastInAppTaskDate: today }));
@@ -554,8 +589,8 @@
                     // Set default limits if not in config
                     appConfig.monetagInterstitialLimit = appConfig.monetagInterstitialLimit || 50;
                     appConfig.adsterraNativeLimit = appConfig.adsterraNativeLimit || 50;
-                    appConfig.monetagMiniAppLimit = appConfig.monetagMiniAppLimit || 50;
-                    appConfig.inAppTaskLimit = appConfig.inAppTaskLimit || 50; // UPDATED: Default limit for GigaPub Tasks (50 as per requirement)
+                    // monetagMiniAppLimit removed as Play Mini App now uses GigaPub and is unlimited
+                    appConfig.inAppTaskLimit = appConfig.inAppTaskLimit || 50; // Default limit for GigaPub Tasks (for "Tasks" section)
                     checkForForceUpdate(appConfig); // Check for update here
                 } else {
                     appConfig = { 
@@ -565,8 +600,7 @@
                         coinValueInr: 10,
                         monetagInterstitialLimit: 50,
                         adsterraNativeLimit: 50,
-                        monetagMiniAppLimit: 50,
-                        inAppTaskLimit: 50 // UPDATED: Default limit for GigaPub Tasks (50 as per requirement)
+                        inAppTaskLimit: 50 // Default limit for GigaPub Tasks (for "Tasks" section)
                     };
                 }
             } catch (error) {
@@ -653,24 +687,7 @@
                  }
             }
 
-            // Monetag Mini App
-            const monetagMiniAppCountEl = document.getElementById('monetag-miniApp-count');
-            const monetagMiniAppLimitEl = document.getElementById('monetag-miniApp-limit');
-            const claimMiniAppBtn = document.getElementById('claim-miniApp-btn');
-
-            monetagMiniAppCountEl.textContent = (appConfig.monetagMiniAppLimit || 0) - (userData.monetagMiniAppCount || 0);
-            monetagMiniAppLimitEl.textContent = appConfig.monetagMiniAppLimit || 0;
-            if ((userData.monetagMiniAppCount || 0) >= (appConfig.monetagMiniAppLimit || 0)) {
-                claimMiniAppBtn.disabled = true;
-                claimMiniAppBtn.textContent = "Limit Reached";
-            } else {
-                if (!adCooldownIntervalId && !isAdsterraAdActive) { // Only re-enable if not globally disabled by cooldown or Adsterra
-                    claimMiniAppBtn.disabled = false;
-                    claimMiniAppBtn.textContent = "Play";
-                }
-            }
-
-            // GigaPub Task specific button (independent of other cooldowns)
+            // GigaPub Task specific button (for "Tasks" section)
             const inAppTaskCountEl = document.getElementById('inApp-task-count');
             const inAppTaskLimitEl = document.getElementById('inApp-task-limit');
 
@@ -686,6 +703,12 @@
                     claimInAppBtn.textContent = "Start";
                 }
             }
+            
+            // "Play Mini App" (now GigaPub, Unlimited) - no count/limit to display
+            const monetagMiniAppCountEl = document.getElementById('monetag-miniApp-count');
+            const monetagMiniAppLimitEl = document.getElementById('monetag-miniApp-limit');
+            monetagMiniAppCountEl.textContent = "Unlimited"; // Display "Unlimited" as per requirement
+            monetagMiniAppLimitEl.textContent = ""; // Clear limit text
         }
 
         // Function to update strike display
@@ -729,6 +752,9 @@
                 loadTopEarners();
             }
             if (pageId === 'wallet-page') loadWithdrawalHistory();
+            if (pageId === 'mini-game-page') {
+                resetMiniGamePage(); // Reset mini-game state when navigating to it
+            }
             lucide.createIcons(); 
         }
         window.navigateTo = navigateTo;
@@ -774,6 +800,11 @@
             withdrawMethodSelect.addEventListener('change', updateDynamicPaymentFields);
 
             claimAdsterraBtn.addEventListener('click', startAdsterraRewardProcess);
+
+            // Event listener for the new "Play Game (Watch Ad)" button inside mini-game-page
+            if (startMiniGameBtn) {
+                startMiniGameBtn.addEventListener('click', handleMiniGamePlayClick);
+            }
         }
         
         window.openRedeemModal = function() {
@@ -867,8 +898,6 @@
                     lastMonetagInterstitialDate: new Date().toISOString().split('T')[0],
                     adsterraNativeCount: 0,
                     lastAdsterraNativeDate: new Date().toISOString().split('T')[0],
-                    monetagMiniAppCount: 0,
-                    lastMonetagMiniAppDate: new Date().toISOString().split('T')[0],
                     inAppTaskCount: 0,
                     lastInAppTaskDate: new Date().toISOString().split('T')[0],
                     isBlocked: false,
@@ -1204,17 +1233,9 @@
          */
         function setAllAdButtonsState(disabled, message = '', excludeButtonId = null) {
             document.querySelectorAll('.ad-button').forEach(button => {
-                // If this button is the excluded one, skip general disable/enable logic
-                if (button.id === excludeButtonId) {
-                    // For claim-inApp-btn specifically, ensure it stays enabled unless its own limit is reached
-                    if (button.id === 'claim-inApp-btn' && (userData.inAppTaskCount || 0) < (appConfig.inAppTaskLimit || 0)) {
-                        button.disabled = false;
-                        button.textContent = "Start";
-                    } else if (button.id === 'claim-inApp-btn' && (userData.inAppTaskCount || 0) >= (appConfig.inAppTaskLimit || 0)) {
-                        button.disabled = true;
-                        button.textContent = "Limit Reached";
-                    }
-                    return; 
+                // Exclude 'claim-miniApp-btn' (home screen navigation button) and 'start-mini-game-btn' (managed separately)
+                if (button.id === excludeButtonId || button.id === 'claim-miniApp-btn' || button.id === 'start-mini-game-btn') {
+                    return; // Skip general state management for these buttons
                 }
                 
                 // General logic for other ad buttons
@@ -1226,14 +1247,6 @@
                         button.disabled = disabled;
                         button.textContent = disabled ? "Wait..." : "Claim";
                     }
-                } else if (button.id === 'claim-miniApp-btn') {
-                    if (!disabled && (userData.monetagMiniAppCount || 0) >= (appConfig.monetagMiniAppLimit || 0)) {
-                        button.disabled = true;
-                        button.textContent = "Limit Reached";
-                    } else {
-                        button.disabled = disabled;
-                        button.textContent = disabled ? "Wait..." : "Play";
-                    }
                 } else if (button.id === 'claim-adsterra-btn') {
                      if (!disabled && (userData.adsterraNativeCount || 0) >= (appConfig.adsterraNativeLimit || 0)) {
                         button.disabled = true;
@@ -1241,6 +1254,14 @@
                     } else {
                         button.disabled = disabled;
                         button.textContent = disabled ? "Wait..." : "Claim";
+                    }
+                } else if (button.id === 'claim-inApp-btn') { // Specific for "Tasks" button
+                    if (!disabled && (userData.inAppTaskCount || 0) >= (appConfig.inAppTaskLimit || 0)) {
+                        button.disabled = true;
+                        button.textContent = "Limit Reached";
+                    } else {
+                        button.disabled = disabled;
+                        button.textContent = disabled ? "Wait..." : "Start";
                     }
                 }
             });
@@ -1258,7 +1279,7 @@
          */
         function startAdCooldown() {
             let timeLeft = AD_COOLDOWN_DURATION / 1000; 
-            // Exclude the 'inApp' (GigaPub Tasks) button from this general cooldown
+            // Exclude the 'inApp' (GigaPub Tasks) and 'miniApp' (GigaPub Mini Game) buttons from this general cooldown
             setAllAdButtonsState(true, `Next ad available in ${timeLeft}s...`, 'claim-inApp-btn');
 
             if (adCooldownIntervalId) clearInterval(adCooldownIntervalId); 
@@ -1302,7 +1323,7 @@
                 return showAlert("Ek ad pehle se active hai. Kripya pura karein ya page refresh karein.");
             }
 
-            // Disable all other ad buttons during this process (excluding GigaPub Tasks)
+            // Disable all other ad buttons during this process (excluding GigaPub Tasks and Mini Game buttons)
             setAllAdButtonsState(true, 'Ad load ho raha hai...', 'claim-adsterra-btn');
             claimAdsterraBtn.disabled = true; 
             claimAdsterraBtn.textContent = "Loading...";
@@ -1477,8 +1498,7 @@
             updateAllAdsLeftCounts(); 
         }
 
-        // --- GigaPub Task Integration ---
-        // FIX: Make handleGigaPubTaskClick globally accessible
+        // --- GigaPub Task Integration (for "Tasks" section) ---
         window.handleGigaPubTaskClick = async function() { 
             if (!currentUser || !userData) {
                 return showAlert("Kripya login karein ya signup karein.");
@@ -1486,7 +1506,7 @@
 
             // Profile incomplete check (assuming name and email are essential fields for "profile complete")
             if (!userData.name || !userData.email) {
-                return showAlert("Kripya sabhi fields bharein. Aapka profile incomplete hai.");
+                return showAlert("Kripya apna profile pura karein (Naam aur Email).");
             }
 
             // Daily limit check for GigaPub Tasks
@@ -1547,15 +1567,136 @@
             userData.strikeCount = newStrikeCount;
             userData.lastStrikeDate = today;
             await updateDoc(userRef, { strikeCount: newStrikeCount, lastStrikeDate: today });
-            updateStrikeDisplay(); // Update UI for strike count
-
-            // As per requirement: "Tasks section me GigaPub Rewarded Interstitial ad integrate karna hai." and "sirf Tasks, baaki sections se independent".
-            // So, no lastNonTaskAdClaimTime update or startAdCooldown for GigaPub.
+            updateStrikeDisplay();
         }
-        // --- END GigaPub Task Integration ---
+        // --- END GigaPub Task Integration (for "Tasks" section) ---
 
+        // --- Play Mini App Integration (GigaPub + HTML5 Game) ---
+        window.openMiniGame = function() {
+            if (!currentUser || !userData) {
+                return showAlert("Kripya login karein ya signup karein.");
+            }
 
-        // Original claimReward function (now only for Monetag/Adsterra other than GigaPub)
+            // Profile incomplete check
+            if (!userData.name || !userData.email) {
+                return showAlert("Kripya apna profile pura karein (Naam aur Email).");
+            }
+
+            navigateTo('mini-game-page');
+            resetMiniGamePage(); // Reset UI when entering the page
+        };
+
+        function resetMiniGamePage() {
+            miniGameIframe.style.display = 'none';
+            miniGameIframe.src = ''; // Clear iframe content
+            startMiniGameBtn.style.display = 'block';
+            startMiniGameBtn.disabled = false;
+            startMiniGameBtn.textContent = "Play Game (Watch Ad)";
+            miniGameStatusMessageEl.textContent = "Ad dekhne ke baad game start hoga.";
+            miniGameCooldownTimerEl.style.display = 'none';
+            clearInterval(miniGameCooldownIntervalId);
+            miniGameCooldownIntervalId = null;
+        }
+
+        async function handleMiniGamePlayClick() {
+            if (startMiniGameBtn.disabled) return;
+
+            // Start cooldown check (if a cooldown is active)
+            if (miniGameCooldownIntervalId) {
+                return showAlert(`Kripya thoda intezaar karein. Next ad ${miniGameTimeLeft}s mein.`, () => {
+                    // No action needed, user just informed.
+                });
+            }
+
+            startMiniGameBtn.disabled = true;
+            startMiniGameBtn.textContent = "Ad Load Ho Raha Hai...";
+            miniGameStatusMessageEl.textContent = "Loading ad...";
+
+            try {
+                await window.showGiga(); // Show GigaPub ad
+                
+                // Ad completed successfully, grant reward and start game
+                await grantMiniGameGigaPubReward();
+                miniGameStatusMessageEl.textContent = `Badhai ho! Aapne ${MINIGAME_GIGAPUB_REWARD} jeete hain! Game shuru ho raha hai.`;
+                showAlert(`Badhai ho! Aapne ${MINIGAME_GIGAPUB_REWARD} jeete hain!`, () => {
+                    startMiniGame();
+                });
+                startMiniGameCooldown(); // Start cooldown after successful ad
+            } catch (error) {
+                console.error("GigaPub Ad in Mini Game failed, closed, or skipped:", error);
+                miniGameStatusMessageEl.textContent = "Ad load nahi ho paya, skip kiya gaya, ya band kar diya gaya. Reward nahi milega.";
+                showAlert("Ad load nahi ho paya, skip kiya gaya, ya band kar diya gaya. Reward nahi milega.", () => {
+                    resetMiniGamePage(); // Reset the page to allow trying again
+                });
+            } finally {
+                // No need to re-enable button here, startMiniGameCooldown or resetMiniGamePage handles it
+            }
+        }
+
+        async function grantMiniGameGigaPubReward() {
+            const userRef = doc(db, "users", currentUser.uid);
+            const today = new Date().toISOString().split('T')[0];
+            const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0];
+
+            // Update user balance
+            await updateBalance(MINIGAME_GIGAPUB_REWARD);
+
+            // Strike logic (same as other rewarded ads)
+            let newStrikeCount = userData.strikeCount || 0;
+            if (userData.lastStrikeDate !== today) { 
+                if (userData.lastStrikeDate === yesterday) {
+                    newStrikeCount += 1;
+                } else {
+                    newStrikeCount = 1; // New streak
+                }
+            }
+            userData.strikeCount = newStrikeCount;
+            userData.lastStrikeDate = today;
+            await updateDoc(userRef, { strikeCount: newStrikeCount, lastStrikeDate: today });
+            updateStrikeDisplay();
+        }
+
+        function startMiniGameCooldown() {
+            miniGameTimeLeft = MINIGAME_COOLDOWN_DURATION;
+            startMiniGameBtn.disabled = true;
+            startMiniGameBtn.style.display = 'none'; // Hide the play button during cooldown
+            miniGameCooldownTimerEl.style.display = 'block';
+            miniGameCooldownTimerEl.textContent = `Next ad/game available in ${miniGameTimeLeft}s`;
+
+            clearInterval(miniGameCooldownIntervalId);
+            miniGameCooldownIntervalId = setInterval(() => {
+                miniGameTimeLeft--;
+                if (miniGameTimeLeft > 0) {
+                    miniGameCooldownTimerEl.textContent = `Next ad/game available in ${miniGameTimeLeft}s`;
+                } else {
+                    clearInterval(miniGameCooldownIntervalId);
+                    miniGameCooldownIntervalId = null;
+                    miniGameCooldownTimerEl.style.display = 'none';
+                    startMiniGameBtn.style.display = 'block'; // Show play button again
+                    startMiniGameBtn.disabled = false;
+                    startMiniGameBtn.textContent = "Play Game (Watch Ad)";
+                    miniGameStatusMessageEl.textContent = "Ad dekhne ke baad game start hoga.";
+                    miniGameIframe.style.display = 'none'; // Hide game iframe after cooldown
+                    miniGameIframe.src = ''; // Clear iframe content
+                }
+            }, 1000);
+        }
+
+        function startMiniGame() {
+            miniGameStatusMessageEl.textContent = "Game shuru ho gaya hai!";
+            startMiniGameBtn.style.display = 'none';
+            miniGameCooldownTimerEl.style.display = 'none'; // Hide cooldown timer if game is active
+            miniGameIframe.src = 'https://play.famobi.com/wrapper/fun-race-3d/A1000-10';
+            miniGameIframe.style.display = 'block';
+
+            // Listen for iframe load to potentially adjust UI, though the ad logic is before this.
+            miniGameIframe.onload = () => {
+                console.log("Mini game iframe loaded.");
+            };
+        }
+        // --- END Play Mini App Integration ---
+
+        // Original claimReward function (now only for Monetag Interstitial)
         window.claimReward = async function(taskType) {
             if (!currentUser || !userData) {
                 return showAlert("Login karein ya signup karein.");
@@ -1572,7 +1713,7 @@
                 return;
             }
 
-            // Disable all other ad buttons while one is active (excluding GigaPub Tasks)
+            // Disable all other ad buttons while one is active (excluding GigaPub Tasks and Mini Game buttons)
             setAllAdButtonsState(true, 'Loading Ad...');
 
             let rewardAmount = 0;
@@ -1605,53 +1746,6 @@
                         await updateBalance(rewardAmount);
 
                         // Strike logic (same for all rewarded ads)
-                        let newStrikeCount = userData.strikeCount || 0;
-                        if (userData.lastStrikeDate !== today) { 
-                            if (userData.lastStrikeDate === yesterday) {
-                                newStrikeCount += 1;
-                            } else {
-                                newStrikeCount = 1;
-                            }
-                        }
-                        userData.strikeCount = newStrikeCount;
-                        userData.lastStrikeDate = today;
-                        await updateDoc(userRef, { strikeCount: newStrikeCount, lastStrikeDate: today });
-                        updateStrikeDisplay();
-
-                        showAlert(`Badhai ho! Aapne ${rewardAmount} jeete hain.`);
-                        updateAllAdsLeftCounts();
-                        lastNonTaskAdClaimTime = Date.now(); // Update timestamp for early access check
-                        startAdCooldown(); // Start the general 5-second cooldown
-                    }).catch(e => {
-                        console.error(`${taskType} Ad error:`, e);
-                        showAlert('Ad nahi dikhaya ja saka. Kripya baad mein prayas karein.');
-                        setAllAdButtonsState(false, '');
-                    });
-                    break;
-
-                case 'miniApp':
-                    currentCountField = 'monetagMiniAppCount';
-                    lastWatchDateField = 'lastMonetagMiniAppDate';
-                    limitField = 'monetagMiniAppLimit';
-                    rewardAmount = 100; // Mini App reward
-                     if ((userData[currentCountField] || 0) >= (appConfig[limitField] || 0)) {
-                        setAllAdButtonsState(false); // Re-enable if limit reached
-                        return showAlert("Aapki aaj ki 'Play Mini App' dekhne ki seema poori ho gayi hai.");
-                    }
-                    if (typeof window.show_10495819 !== 'function') {
-                        setAllAdButtonsState(false, ''); // Re-enable if ad service not available
-                        return showAlert("Ad service abhi uplabdh nahi hai. Kripya baad mein prayas karein.");
-                    }
-                    window.show_10495819().then(async () => {
-                        updatePayload[currentCountField] = (userData[currentCountField] || 0) + 1;
-                        updatePayload[lastWatchDateField] = today;
-                        await updateDoc(userRef, updatePayload);
-                        userData[currentCountField] = updatePayload[currentCountField];
-                        userData[lastWatchDateField] = updatePayload[lastWatchDateField];
-
-                        await updateBalance(rewardAmount);
-
-                        // Strike logic
                         let newStrikeCount = userData.strikeCount || 0;
                         if (userData.lastStrikeDate !== today) { 
                             if (userData.lastStrikeDate === yesterday) {
