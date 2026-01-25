@@ -821,7 +821,7 @@
             const email = document.getElementById('signup-email').value.trim();
             const password = document.getElementById('signup-password').value;
 
-            if (!name || !email || !!password) return showAlert("Kripya sabhi fields bharein.");
+            if (!name || !email || !password) return showAlert("Kripya sabhi fields bharein.");
             if (name.length < 3) return showAlert("Naam kam se kam 3 akshar ka hona chahiye.");
             if (password.length < 6) return showAlert("Password kam se kam 6 akshar ka hona chahiye.");
 
