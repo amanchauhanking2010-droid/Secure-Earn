@@ -62,6 +62,19 @@
             opacity: 0.6;
             cursor: not-allowed;
         }
+
+        /* Adsterra Specific styles */
+        .adsterra-ad-wrapper {
+            background-color: #2a2a2a;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            min-height: 100px; /* Ensure space even if ad doesn't load immediately */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
     </style>
 </head>
 <body class="max-w-md mx-auto">
@@ -134,12 +147,16 @@
                     </div>
                 </div>
                 <section>
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <h2 class="text-lg font-semibold">Daily Tasks</h2>
-                            <p class="text-sm text-gray-400 mb-4">Complete tasks to get rewards.</p>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold">Daily Tasks</h2>
+                        <!-- Consolidated ad counts -->
+                        <div class="text-sm text-gray-400">
+                            <p>Short Ads: <span id="monetag-interstitial-count">...</span>/<span id="monetag-interstitial-limit">...</span></p>
+                            <p>Click for Reward: <span id="adsterra-native-count">...</span>/<span id="adsterra-native-limit">...</span></p>
+                            <p>Mini Apps: <span id="monetag-miniApp-count">...</span>/<span id="monetag-miniApp-limit">...</span></p>
+                            <!-- In-App Task count display if a limit is added -->
+                            <p>Tasks: <span id="inApp-task-count">...</span>/<span id="inApp-task-limit">...</span></p>
                         </div>
-                        <p class="text-sm text-gray-400">Ads Left: <span id="ads-left-count">...</span></p>
                     </div>
 
                     <!-- Ad Cooldown Message -->
@@ -163,16 +180,17 @@
                             <div id="adsterra-reward-wrapper" class="flex flex-col items-center">
                                 <button id="claim-adsterra-btn" class="bg-white text-black font-bold px-6 py-2 rounded-lg text-sm btn ad-button">Claim</button>
                                 <div id="adsterra-timer-display" class="text-accent font-semibold mt-2 hidden"></div>
+                                <div id="adsterra-status-message" class="text-gray-400 text-xs mt-1 hidden"></div>
                                 <!-- Adsterra Ad Container (initially hidden) -->
-                                <div id="adsterra-ad-container" class="mt-3 w-full" style="min-height: 100px; display: none;">
+                                <div id="adsterra-ad-container" class="mt-3 w-full adsterra-ad-wrapper" style="display: none;">
+                                    <p id="adsterra-loading-text" class="text-gray-400">Ad loading...</p>
                                     <!-- The Adsterra Native Banner script and its container div will be dynamically loaded here -->
                                 </div>
                             </div>
                         </div>
                          <div class="card-bg p-3 rounded-lg flex items-center justify-between shadow-lg">
-                            <div class="flex items-center space-x-3"><span class="text-3xl">👀</span><div><h3 class="font-semibold">Tasks</h3><!-- 'Watch a Video' se 'Tasks' kiya gaya --><p class="text-xs text-gray-400">More Reward</p><!-- 'In-App Interstitial' se 'More Coin' kiya gaya --></div></div>
-                            <!-- Yeh button 'inApp' taskType ke saath claimReward function ko call karta hai -->
-                            <button id="claim-inApp-btn" class="bg-gray-700 text-white font-bold px-6 py-2 rounded-lg text-sm btn" onclick="claimReward('inApp')">Start</button>
+                            <div class="flex items-center space-x-3"><span class="text-3xl">👀</span><div><h3 class="font-semibold">Tasks</h3><p class="text-xs text-gray-400">More Reward</p></div></div>
+                            <button id="claim-inApp-btn" class="bg-gray-700 text-white font-bold px-6 py-2 rounded-lg text-sm btn ad-button" onclick="claimReward('inApp')">Start</button>
                         </div>
                         <div class="card-bg p-3 rounded-lg flex items-center justify-between shadow-lg">
                             <div class="flex items-center space-x-3"><span class="text-3xl">🎮</span><div><h3 class="font-semibold">Play Mini App</h3><p class="text-xs text-gray-400">Get a big reward!</p></div></div>
@@ -370,7 +388,6 @@
         const coinValueInfoEl = document.getElementById('coin-value-info');
         const withdrawMethodSelect = document.getElementById('withdraw-method');
         const notificationDot = document.getElementById('notification-dot');
-        const adsLeftCountEl = document.getElementById('ads-left-count');
         const paymentDetailsContainer = document.getElementById('payment-details-container');
         const strikeDisplayEl = document.getElementById('strike-display'); 
         const currentActivityLevelEl = document.getElementById('current-activity-level'); // New: Activity level element
@@ -381,21 +398,25 @@
         const AD_COOLDOWN_DURATION = 5 * 1000; // 5 seconds
         let adCooldownIntervalId = null; // To hold the setInterval ID for the 5s cooldown
 
-        // const adButtons = document.querySelectorAll('.ad-button'); // This will be redefined/used differently
         const adCooldownMessageEl = document.getElementById('ad-cooldown-message');
         // ------------------------------------------
 
         // --- NEW ADSTERRA REWARD LOGIC VARIABLES ---
         const ADSTERRA_REWARD_TIMER_DURATION = 15; // seconds
+        const ADSTERRA_LOAD_TIMEOUT = 5000; // 5 seconds for ad to load
         let adsterraTimer = null;
         let adsterraTimeLeft = ADSTERRA_REWARD_TIMER_DURATION;
         let isAdsterraAdActive = false; // Tracks if a user is currently in the ad-watching flow
-        let hasAdsterraAdScriptLoaded = false; // Tracks if the ad script has been injected
+        let hasAdsterraAdScriptLoaded = false; // Tracks if the ad script has been injected once
         let adsterraRewardGrantedForCurrentAttempt = false; // To prevent multiple rewards for one ad view attempt
+        let adLoadCheckInterval = null; // Interval to check if adsterra ad has loaded
+        let adLoadTimeoutId = null; // Timeout for adsterra ad loading
 
         const adsterraAdContainer = document.getElementById('adsterra-ad-container');
         const adsterraTimerDisplay = document.getElementById('adsterra-timer-display');
         const claimAdsterraBtn = document.getElementById('claim-adsterra-btn');
+        const adsterraStatusMessageEl = document.getElementById('adsterra-status-message');
+        const adsterraLoadingText = document.getElementById('adsterra-loading-text');
 
         // References for visibility listeners to remove them later
         let pageVisibilityListener = null;
@@ -460,8 +481,16 @@
                         balance: 50, referralCode: ownReferralCode, referredBy: null, 
                         lastNotificationCheck: new Date(),
                         createdAt: serverTimestamp(),
-                        dailyAdCount: 0, 
-                        lastAdWatchDate: new Date().toISOString().split('T')[0], 
+                        // New separate ad counters and dates
+                        monetagInterstitialCount: 0,
+                        lastMonetagInterstitialDate: new Date().toISOString().split('T')[0],
+                        adsterraNativeCount: 0,
+                        lastAdsterraNativeDate: new Date().toISOString().split('T')[0],
+                        monetagMiniAppCount: 0,
+                        lastMonetagMiniAppDate: new Date().toISOString().split('T')[0],
+                        inAppTaskCount: 0, // Added for consistency, can be adapted
+                        lastInAppTaskDate: new Date().toISOString().split('T')[0],
+
                         isBlocked: false,
                         strikeCount: 0, 
                         lastStrikeDate: null 
@@ -478,6 +507,31 @@
                     userData.strikeCount = 0;
                     await updateDoc(userRef, { strikeCount: 0 });
                 }
+
+                // Reset ad counts if the date has changed for each category
+                const updatePromises = [];
+                if (userData.lastMonetagInterstitialDate !== today) {
+                    userData.monetagInterstitialCount = 0;
+                    userData.lastMonetagInterstitialDate = today;
+                    updatePromises.push(updateDoc(userRef, { monetagInterstitialCount: 0, lastMonetagInterstitialDate: today }));
+                }
+                if (userData.lastAdsterraNativeDate !== today) {
+                    userData.adsterraNativeCount = 0;
+                    userData.lastAdsterraNativeDate = today;
+                    updatePromises.push(updateDoc(userRef, { adsterraNativeCount: 0, lastAdsterraNativeDate: today }));
+                }
+                if (userData.lastMonetagMiniAppDate !== today) {
+                    userData.monetagMiniAppCount = 0;
+                    userData.lastMonetagMiniAppDate = today;
+                    updatePromises.push(updateDoc(userRef, { monetagMiniAppCount: 0, lastMonetagMiniAppDate: today }));
+                }
+                if (userData.lastInAppTaskDate !== today) {
+                    userData.inAppTaskCount = 0;
+                    userData.lastInAppTaskDate = today;
+                    updatePromises.push(updateDoc(userRef, { inAppTaskCount: 0, lastInAppTaskDate: today }));
+                }
+                await Promise.all(updatePromises);
+
             } catch (error) {
                 console.error("Error fetching user data:", error);
                 showAlert("User data load karne mein error aayi.");
@@ -490,9 +544,24 @@
                 const configSnap = await getDoc(configRef);
                 if (configSnap.exists()) {
                     appConfig = configSnap.data();
+                    // Set default limits if not in config
+                    appConfig.monetagInterstitialLimit = appConfig.monetagInterstitialLimit || 50;
+                    appConfig.adsterraNativeLimit = appConfig.adsterraNativeLimit || 50;
+                    appConfig.monetagMiniAppLimit = appConfig.monetagMiniAppLimit || 50;
+                    appConfig.inAppTaskLimit = appConfig.inAppTaskLimit || 5; // Default limit for inApp task
+
                     checkForForceUpdate(appConfig); // Check for update here
                 } else {
-                    appConfig = { minWithdrawal: 5000, paymentMethods: ["UPI", "Paytm"], dailyAdLimit: 10, coinValueCoins: 1000, coinValueInr: 10 };
+                    appConfig = { 
+                        minWithdrawal: 5000, 
+                        paymentMethods: ["UPI", "Paytm"], 
+                        coinValueCoins: 1000, 
+                        coinValueInr: 10,
+                        monetagInterstitialLimit: 50,
+                        adsterraNativeLimit: 50,
+                        monetagMiniAppLimit: 50,
+                        inAppTaskLimit: 5
+                    };
                 }
             } catch (error) {
                 console.error("Error fetching app config:", error);
@@ -539,17 +608,51 @@
                 withdrawMethodSelect.appendChild(option);
             });
             updateDynamicPaymentFields();
-            updateAdsLeftCount();
+            updateAllAdsLeftCounts(); // Updated function call
             updateStrikeDisplay(); // New: Update strike display
         }
 
-        function updateAdsLeftCount() {
-            const today = new Date().toISOString().split('T')[0];
-            if (userData.lastAdWatchDate !== today) {
-                userData.dailyAdCount = 0;
+        // New function to update all ad counts and button states
+        function updateAllAdsLeftCounts() {
+            document.getElementById('monetag-interstitial-count').textContent = (appConfig.monetagInterstitialLimit || 0) - (userData.monetagInterstitialCount || 0);
+            document.getElementById('monetag-interstitial-limit').textContent = appConfig.monetagInterstitialLimit || 0;
+            if ((userData.monetagInterstitialCount || 0) >= (appConfig.monetagInterstitialLimit || 0)) {
+                document.getElementById('claim-interstitial-btn').disabled = true;
+                document.getElementById('claim-interstitial-btn').textContent = "Limit Reached";
+            } else {
+                document.getElementById('claim-interstitial-btn').disabled = false;
+                document.getElementById('claim-interstitial-btn').textContent = "Claim";
             }
-            const adsLeft = Math.max(0, (appConfig.dailyAdLimit || 10) - userData.dailyAdCount);
-            adsLeftCountEl.textContent = adsLeft;
+
+            document.getElementById('adsterra-native-count').textContent = (appConfig.adsterraNativeLimit || 0) - (userData.adsterraNativeCount || 0);
+            document.getElementById('adsterra-native-limit').textContent = appConfig.adsterraNativeLimit || 0;
+            if ((userData.adsterraNativeCount || 0) >= (appConfig.adsterraNativeLimit || 0)) {
+                document.getElementById('claim-adsterra-btn').disabled = true;
+                document.getElementById('claim-adsterra-btn').textContent = "Limit Reached";
+            } else {
+                document.getElementById('claim-adsterra-btn').disabled = false;
+                document.getElementById('claim-adsterra-btn').textContent = "Claim";
+            }
+
+            document.getElementById('monetag-miniApp-count').textContent = (appConfig.monetagMiniAppLimit || 0) - (userData.monetagMiniAppCount || 0);
+            document.getElementById('monetag-miniApp-limit').textContent = appConfig.monetagMiniAppLimit || 0;
+            if ((userData.monetagMiniAppCount || 0) >= (appConfig.monetagMiniAppLimit || 0)) {
+                document.getElementById('claim-miniApp-btn').disabled = true;
+                document.getElementById('claim-miniApp-btn').textContent = "Limit Reached";
+            } else {
+                document.getElementById('claim-miniApp-btn').disabled = false;
+                document.getElementById('claim-miniApp-btn').textContent = "Play";
+            }
+
+            document.getElementById('inApp-task-count').textContent = (appConfig.inAppTaskLimit || 0) - (userData.inAppTaskCount || 0);
+            document.getElementById('inApp-task-limit').textContent = appConfig.inAppTaskLimit || 0;
+            if ((userData.inAppTaskCount || 0) >= (appConfig.inAppTaskLimit || 0)) {
+                document.getElementById('claim-inApp-btn').disabled = true;
+                document.getElementById('claim-inApp-btn').textContent = "Limit Reached";
+            } else {
+                document.getElementById('claim-inApp-btn').disabled = false;
+                document.getElementById('claim-inApp-btn').textContent = "Start";
+            }
         }
 
         // New: Function to update strike display
@@ -718,7 +821,7 @@
             const email = document.getElementById('signup-email').value.trim();
             const password = document.getElementById('signup-password').value;
 
-            if (!name || !email || !password) return showAlert("Kripya sabhi fields bharein.");
+            if (!name || !email || !!password) return showAlert("Kripya sabhi fields bharein.");
             if (name.length < 3) return showAlert("Naam kam se kam 3 akshar ka hona chahiye.");
             if (password.length < 6) return showAlert("Password kam se kam 6 akshar ka hona chahiye.");
 
@@ -749,8 +852,14 @@
                     referredBy: null, 
                     lastNotificationCheck: new Date(),
                     createdAt: serverTimestamp(),
-                    dailyAdCount: 0, 
-                    lastAdWatchDate: new Date().toISOString().split('T')[0], 
+                    monetagInterstitialCount: 0,
+                    lastMonetagInterstitialDate: new Date().toISOString().split('T')[0],
+                    adsterraNativeCount: 0,
+                    lastAdsterraNativeDate: new Date().toISOString().split('T')[0],
+                    monetagMiniAppCount: 0,
+                    lastMonetagMiniAppDate: new Date().toISOString().split('T')[0],
+                    inAppTaskCount: 0,
+                    lastInAppTaskDate: new Date().toISOString().split('T')[0],
                     isBlocked: false,
                     strikeCount: 0, 
                     lastStrikeDate: null 
@@ -1123,15 +1232,51 @@
         window.showAlert = showAlert; // Global scope mein available rakhein
 
         /**
-         * Disables all ad buttons (except 'inApp') and displays a message.
+         * Disables all ad buttons (except 'inApp' if it has no limits) and displays a message.
          * Used for general cooldowns or when an ad process is active.
          * @param {boolean} disabled True to disable, false to enable.
          * @param {string} message Optional message to display.
+         * @param {string} excludeButtonId Optional: ID of a button to NOT disable (e.g., if it's currently managing its own state)
          */
-        function setAllAdButtonsState(disabled, message = '') {
+        function setAllAdButtonsState(disabled, message = '', excludeButtonId = null) {
             document.querySelectorAll('.ad-button').forEach(button => {
-                if (button.id !== 'claim-inApp-btn') { // Don't disable 'inApp'
-                    button.disabled = disabled;
+                if (button.id === excludeButtonId) return; // Don't touch the excluded button
+
+                if (button.id === 'claim-interstitial-btn') {
+                    if (!disabled && (userData.monetagInterstitialCount || 0) >= (appConfig.monetagInterstitialLimit || 0)) {
+                        button.disabled = true;
+                        button.textContent = "Limit Reached";
+                    } else {
+                        button.disabled = disabled;
+                        button.textContent = disabled ? "Wait..." : "Claim";
+                    }
+                } else if (button.id === 'claim-miniApp-btn') {
+                    if (!disabled && (userData.monetagMiniAppCount || 0) >= (appConfig.monetagMiniAppLimit || 0)) {
+                        button.disabled = true;
+                        button.textContent = "Limit Reached";
+                    } else {
+                        button.disabled = disabled;
+                        button.textContent = disabled ? "Wait..." : "Play";
+                    }
+                } else if (button.id === 'claim-inApp-btn') {
+                    // For inApp, it's 'Start'/'Limit Reached'
+                    if (!disabled && (userData.inAppTaskCount || 0) >= (appConfig.inAppTaskLimit || 0)) {
+                        button.disabled = true;
+                        button.textContent = "Limit Reached";
+                    } else {
+                        button.disabled = disabled;
+                        button.textContent = disabled ? "Wait..." : "Start";
+                    }
+                } else if (button.id === 'claim-adsterra-btn') {
+                     // Adsterra button state is managed by its own `startAdsterraRewardProcess`
+                     // but here we ensure it respects the global cooldown.
+                     if (!disabled && (userData.adsterraNativeCount || 0) >= (appConfig.adsterraNativeLimit || 0)) {
+                        button.disabled = true;
+                        button.textContent = "Limit Reached";
+                    } else {
+                        button.disabled = disabled;
+                        button.textContent = disabled ? "Wait..." : "Claim";
+                    }
                 }
             });
             if (message) {
@@ -1167,6 +1312,7 @@
                         adCooldownMessageEl.textContent = '';
                         adCooldownMessageEl.style.display = 'none';
                     }
+                    updateAllAdsLeftCounts(); // Refresh counts and enable/disable buttons based on limits
                 }
             }, 1000);
         }
@@ -1179,17 +1325,9 @@
                 return showAlert("Login karein ya signup karein.");
             }
 
-            const today = new Date().toISOString().split('T')[0];
-            const userRef = doc(db, "users", currentUser.uid);
-
-            // Daily Ad Limit Check
-            if (userData.lastAdWatchDate !== today) {
-                await updateDoc(userRef, { dailyAdCount: 0, lastAdWatchDate: today });
-                userData.dailyAdCount = 0;
-                userData.lastAdWatchDate = today;
-            }
-            if (userData.dailyAdCount >= (appConfig.dailyAdLimit || 10)) {
-                return showAlert("Aapki aaj ki ad dekhne ki seema poori ho gayi hai.");
+            // Daily Ad Limit Check for Adsterra
+            if ((userData.adsterraNativeCount || 0) >= (appConfig.adsterraNativeLimit || 0)) {
+                return showAlert("Aapki aaj ki 'Click for Reward' ad dekhne ki seema poori ho gayi hai.");
             }
 
             // Early Access Restriction Check (14 seconds) for ALL non-Tasks ads
@@ -1202,17 +1340,32 @@
                 return showAlert("Ek ad pehle se active hai. Kripya pura karein ya page refresh karein.");
             }
 
-            setAllAdButtonsState(true, 'Ad load ho raha hai...');
-            claimAdsterraBtn.disabled = true; // Also explicitly disable its own button
+            // Disable all other ad buttons during this process
+            setAllAdButtonsState(true, 'Ad load ho raha hai...', 'claim-adsterra-btn');
+            claimAdsterraBtn.disabled = true; // Disable its own button
+            claimAdsterraBtn.textContent = "Loading...";
 
             isAdsterraAdActive = true;
             adsterraRewardGrantedForCurrentAttempt = false; // Reset for new attempt
             adsterraTimeLeft = ADSTERRA_REWARD_TIMER_DURATION;
 
-            // Show the ad container and timer
-            adsterraAdContainer.style.display = 'block';
-            adsterraTimerDisplay.classList.remove('hidden');
-            adsterraTimerDisplay.textContent = `Ad dekhein: ${adsterraTimeLeft}s`;
+            // Show the ad container and status message
+            adsterraAdContainer.style.display = 'flex'; // Use flex for centering child
+            adsterraLoadingText.style.display = 'block';
+            adsterraTimerDisplay.classList.add('hidden'); // Hide timer initially
+            adsterraStatusMessageEl.classList.remove('hidden');
+            adsterraStatusMessageEl.textContent = "Ad loading...";
+
+
+            // Clear previous Adsterra ad content
+            let adsterraRenderDiv = document.getElementById('container-672b63be9fb2075930c092f8318d528c');
+            if (adsterraRenderDiv) {
+                adsterraRenderDiv.innerHTML = ''; // Clear previous ad content
+            } else {
+                adsterraRenderDiv = document.createElement('div');
+                adsterraRenderDiv.id = 'container-672b63be9fb2075930c092f8318d528c';
+                adsterraAdContainer.appendChild(adsterraRenderDiv);
+            }
 
             // Inject the Adsterra Native Banner script if not already done
             if (!hasAdsterraAdScriptLoaded) {
@@ -1220,30 +1373,52 @@
                 adScript.async = true;
                 adScript.dataset.cfasync = 'false';
                 adScript.src = "https://pl28561145.effectivegatecpm.com/672b63be9fb2075930c092f8318d528c/invoke.js";
-                
-                // Create the div where Adsterra will render its ad
-                const adsterraRenderDiv = document.createElement('div');
-                adsterraRenderDiv.id = 'container-672b63be9fb2075930c092f8318d528c';
-                adsterraAdContainer.appendChild(adsterraRenderDiv); // Add the placeholder div
-
-                adsterraAdContainer.prepend(adScript); // Prepend the script to ensure it can find the div
+                adsterraAdContainer.appendChild(adScript); 
                 hasAdsterraAdScriptLoaded = true;
             } else {
-                 // If script already loaded, just re-evaluate it to load a new ad
-                 // This is a common pattern for ad networks without explicit refresh functions.
-                 // We clear the container and then re-add the ad rendering div.
-                 const existingAdDiv = document.getElementById('container-672b63be9fb2075930c092f8318d528c');
-                 if (existingAdDiv) {
-                     existingAdDiv.innerHTML = ''; // Clear previous ad content
-                 } else {
-                     const newAdDiv = document.createElement('div');
-                     newAdDiv.id = 'container-672b63be9fb2075930c092f8318d528c';
-                     adsterraAdContainer.appendChild(newAdDiv);
+                 // For subsequent ads, re-execute the invoke.js.
+                 // This is a common pattern for Adsterra native banners to ensure a new ad impression.
+                 const existingScript = document.querySelector('script[src="https://pl28561145.effectivegatecpm.com/672b63be9fb2075930c092f8318d528c/invoke.js"]');
+                 if (existingScript) {
+                     existingScript.remove(); // Remove old script to prevent duplicates
                  }
+                 const newScript = document.createElement('script');
+                 newScript.async = true;
+                 newScript.dataset.cfasync = 'false';
+                 newScript.src = "https://pl28561145.effectivegatecpm.com/672b63be9fb2075930c092f8318d528c/invoke.js";
+                 adsterraAdContainer.appendChild(newScript);
             }
 
+            // Start ad load timeout
+            clearTimeout(adLoadTimeoutId); // Clear any previous timeout
+            adLoadTimeoutId = setTimeout(() => {
+                clearInterval(adLoadCheckInterval);
+                adsterraStatusMessageEl.textContent = "Ad failed to load. Please try again.";
+                showAlert("Ad load nahi ho paya. Kripya dobara prayas karein.");
+                resetAdsterraRewardProcess();
+            }, ADSTERRA_LOAD_TIMEOUT);
 
-            // Start the 15-second timer
+            // Start checking for ad loaded state
+            clearInterval(adLoadCheckInterval); // Clear any previous interval
+            adLoadCheckInterval = setInterval(() => {
+                const adContentDiv = document.getElementById('container-672b63be9fb2075930c092f8318d528c');
+                // Heuristic for ad loaded: check if the container has children (ad content) or has a significant height.
+                if (adContentDiv && (adContentDiv.children.length > 0 || adContentDiv.offsetHeight > 50)) { // 50px as a minimum height indicator
+                    clearTimeout(adLoadTimeoutId);
+                    clearInterval(adLoadCheckInterval);
+                    startAdsterraRewardTimer();
+                }
+            }, 500); // Check every 0.5 seconds
+        }
+
+        function startAdsterraRewardTimer() {
+            adsterraLoadingText.style.display = 'none'; // Hide loading text
+            adsterraStatusMessageEl.classList.add('hidden'); // Hide status message
+            adsterraTimerDisplay.classList.remove('hidden'); // Show timer
+            adsterraTimerDisplay.textContent = `Ad dekhein: ${adsterraTimeLeft}s`;
+            claimAdsterraBtn.textContent = "Watching Ad..."; // Update button text
+            claimAdsterraBtn.disabled = true; // Ensure button remains disabled
+
             adsterraTimer = setInterval(async () => {
                 adsterraTimeLeft--;
                 adsterraTimerDisplay.textContent = `Ad dekhein: ${adsterraTimeLeft}s`;
@@ -1298,20 +1473,21 @@
             if (adsterraRewardGrantedForCurrentAttempt) return; // Prevent double reward
 
             const userRef = doc(db, "users", currentUser.uid);
-            const today = new Date().toISOString().split('T')[0];
-            const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0];
 
             // Reward logic
             const rewardAmount = 50; // Coins for Adsterra Native Banner
             await updateBalance(rewardAmount);
 
-            // Daily Ad Count update
-            const newCount = (userData.dailyAdCount || 0) + 1;
-            await updateDoc(userRef, { dailyAdCount: newCount });
-            userData.dailyAdCount = newCount;
+            // Adsterra Ad Count update
+            const newCount = (userData.adsterraNativeCount || 0) + 1;
+            await updateDoc(userRef, { adsterraNativeCount: newCount, lastAdsterraNativeDate: new Date().toISOString().split('T')[0] });
+            userData.adsterraNativeCount = newCount;
 
             // Strike logic
             let newStrikeCount = userData.strikeCount || 0;
+            const today = new Date().toISOString().split('T')[0];
+            const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0];
+
             if (userData.lastStrikeDate !== today) { // Only increment if not already incremented today for *any* ad
                 if (userData.lastStrikeDate === yesterday) {
                     newStrikeCount += 1; // Continue streak
@@ -1325,7 +1501,7 @@
             updateStrikeDisplay();
 
             showAlert(`Badhai ho! Aapne ${rewardAmount} jeete hain.`);
-            updateAdsLeftCount();
+            updateAllAdsLeftCounts(); // Refresh counts and enable/disable buttons based on limits
 
             lastNonTaskAdClaimTime = Date.now(); // Update timestamp for early access check
             startAdCooldown(); // Start the general 5-second cooldown
@@ -1339,10 +1515,16 @@
         function resetAdsterraRewardProcess() {
             clearInterval(adsterraTimer);
             adsterraTimer = null;
+            clearTimeout(adLoadTimeoutId);
+            clearInterval(adLoadCheckInterval);
+
             adsterraTimeLeft = ADSTERRA_REWARD_TIMER_DURATION;
 
             adsterraTimerDisplay.classList.add('hidden');
             adsterraTimerDisplay.textContent = ''; // Clear timer text
+            adsterraStatusMessageEl.classList.add('hidden');
+            adsterraStatusMessageEl.textContent = '';
+            adsterraLoadingText.style.display = 'none';
 
             // Clear Adsterra ad content
             const adsterraDiv = document.getElementById('container-672b63be9fb2075930c092f8318d528c');
@@ -1359,57 +1541,21 @@
             window.removeEventListener('blur', handleAdsterraBlur);
             window.removeEventListener('focus', handleAdsterraFocus);
             
-            setAllAdButtonsState(false); // Re-enable all non-inApp buttons
-            startAdCooldown(); // Ensure the general cooldown is respected if an ad failed or was cancelled
+            // Re-enable all other buttons, respecting their individual limits
+            setAllAdButtonsState(false); 
+            updateAllAdsLeftCounts(); // Ensure the buttons are correctly enabled/disabled based on current counts
         }
 
 
         window.claimReward = async function(taskType) {
+            if (!currentUser || !userData) {
+                return showAlert("Login karein ya signup karein.");
+            }
+
+            const userRef = doc(db, "users", currentUser.uid);
             const today = new Date().toISOString().split('T')[0];
             const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0];
-            const userRef = doc(db, "users", currentUser.uid);
 
-            // --- Handle 'inApp' task separately (no cooldowns/restrictions) ---
-            if (taskType === 'inApp') {
-                showAlert("2 min wait karo uske baad back aao reward paao", async () => {
-                    window.open('https://otieu.com/4/10502742', '_blank');
-                    loader.style.display = 'flex';
-                    showAlert("कृपया 2 मिनट प्रतीक्षा करें...", null);
-                    
-                    setTimeout(async () => {
-                        // Reward logic for inApp task
-                        const newCount = (userData.dailyAdCount || 0) + 1;
-                        await updateDoc(userRef, { dailyAdCount: newCount });
-                        userData.dailyAdCount = newCount;
-                        const rewardAmount = 100; 
-                        await updateBalance(rewardAmount);
-                        // Strike logic for inApp task (same as other ads)
-                        let newStrikeCount = userData.strikeCount || 0;
-                        if (userData.lastStrikeDate !== today) { // Only increment if not already incremented today for *any* ad
-                            if (userData.lastStrikeDate === new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0]) {
-                                newStrikeCount += 1;
-                            } else {
-                                newStrikeCount = 1;
-                            }
-                        }
-                        userData.strikeCount = newStrikeCount;
-                        userData.lastStrikeDate = today;
-                        await updateDoc(userRef, { strikeCount: newStrikeCount, lastStrikeDate: today });
-                        updateStrikeDisplay(); 
-
-                        showAlert(`Badhai ho! Aapne ${rewardAmount} jeete hain.`);
-                        updateAdsLeftCount();
-                        loader.style.display = 'none';
-                    }, 2 * 60 * 1000); // 2 minutes
-                });
-                return; // Exit here for inApp tasks
-            }
-
-            // --- For other ad types (interstitial, miniApp) apply restrictions/cooldowns ---
-            // 'popup' is now handled by startAdsterraRewardProcess, so ignore here
-            if (taskType === 'popup') {
-                return; 
-            }
 
             // Early Access Restriction Check (14 seconds)
             const timeSinceLastAd = Date.now() - lastNonTaskAdClaimTime;
@@ -1418,45 +1564,45 @@
                 return;
             }
 
-            // Daily Ad Limit Check
-            if (userData.lastAdWatchDate !== today) {
-                await updateDoc(userRef, { dailyAdCount: 0, lastAdWatchDate: today });
-                userData.dailyAdCount = 0;
-                userData.lastAdWatchDate = today;
-            }
-            if (userData.dailyAdCount >= (appConfig.dailyAdLimit || 10)) {
-                return showAlert("Aapki aaj ki ad dekhne ki seema poori ho gayi hai.");
-            }
-            
-            // Disable buttons and clear any existing cooldown display message
-            setAllAdButtonsState(true, 'Loading Ad...'); // Set general message during ad loading
+            // Disable all other ad buttons while one is active
+            setAllAdButtonsState(true, 'Loading Ad...');
 
-            let adPromise;
+            let rewardAmount = 0;
+            let currentCountField = '';
+            let lastWatchDateField = '';
+            let limitField = '';
+            let updatePayload = {};
+
             switch(taskType) {
                 case 'interstitial':
-                case 'miniApp':
+                    currentCountField = 'monetagInterstitialCount';
+                    lastWatchDateField = 'lastMonetagInterstitialDate';
+                    limitField = 'monetagInterstitialLimit';
+                    rewardAmount = 50;
+                    if ((userData[currentCountField] || 0) >= (appConfig[limitField] || 0)) {
+                        setAllAdButtonsState(false); // Re-enable if limit reached
+                        return showAlert("Aapki aaj ki 'Watch Short Ad' dekhne ki seema poori ho gayi hai.");
+                    }
                     if (typeof window.show_10495819 !== 'function') {
                         setAllAdButtonsState(false, ''); // Re-enable if ad service not available
                         return showAlert("Ad service abhi uplabdh nahi hai. Kripya baad mein prayas karein.");
                     }
-                    adPromise = window.show_10495819();
-                    adPromise.then(async () => {
-                        const newCount = (userData.dailyAdCount || 0) + 1;
-                        await updateDoc(userRef, { dailyAdCount: newCount });
-                        userData.dailyAdCount = newCount;
-                        
-                        let rewardAmount = 50;
-                        if (taskType === 'miniApp') rewardAmount = 100;
+                    window.show_10495819().then(async () => {
+                        updatePayload[currentCountField] = (userData[currentCountField] || 0) + 1;
+                        updatePayload[lastWatchDateField] = today;
+                        await updateDoc(userRef, updatePayload);
+                        userData[currentCountField] = updatePayload[currentCountField];
+                        userData[lastWatchDateField] = updatePayload[lastWatchDateField];
 
                         await updateBalance(rewardAmount);
 
-                        // Strike logic
+                        // Strike logic (same for all rewarded ads)
                         let newStrikeCount = userData.strikeCount || 0;
-                        if (userData.lastStrikeDate !== today) { // Only increment if not already incremented today for *any* ad
+                        if (userData.lastStrikeDate !== today) { 
                             if (userData.lastStrikeDate === yesterday) {
-                                newStrikeCount += 1; // Continue streak
+                                newStrikeCount += 1;
                             } else {
-                                newStrikeCount = 1; // New streak
+                                newStrikeCount = 1;
                             }
                         }
                         userData.strikeCount = newStrikeCount;
@@ -1465,18 +1611,111 @@
                         updateStrikeDisplay();
 
                         showAlert(`Badhai ho! Aapne ${rewardAmount} jeete hain.`);
-                        updateAdsLeftCount();
-                        
-                        // --- Start 5-second Cooldown ---
-                        lastNonTaskAdClaimTime = Date.now(); // Update timestamp for early access check
-                        startAdCooldown(); // Call the new cooldown function
-
+                        updateAllAdsLeftCounts();
+                        lastNonTaskAdClaimTime = Date.now();
+                        startAdCooldown();
                     }).catch(e => {
                         console.error(`${taskType} Ad error:`, e);
                         showAlert('Ad nahi dikhaya ja saka. Kripya baad mein prayas karein.');
-                        setAllAdButtonsState(false, ''); // Re-enable buttons on ad failure
+                        setAllAdButtonsState(false, '');
                     });
                     break;
+
+                case 'miniApp':
+                    currentCountField = 'monetagMiniAppCount';
+                    lastWatchDateField = 'lastMonetagMiniAppDate';
+                    limitField = 'monetagMiniAppLimit';
+                    rewardAmount = 100; // Mini App reward
+                     if ((userData[currentCountField] || 0) >= (appConfig[limitField] || 0)) {
+                        setAllAdButtonsState(false); // Re-enable if limit reached
+                        return showAlert("Aapki aaj ki 'Play Mini App' dekhne ki seema poori ho gayi hai.");
+                    }
+                    if (typeof window.show_10495819 !== 'function') {
+                        setAllAdButtonsState(false, ''); // Re-enable if ad service not available
+                        return showAlert("Ad service abhi uplabdh nahi hai. Kripya baad mein prayas karein.");
+                    }
+                    window.show_10495819().then(async () => {
+                        updatePayload[currentCountField] = (userData[currentCountField] || 0) + 1;
+                        updatePayload[lastWatchDateField] = today;
+                        await updateDoc(userRef, updatePayload);
+                        userData[currentCountField] = updatePayload[currentCountField];
+                        userData[lastWatchDateField] = updatePayload[lastWatchDateField];
+
+                        await updateBalance(rewardAmount);
+
+                        // Strike logic
+                        let newStrikeCount = userData.strikeCount || 0;
+                        if (userData.lastStrikeDate !== today) { 
+                            if (userData.lastStrikeDate === yesterday) {
+                                newStrikeCount += 1;
+                            } else {
+                                newStrikeCount = 1;
+                            }
+                        }
+                        userData.strikeCount = newStrikeCount;
+                        userData.lastStrikeDate = today;
+                        await updateDoc(userRef, { strikeCount: newStrikeCount, lastStrikeDate: today });
+                        updateStrikeDisplay();
+
+                        showAlert(`Badhai ho! Aapne ${rewardAmount} jeete hain.`);
+                        updateAllAdsLeftCounts();
+                        lastNonTaskAdClaimTime = Date.now();
+                        startAdCooldown();
+                    }).catch(e => {
+                        console.error(`${taskType} Ad error:`, e);
+                        showAlert('Ad nahi dikhaya ja saka. Kripya baad mein prayas karein.');
+                        setAllAdButtonsState(false, '');
+                    });
+                    break;
+
+                case 'inApp':
+                    currentCountField = 'inAppTaskCount';
+                    lastWatchDateField = 'lastInAppTaskDate';
+                    limitField = 'inAppTaskLimit';
+                    rewardAmount = 100; // In-App task reward
+                    if ((userData[currentCountField] || 0) >= (appConfig[limitField] || 0)) {
+                        setAllAdButtonsState(false); // Re-enable if limit reached
+                        return showAlert("Aapki aaj ki 'Tasks' dekhne ki seema poori ho gayi hai.");
+                    }
+                    showAlert("2 min wait karo uske baad back aao reward paao", async () => {
+                        window.open('https://otieu.com/4/10502742', '_blank'); // Open the task in a new tab
+                        loader.style.display = 'flex';
+                        adCooldownMessageEl.textContent = "कृपया 2 मिनट प्रतीक्षा करें..."; // Show custom message in cooldown area
+                        adCooldownMessageEl.style.display = 'block';
+                        setAllAdButtonsState(true, adCooldownMessageEl.textContent); // Keep all buttons disabled with message
+
+                        setTimeout(async () => {
+                            // Reward logic for inApp task
+                            updatePayload[currentCountField] = (userData[currentCountField] || 0) + 1;
+                            updatePayload[lastWatchDateField] = today;
+                            await updateDoc(userRef, updatePayload);
+                            userData[currentCountField] = updatePayload[currentCountField];
+                            userData[lastWatchDateField] = updatePayload[lastWatchDateField];
+                            
+                            await updateBalance(rewardAmount);
+                            // Strike logic for inApp task (same as other ads)
+                            let newStrikeCount = userData.strikeCount || 0;
+                            if (userData.lastStrikeDate !== today) { 
+                                if (userData.lastStrikeDate === yesterday) {
+                                    newStrikeCount += 1;
+                                } else {
+                                    newStrikeCount = 1;
+                                }
+                            }
+                            userData.strikeCount = newStrikeCount;
+                            userData.lastStrikeDate = today;
+                            await updateDoc(userRef, { strikeCount: newStrikeCount, lastStrikeDate: today });
+                            updateStrikeDisplay(); 
+
+                            showAlert(`Badhai ho! Aapne ${rewardAmount} jeete hain.`);
+                            updateAllAdsLeftCounts();
+                            loader.style.display = 'none';
+                            adCooldownMessageEl.style.display = 'none'; // Clear the message
+                            setAllAdButtonsState(false); // Re-enable all buttons
+                        }, 2 * 60 * 1000); // 2 minutes
+                    });
+                    break;
+
                 default:
                     setAllAdButtonsState(false, ''); // Re-enable buttons if taskType is unknown
                     return;
