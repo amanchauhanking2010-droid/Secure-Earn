@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secure Earn</title>
 
-    <!-- Aapka Naya Ad Code -->
+    <!-- Aapka Naya Ad Code (GigaPub) -->
+    <script src="https://ad.gigapub.tech/script?id=5424"></script>
+
     <!-- Monetag SDK ab bhi load hoga, lekin 'inApp' task iska istemal seedhe nahi karega -->
     <script src='//libtl.com/sdk.js' data-zone='10495819' data-sdk='show_10495819'></script>
 
@@ -282,6 +284,27 @@
         </div>
     </div>
 
+    <!-- Game Control Modal -->
+    <div id="game-control-modal" class="hidden fixed inset-0 modal-overlay flex items-center justify-center z-[60] p-4">
+        <div class="bg-gray-800 rounded-lg p-6 w-full max-w-sm text-center shadow-lg">
+            <h3 class="text-xl font-bold text-accent mb-4">Game Chal Raha Hai!</h3>
+            <p class="text-gray-300 mb-6">Jab aap game khel chuke hon, ya jeet gaye hon, toh neeche diye gaye vikalp chunein.</p>
+
+            <button id="claim-game-finished-btn" class="w-full p-3 rounded-lg btn-accent mb-3">
+                Game Khel Liya (100 Coins)
+            </button>
+            <button id="claim-game-win-bonus-btn" class="w-full p-3 rounded-lg btn-outline-accent mb-3">
+                Maine Jeeta! (50 Coins Bonus)
+            </button>
+            <button id="claim-game-mid-ad-btn" class="w-full p-3 rounded-lg border border-purple-500 text-purple-400 mb-4">
+                Ad Dekhein (20 Coins)
+            </button>
+            <button id="game-control-cancel-btn" class="w-full p-3 rounded-lg text-gray-400 mt-4">
+                Cancel Game Session
+            </button>
+        </div>
+    </div>
+
     <!-- NEW: Force Update Modal (Cannot Close) -->
     <div id="update-modal" class="hidden fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-[70] p-6">
         <div class="bg-gray-800 rounded-xl p-6 w-full max-w-sm text-center border border-accent shadow-2xl">
@@ -381,6 +404,12 @@
 
         const adButtons = document.querySelectorAll('.ad-button');
         const adCooldownMessageEl = document.getElementById('ad-cooldown-message');
+
+        // --- Global flags for game state ---
+        let isMiniAppGameActive = false;
+        let hasClaimedGameWinBonus = false;
+        let hasShownReturnAd = false; // To limit return-to-app ads per session
+
 
         // --- Helper Function: getSafeName ---
         /**
@@ -666,6 +695,18 @@
             document.getElementById('home-withdraw-btn').addEventListener('click', () => navigateTo('wallet-page'));
             document.getElementById('apply-referral-btn').addEventListener('click', handleApplyReferralCode);
             withdrawMethodSelect.addEventListener('change', updateDynamicPaymentFields);
+
+            // Game Control Modal Event Listeners
+            document.getElementById('claim-game-finished-btn').addEventListener('click', handleGameFinishedClaim);
+            document.getElementById('claim-game-win-bonus-btn').addEventListener('click', handleGameWinBonusClaim);
+            document.getElementById('claim-game-mid-ad-btn').addEventListener('click', handleGameMidAdClaim); // New button event listener
+            document.getElementById('game-control-cancel-btn').addEventListener('click', () => {
+                hideGameControlModal();
+                setAdButtonsState(false, ''); // Re-enable main ad buttons immediately on cancel
+                showAlert("Game session cancel kar diya gaya hai. Aap phir se 'Play Mini App' par click karke shuru kar sakte hain.");
+            });
+
+            document.addEventListener('visibilitychange', handleVisibilityChange); // New visibility listener
         }
 
         // --- Authentication Handlers ---
@@ -1135,9 +1176,232 @@
             }, 1000);
         }
 
+        // Helper to apply strike logic (used by all rewarded GigaPub ads in Mini App flow)
+        async function applyStrikeLogic(userRef, today) {
+            const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0];
+            let newStrikeCount = userData.strikeCount || 0;
+            if (userData.lastStrikeDate !== today) {
+                if (userData.lastStrikeDate === yesterday) {
+                    newStrikeCount += 1;
+                } else { // Streak broken
+                    newStrikeCount = 1;
+                }
+            } else { // Already watched an ad today, maintain strike count (or ensure it's at least 1)
+                newStrikeCount = Math.max(1, newStrikeCount);
+            }
+            userData.strikeCount = newStrikeCount;
+            userData.lastStrikeDate = today;
+            await updateDoc(userRef, { strikeCount: newStrikeCount, lastStrikeDate: today });
+            updateStrikeDisplay();
+        }
+
+        // --- Game Control Modal Functions ---
+        function showGameControlModal() {
+            document.getElementById('game-control-modal').classList.remove('hidden');
+            isMiniAppGameActive = true;
+            hasClaimedGameWinBonus = false; // Reset for new session
+            hasShownReturnAd = false; // Reset for new session
+            setAdButtonsState(true, 'Game chal raha hai, yahan se action lein...'); // Keep main buttons disabled
+        }
+
+        function hideGameControlModal() {
+            document.getElementById('game-control-modal').classList.add('hidden');
+            isMiniAppGameActive = false; // Game session ended
+            // Main buttons will be re-enabled by startAdCooldown after the 100 coins claim,
+            // or immediately if the session is cancelled without claiming 100 coins.
+        }
+
+        async function handleGameFinishedClaim() {
+            if (!isMiniAppGameActive) return showAlert("Pehle game shuru karein.", hideGameControlModal);
+
+            const userRef = doc(db, "users", currentUser.uid);
+            const today = new Date().toISOString().split('T')[0];
+
+            if (userData.dailyAdCount >= (appConfig.dailyAdLimit || 10)) {
+                hideGameControlModal(); // Close modal if limit reached
+                setAdButtonsState(false, ''); // Re-enable main buttons
+                return showAlert("Aapki aaj ki ad dekhne ki seema poori ho gayi hai. Game session ab khatam ho gaya hai.");
+            }
+
+            loader.style.display = 'flex';
+            showAlert("Game khatam, ab agla ad load ho raha hai...");
+
+            try {
+                await window.showGiga(); // Ad 2: Game End Ad
+                const newCount = (userData.dailyAdCount || 0) + 1;
+                await updateDoc(userRef, { dailyAdCount: newCount });
+                userData.dailyAdCount = newCount;
+
+                const rewardAmount = 100;
+                await updateBalance(rewardAmount);
+
+                await applyStrikeLogic(userRef, today); // Apply strike logic
+
+                showAlert(`Badhai ho! Aapne ${rewardAmount} jeete hain!`);
+                updateAdsLeftCount();
+
+                lastNonTaskAdClaimTime = Date.now();
+                hideGameControlModal(); // Finally hide game modal
+                setAdButtonsState(false, ''); // Re-enable main ad buttons
+
+            } catch (e) {
+                console.error("Gigapub Ad (after game) error:", e);
+                showAlert('Game ke baad ka ad nahi dikhaya ja saka. Kripya baad mein prayas karein.', () => {
+                    hideGameControlModal();
+                    setAdButtonsState(false, ''); // Re-enable on error too
+                });
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+
+        async function handleGameWinBonusClaim() {
+            if (!isMiniAppGameActive) return showAlert("Pehle game shuru karein.");
+            if (hasClaimedGameWinBonus) return showAlert("Aap pehle hi jeetne ka bonus claim kar chuke hain is session mein.");
+
+            const userRef = doc(db, "users", currentUser.uid);
+            const today = new Date().toISOString().split('T')[0];
+
+            // Early Access Restriction Check (14 seconds)
+            const timeSinceLastAd = Date.now() - lastNonTaskAdClaimTime;
+            if (lastNonTaskAdClaimTime !== 0 && timeSinceLastAd < EARLY_ACCESS_RESTRICTION_DURATION) {
+                return showAlert("⏳ Aap time se pehle aa gaye ho, please thoda wait karein.");
+            }
+
+            // Check Daily Ad Limit
+            if (userData.dailyAdCount >= (appConfig.dailyAdLimit || 10)) {
+                return showAlert("Aapki aaj ki ad dekhne ki seema poori ho gayi hai. Aap jeetne ka bonus claim nahi kar sakte.");
+            }
+
+            loader.style.display = 'flex';
+            showAlert("Jeetne ka bonus claim kiya ja raha hai... ad load ho raha hai.");
+
+            try {
+                await window.showGiga(); // Ad 3: Win Bonus Ad
+                const rewardAmount = 50;
+                await updateBalance(rewardAmount);
+                hasClaimedGameWinBonus = true;
+
+                const newCount = (userData.dailyAdCount || 0) + 1;
+                await updateDoc(userRef, { dailyAdCount: newCount });
+                userData.dailyAdCount = newCount;
+
+                await applyStrikeLogic(userRef, today); // Apply strike logic
+
+                showAlert(`Badhai ho! Aapne jeetne ke liye ${rewardAmount} bonus jeete hain!`);
+                updateAdsLeftCount();
+
+                lastNonTaskAdClaimTime = Date.now();
+
+            } catch (e) {
+                console.error("Gigapub Ad (win bonus) error:", e);
+                showAlert('Jeetne ka bonus ad nahi dikhaya ja saka. Kripya baad mein prayas karein.');
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+
+        // New Game Mid-Ad Claim Handler
+        async function handleGameMidAdClaim() {
+            if (!isMiniAppGameActive) return showAlert("Pehle game shuru karein.", hideGameControlModal);
+            
+            const userRef = doc(db, "users", currentUser.uid);
+            const today = new Date().toISOString().split('T')[0];
+
+            // Check Early Access Restriction
+            const timeSinceLastAd = Date.now() - lastNonTaskAdClaimTime;
+            if (lastNonTaskAdClaimTime !== 0 && timeSinceLastAd < EARLY_ACCESS_RESTRICTION_DURATION) {
+                return showAlert("⏳ Aap time se pehle aa gaye ho, please thoda wait karein.");
+            }
+
+            // Check Daily Ad Limit
+            if (userData.dailyAdCount >= (appConfig.dailyAdLimit || 10)) {
+                return showAlert("Aapki aaj ki ad dekhne ki seema poori ho gayi hai. Aap game control modal se aur ads nahi dekh sakte.");
+            }
+
+            loader.style.display = 'flex';
+            showAlert("Game ke beech ka ad load ho raha hai...");
+
+            try {
+                await window.showGiga(); // Ad 4: Mid-Game Ad
+                const newCount = (userData.dailyAdCount || 0) + 1;
+                await updateDoc(userRef, { dailyAdCount: newCount });
+                userData.dailyAdCount = newCount;
+
+                const rewardAmount = 20; // Reward for mid-game ad
+                await updateBalance(rewardAmount);
+
+                await applyStrikeLogic(userRef, today); // Apply strike logic
+
+                showAlert(`Badhai ho! Aapne game ke beech mein ${rewardAmount} jeete hain!`);
+                updateAdsLeftCount();
+
+                lastNonTaskAdClaimTime = Date.now(); // Update last ad time
+
+            } catch (e) {
+                console.error("Gigapub Ad (mid-game) error:", e);
+                showAlert('Game ke beech ka ad nahi dikhaya ja saka. Kripya baad mein prayas karein.');
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+
+
+        // New Visibility Change Handler (for "game khele tab par bhi add run ho")
+        async function handleVisibilityChange() {
+            if (document.visibilityState === 'visible' && isMiniAppGameActive && !hasShownReturnAd) {
+                // If user returns to the app while game is active and we haven't shown this ad yet for this session
+                
+                const userRef = doc(db, "users", currentUser.uid);
+                const today = new Date().toISOString().split('T')[0];
+
+                // Check Early Access Restriction
+                const timeSinceLastAd = Date.now() - lastNonTaskAdClaimTime;
+                if (lastNonTaskAdClaimTime !== 0 && timeSinceLastAd < EARLY_ACCESS_RESTRICTION_DURATION) {
+                    console.log("Not showing return ad due to early access restriction.");
+                    return; // Don't show if too soon
+                }
+
+                // Check Daily Ad Limit
+                if (userData.dailyAdCount >= (appConfig.dailyAdLimit || 10)) {
+                    console.log("Not showing return ad due to daily ad limit.");
+                    return; // Don't show if limit reached
+                }
+
+                console.log("User returned to app, attempting to show ad...");
+                showAlert("Wapas aane par ek chhota ad chalega...", null); // Inform user
+                loader.style.display = 'flex';
+
+                try {
+                    await window.showGiga(); // Ad 5: Return to App Ad
+                    const rewardAmount = 10; // Small reward for returning ad
+                    await updateBalance(rewardAmount);
+                    hasShownReturnAd = true; // Mark as shown for this session
+
+                    const newCount = (userData.dailyAdCount || 0) + 1;
+                    await updateDoc(userRef, { dailyAdCount: newCount });
+                    userData.dailyAdCount = newCount;
+
+                    await applyStrikeLogic(userRef, today); // Apply strike logic
+
+                    showAlert(`Wapas aane ke liye ${rewardAmount} coins!`, () => {
+                        // This callback ensures the loader is hidden after the user dismisses the alert.
+                        loader.style.display = 'none';
+                        updateAdsLeftCount();
+                    });
+                    lastNonTaskAdClaimTime = Date.now(); // Update last ad time
+
+                } catch (e) {
+                    console.error("Gigapub Ad (return to app) error:", e);
+                    showAlert('Wapas aane par ad nahi dikhaya ja saka.');
+                    loader.style.display = 'none'; // Hide loader if ad fails
+                }
+            }
+        }
+
+
         window.claimReward = async function(taskType) {
             const today = new Date().toISOString().split('T')[0];
-            const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0];
             const userRef = doc(db, "users", currentUser.uid);
 
             // Handle 'inApp' task separately (no cooldowns/restrictions)
@@ -1154,20 +1418,7 @@
                         userData.dailyAdCount = newCount;
                         const rewardAmount = 100;
                         await updateBalance(rewardAmount);
-                        // Strike logic for inApp task (same as other ads)
-                        let newStrikeCount = userData.strikeCount || 0;
-                        if (userData.lastStrikeDate !== today) {
-                            if (userData.lastStrikeDate === yesterday) {
-                                newStrikeCount += 1;
-                            } else {
-                                newStrikeCount = 1;
-                            }
-                        }
-                        userData.strikeCount = newStrikeCount;
-                        userData.lastStrikeDate = today;
-                        await updateDoc(userRef, { strikeCount: newStrikeCount, lastStrikeDate: today });
-                        updateStrikeDisplay();
-
+                        await applyStrikeLogic(userRef, today); // Apply strike logic
                         showAlert(`Badhai ho! Aapne ${rewardAmount} jeete hain.`);
                         updateAdsLeftCount();
                         loader.style.display = 'none';
@@ -1178,14 +1429,14 @@
 
             // For other ad types (interstitial, popup, miniApp) apply restrictions/cooldowns
 
-            // Early Access Restriction Check (14 seconds)
+            // Early Access Restriction Check (14 seconds) for any non-task ad
             const timeSinceLastAd = Date.now() - lastNonTaskAdClaimTime;
             if (lastNonTaskAdClaimTime !== 0 && timeSinceLastAd < EARLY_ACCESS_RESTRICTION_DURATION) {
                 showAlert("⏳ Aap time se pehle aa gaye ho, please thoda wait karein.");
                 return;
             }
 
-            // Daily Ad Limit Check
+            // Daily Ad Limit Check (for interstitial/popup/miniApp main reward)
             if (userData.lastAdWatchDate !== today) {
                 await updateDoc(userRef, { dailyAdCount: 0, lastAdWatchDate: today });
                 userData.dailyAdCount = 0;
@@ -1198,39 +1449,24 @@
             // Disable buttons and clear any existing cooldown display message
             setAdButtonsState(true, 'Loading Ad...');
 
-            let adPromise;
             switch (taskType) {
                 case 'interstitial':
                 case 'popup':
-                case 'miniApp':
                     if (typeof window.show_10495819 !== 'function') {
                         setAdButtonsState(false, '');
                         return showAlert("Ad service abhi uplabdh nahi hai. Kripya baad mein prayas karein.");
                     }
-                    adPromise = (taskType === 'popup') ? window.show_10495819('pop') : window.show_10495819();
+                    const adPromise = (taskType === 'popup') ? window.show_10495819('pop') : window.show_10495819();
                     adPromise.then(async () => {
                         const newCount = (userData.dailyAdCount || 0) + 1;
                         await updateDoc(userRef, { dailyAdCount: newCount });
                         userData.dailyAdCount = newCount;
 
-                        let rewardAmount = 50;
-                        if (taskType === 'miniApp') rewardAmount = 100;
+                        let rewardAmount = 50; // Default for interstitial/popup
 
                         await updateBalance(rewardAmount);
 
-                        // Strike logic
-                        let newStrikeCount = userData.strikeCount || 0;
-                        if (userData.lastStrikeDate !== today) {
-                            if (userData.lastStrikeDate === yesterday) {
-                                newStrikeCount += 1;
-                            } else {
-                                newStrikeCount = 1;
-                            }
-                        }
-                        userData.strikeCount = newStrikeCount;
-                        userData.lastStrikeDate = today;
-                        await updateDoc(userRef, { strikeCount: newStrikeCount, lastStrikeDate: today });
-                        updateStrikeDisplay();
+                        await applyStrikeLogic(userRef, today); // Apply strike logic
 
                         showAlert(`Badhai ho! Aapne ${rewardAmount} jeete hain.`);
                         updateAdsLeftCount();
@@ -1243,6 +1479,38 @@
                         showAlert('Ad nahi dikhaya ja saka. Kripya baad mein prayas karein.');
                         setAdButtonsState(false, '');
                     });
+                    break;
+
+                case 'miniApp': // MODIFIED LOGIC FOR MINI APP
+                    if (isMiniAppGameActive) { // Prevent starting new game session if one is active
+                        return showAlert("Ek game session pehle se chal raha hai. Kripya Game Control Modal se action lein.");
+                    }
+                    if (userData.dailyAdCount >= (appConfig.dailyAdLimit || 10)) {
+                         return showAlert("Aapki aaj ki ad dekhne ki seema poori ho gayi hai. Naye game session ke liye kal wapas aayen.");
+                    }
+                    if (typeof window.showGiga !== 'function') {
+                        setAdButtonsState(false, '');
+                        return showAlert("Game ke ads abhi uplabdh nahi hain. Kripya baad mein prayas karein.");
+                    }
+
+                    setAdButtonsState(true, 'Game shuru karne se pehle ad load ho raha hai...');
+                    loader.style.display = 'flex'; // Show loader during ad load
+                    try {
+                        await window.showGiga(); // Ad 1: Game Start Ad
+                        lastNonTaskAdClaimTime = Date.now(); // Update ad time after first ad
+                        
+                        // Ad 1 successful, open game
+                        window.open('https://gemioli.com/yetisensation/html5/gemioli/', '_blank');
+
+                        showAlert("Game ek naye tab mein shuru ho gaya hai! Wapas Secure Earn app par aakar Game Control Modal se rewards claim karein. Game ke beech mein ya jeetne par bhi ads dekh sakte hain.", showGameControlModal);
+                        
+                    } catch (e) {
+                        console.error("Gigapub Ad (before game) error:", e);
+                        showAlert('Game se pehle ka ad nahi dikhaya ja saka. Kripya baad mein prayas karein.');
+                        setAdButtonsState(false, '');
+                    } finally {
+                        loader.style.display = 'none'; // Hide loader
+                    }
                     break;
                 default:
                     setAdButtonsState(false, '');
