@@ -5,13 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secure Earn</title>
     
-    <!-- Rewarded Ad Code - Monetag SDK -->
-    <!-- Yeh script rewarded ads load karega jab user "Claim" button par click karega. -->
-    <!-- Monetag dashboard mein is zone (10495819) ko 'Rewarded Interstitial' ya 'Rewarded Video' ke liye configure karein. -->
+    <!-- Aapka Naya Ad Code -->
+    <!-- Monetag SDK ab bhi load hoga, lekin 'inApp' task iska istemal seedhe nahi karega -->
     <script src='//libtl.com/sdk.js' data-zone='10495819' data-sdk='show_10495819'></script>
     
-    <!-- Puraane pop-up/vignette ad scripts hata diye gaye hain taaki sirf rewarded ads dikhe. -->
-
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -42,24 +39,28 @@
         /* Modal Styles */
         .modal-overlay { background-color: rgba(0, 0, 0, 0.8); }
 
-        /* NEW: Glow effect for the Start button */
-        @keyframes glow {
-            0% { box-shadow: 0 0 5px #ff8c00, 0 0 10px #ff8c00, 0 0 15px #ff8c00; }
-            50% { box-shadow: 0 0 10px #e67e00, 0 0 20px #e67e00, 0 0 30px #e67e00; }
-            100% { box-shadow: 0 0 5px #ff8c00, 0 0 10px #ff8c00, 0 0 15px #ff8c00; }
+        /* Strike Glow Effect */
+        .strike-glow {
+            color: #FFEB3B; /* Bright yellow */
+            text-shadow: 0 0 5px rgba(255, 235, 59, 0.7), 0 0 10px rgba(255, 235, 59, 0.5), 0 0 15px rgba(255, 235, 59, 0.3);
+            animation: pulseGlow 1.5s infinite alternate;
         }
 
-        .btn-glow {
-            animation: glow 1.5s infinite alternate;
+        @keyframes pulseGlow {
+            from { text-shadow: 0 0 5px rgba(255, 235, 59, 0.7), 0 0 10px rgba(255, 235, 59, 0.5); }
+            to { text-shadow: 0 0 8px rgba(255, 235, 59, 0.9), 0 0 15px rgba(255, 235, 59, 0.7), 0 0 20px rgba(255, 235, 59, 0.4); }
         }
 
-        /* NEW: Style for disabled 'Tasks' button */
-        .btn-disabled-limit {
-            background-color: #4a4a4a !important; /* Darker grey */
-            color: #a0a0a0 !important; /* Lighter grey text */
+        /* Medals Styling for larger display */
+        .medal-icon {
+            font-size: 1.5rem; /* Adjust size as needed */
+            line-height: 1; /* Align with text */
+            margin-right: 0.5rem;
+        }
+
+        .ad-button:disabled {
+            opacity: 0.6;
             cursor: not-allowed;
-            text-decoration: line-through; /* Strikethrough effect */
-            animation: none !important; /* Remove glow */
         }
     </style>
 </head>
@@ -97,22 +98,40 @@
             <h1 class="text-xl font-bold text-accent">Secure Earn</h1>
             <div class="flex items-center space-x-4">
                 <div id="notification-bell" class="relative cursor-pointer">
-                    <i data-lucide="bell" class="mx-auto w-6 h-6"></i>
+                    <i data-lucide="bell" class="w-6 h-6"></i>
                     <div id="notification-dot" class="notification-dot"></div>
                 </div>
-                <i data-lucide="user" class="mx-auto w-6 h-6 cursor-pointer" onclick="navigateTo('profile-page')"></i>
+                <!-- Profile icon added next to notification -->
+                <i data-lucide="user-circle" class="w-6 h-6 cursor-pointer" onclick="navigateTo('profile-page')"></i>
+                <!-- NEW: Help icon replacing the 'Top' icon -->
+                <i data-lucide="help-circle" class="w-6 h-6 cursor-pointer" onclick="openHelpChat()"></i>
             </div>
         </header>
 
         <main class="flex-grow">
             <!-- Home Page -->
             <div id="home-page" class="p-4 space-y-6 sub-page">
-                <div class="card-bg p-4 rounded-lg flex items-center justify-between">
+                <div class="card-bg p-4 rounded-lg flex items-start justify-between shadow-lg">
                     <div>
                         <p class="text-gray-400 text-sm">Your Balance</p>
-                        <p class="text-3xl font-bold"><span id="coin-balance">0</span> Coins</p>
+                        <p class="text-3xl font-bold flex items-center mb-1">
+                            <span id="coin-balance">0</span> 
+                            <!-- Strike display next to coins -->
+                            <span id="strike-display" class="ml-2 text-2xl strike-glow hidden"></span>
+                        </p>
+                        <!-- Strike system visual hint -->
+                        <p class="text-xs text-gray-500">🔥 1 Strike = 5 Ads</p>
                     </div>
-                    <button id="home-withdraw-btn" class="bg-white text-black font-semibold px-6 py-2 rounded-lg">Withdraw</button>
+                    
+                    <div class="flex flex-col items-end space-y-2"> <!-- Container for strike indicator and withdraw button -->
+                        <!-- Activity Level Indicator ABOVE Withdraw button -->
+                        <div id="strike-activity-indicator" class="flex items-center text-sm text-accent">
+                            <i data-lucide="flame" class="w-4 h-4 mr-1"></i> 
+                            <span id="activity-level-text">Activity Level: <span id="current-activity-level">0</span></span>
+                        </div>
+                        <!-- Withdraw Button, compact and premium -->
+                        <button id="home-withdraw-btn" class="btn-accent px-5 py-2 rounded-lg text-sm">Withdraw</button> 
+                    </div>
                 </div>
                 <section>
                     <div class="flex justify-between items-center">
@@ -122,23 +141,27 @@
                         </div>
                         <p class="text-sm text-gray-400">Ads Left: <span id="ads-left-count">...</span></p>
                     </div>
+
+                    <!-- Ad Cooldown Message -->
+                    <div id="ad-cooldown-message" class="text-center text-accent font-semibold text-sm mb-4" style="display: none;"></div>
+
                     <div class="space-y-3">
-                        <div class="bg-orange-500 p-3 rounded-lg flex items-center justify-between text-black">
+                        <div class="bg-orange-500 p-3 rounded-lg flex items-center justify-between text-black shadow-lg">
                             <div class="flex items-center space-x-3"><span class="text-3xl">🤩</span><div><h3 class="font-bold">Watch Short Ad</h3><p class="text-xs font-medium">Rewarded Interstitial</p></div></div>
-                            <button class="bg-white text-orange-500 font-bold px-6 py-2 rounded-lg text-sm btn" onclick="claimReward('interstitial')">Claim</button>
+                            <button id="claim-interstitial-btn" class="bg-white text-orange-500 font-bold px-6 py-2 rounded-lg text-sm btn ad-button" onclick="claimReward('interstitial')">Claim</button>
                         </div>
-                        <div class="card-bg p-3 rounded-lg flex items-center justify-between">
-                            <div class="flex items-center space-x-3"><span class="text-3xl">😎</span><div><h3 class="font-semibold">Watch Rewarded Ad</h3><p class="text-xs text-gray-400">Watch & Earn</p></div></div>
-                            <button class="bg-white text-black font-bold px-6 py-2 rounded-lg text-sm btn" onclick="claimReward('rewardedVideo')">Claim</button>
+                        <div class="card-bg p-3 rounded-lg flex items-center justify-between shadow-lg">
+                            <div class="flex items-center space-x-3"><span class="text-3xl">😎</span><div><h3 class="font-semibold">Click for Reward</h3><p class="text-xs text-gray-400">Rewarded Popup</p></div></div>
+                            <button id="claim-popup-btn" class="bg-white text-black font-bold px-6 py-2 rounded-lg text-sm btn ad-button" onclick="claimReward('popup')">Claim</button>
                         </div>
-                         <div class="card-bg p-3 rounded-lg flex items-center justify-between">
-                            <div class="flex items-center space-x-3"><span class="text-3xl">👀</span><div><h3 class="font-semibold">Tasks</h3><!-- 'Watch a Video' se 'Tasks' kiya गया --><p id="inApp-task-description" class="text-xs text-gray-400">More Coin</p><!-- 'In-App Interstitial' se 'More Coin' kiya गया --></div></div>
+                         <div class="card-bg p-3 rounded-lg flex items-center justify-between shadow-lg">
+                            <div class="flex items-center space-x-3"><span class="text-3xl">👀</span><div><h3 class="font-semibold">Tasks</h3><!-- 'Watch a Video' se 'Tasks' kiya gaya --><p class="text-xs text-gray-400">More Reward</p><!-- 'In-App Interstitial' se 'More Coin' kiya gaya --></div></div>
                             <!-- Yeh button 'inApp' taskType ke saath claimReward function ko call karta hai -->
-                            <button id="inApp-task-start-btn" class="bg-gray-700 text-white font-bold px-6 py-2 rounded-lg text-sm btn btn-glow" onclick="claimReward('inApp', event)">Start</button>
+                            <button id="claim-inApp-btn" class="bg-gray-700 text-white font-bold px-6 py-2 rounded-lg text-sm btn" onclick="claimReward('inApp')">Start</button>
                         </div>
-                        <div class="card-bg p-3 rounded-lg flex items-center justify-between">
+                        <div class="card-bg p-3 rounded-lg flex items-center justify-between shadow-lg">
                             <div class="flex items-center space-x-3"><span class="text-3xl">🎮</span><div><h3 class="font-semibold">Play Mini App</h3><p class="text-xs text-gray-400">Get a big reward!</p></div></div>
-                            <button class="bg-blue-500 text-white font-bold px-6 py-2 rounded-lg text-sm btn" onclick="claimReward('miniApp')">Play</button>
+                            <button id="claim-miniApp-btn" class="bg-blue-500 text-white font-bold px-6 py-2 rounded-lg text-sm btn ad-button" onclick="claimReward('miniApp')">Play</button>
                         </div>
                     </div>
                 </section>
@@ -147,15 +170,15 @@
             <!-- Wallet Page -->
             <div id="wallet-page" class="p-4 space-y-6 sub-page">
                 <h2 class="text-xl font-bold text-center">Mera Wallet</h2>
-                <div class="card-bg p-4 rounded-lg">
+                <div class="card-bg p-4 rounded-lg shadow-lg">
                     <h3 class="font-semibold mb-3">Earnings Withdraw Karein</h3>
-                    <p class="text-sm text-gray-400 mb-1">Current Balance: <span class="font-bold text-accent"><span id="wallet-coin-balance">0</span> Coins</span></p>
-                    <p class="text-sm text-gray-400 mb-2">Minimum Withdrawal: <span id="min-withdrawal-info">...</span> Coins</p>
+                    <p class="text-sm text-gray-400 mb-1">Current Balance: <span class="font-bold text-accent"><span id="wallet-coin-balance">0</span></span></p>
+                    <p class="text-sm text-gray-400 mb-2">Minimum Withdrawal: <span id="min-withdrawal-info">...</span></p>
                     <p class="text-sm text-gray-400 mb-4 font-semibold" id="coin-value-info">...</p>
                     
                     <!-- Standard Withdrawal Form -->
                     <div class="border-b border-gray-700 pb-4 mb-4">
-                        <input id="withdraw-amount" type="number" placeholder="Coin amount daalein" class="w-full p-3 rounded-lg input-field mb-3">
+                        <input id="withdraw-amount" type="number" placeholder="Amount daalein" class="w-full p-3 rounded-lg input-field mb-3">
                         <select id="withdraw-method" class="w-full p-3 rounded-lg input-field mb-3"></select>
                         <div id="payment-details-container"></div>
                         <button id="withdraw-btn" class="w-full p-3 rounded-lg btn-accent mt-3">Request Withdrawal</button>
@@ -165,7 +188,7 @@
                     <div class="pt-2">
                          <h4 class="font-semibold mb-2 text-sm text-gray-300">Other Methods</h4>
                          <button onclick="openRedeemModal()" class="w-full p-3 rounded-lg btn-outline-accent flex justify-center items-center gap-2">
-                             <i data-lucide="gift" class="mx-auto w-5 h-5"></i> Withdraw via Redeem Code
+                             <i data-lucide="gift" class="w-5 h-5"></i> Withdraw via Redeem Code
                          </button>
                     </div>
                 </div>
@@ -178,33 +201,53 @@
             <!-- Refer Page -->
             <div id="refer-page" class="p-4 space-y-6 sub-page">
                  <h2 class="text-xl font-bold text-center">Refer & Earn</h2>
-                 <div class="card-bg p-6 rounded-lg text-center">
+                 <div class="card-bg p-6 rounded-lg text-center shadow-lg">
                      <p class="text-gray-400 mb-2">Aapka Referral Code</p>
                      <div class="bg-gray-800 p-3 rounded-lg flex items-center justify-center mb-4">
                          <span id="referral-code" class="text-2xl font-bold tracking-widest">LOADING...</span>
-                         <button id="copy-code-btn" class="ml-4"><i data-lucide="copy" class="mx-auto w-6 h-6 text-gray-400"></i></button>
+                         <button id="copy-code-btn" class="ml-4"><i data-lucide="copy" class="w-6 h-6 text-gray-400"></i></button>
                      </div>
                      <p class="text-sm text-gray-300">Apne dosto ke saath code share karein.</p>
                  </div>
-                 <button id="share-btn" class="w-full p-3 rounded-lg btn-accent">Apna Code Share Karein</button>
-                 <div class="card-bg p-4 rounded-lg mt-6">
+                 <!-- Modified Button Text -->
+                 <button id="share-btn" class="w-full p-3 rounded-lg btn-accent">Share</button>
+                 <div class="card-bg p-4 rounded-lg mt-6 shadow-lg">
                     <h3 class="font-semibold mb-3 text-center">Kisi ka Referral Code Hai?</h3>
                     <input id="enter-referral-code" type="text" placeholder="Yahan code daalein" class="w-full p-3 rounded-lg input-field mb-3">
                     <button id="apply-referral-btn" class="w-full p-3 rounded-lg btn-outline-accent">Code Apply Karein</button>
                  </div>
             </div>
 
-            <!-- Profile Page -->
-            <div id="profile-page" class="p-4 space-y-6 sub-page">
-                <h2 class="text-xl font-bold text-center mb-4">Profile</h2>
-                <div class="flex flex-col items-center">
-                    <img src="https://placehold.co/100x100/1e1e1e/ff8c00?text=U" class="rounded-full mb-2">
-                    <h2 id="profile-name" class="text-xl font-bold">User Name</h2>
-                    <p id="profile-email" class="text-gray-400">user@email.com</p>
+            <!-- Top Page (Leaderboard Only) -->
+            <div id="top-page" class="p-4 space-y-6 sub-page">
+                <h2 class="text-xl font-bold text-center mb-4 text-accent">Leaderboard</h2>
+                
+                <!-- Leaderboard Section -->
+                <div class="card-bg p-4 rounded-lg shadow-lg">
+                    <div id="leaderboard-list" class="space-y-3">
+                        <!-- Top earners will be rendered here -->
+                        <p class="text-gray-400 text-center">Loading Top Strikers...</p>
+                    </div>
                 </div>
-                <button id="logout-btn" class="w-full mt-6 p-3 rounded-lg bg-red-600 text-white font-bold">Logout</button>
             </div>
             
+            <!-- NEW: Profile Page -->
+            <div id="profile-page" class="p-4 space-y-6 sub-page">
+                <h2 class="text-xl font-bold text-center mb-4">Mera Profile</h2>
+                <div class="card-bg p-6 rounded-lg space-y-4 shadow-lg">
+                    <div>
+                        <p class="text-gray-400 text-sm">Naam</p>
+                        <p id="profile-name" class="text-xl font-semibold"></p>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-sm">Email</p>
+                        <p id="profile-email" class="text-xl font-semibold"></p>
+                    </div>
+                    <button onclick="handlePasswordChange()" class="w-full p-3 rounded-lg btn-outline-accent">Password Badlein</button>
+                    <button id="logout-btn" class="w-full p-3 rounded-lg bg-red-600 text-white font-bold">Logout</button>
+                </div>
+            </div>
+
             <!-- Notifications Page -->
             <div id="notifications-page" class="p-4 space-y-4 sub-page">
                 <h2 class="text-xl font-bold text-center">Notifications</h2>
@@ -212,11 +255,12 @@
             </div>
         </main>
 
-        <nav class="bottom-nav sticky bottom-0 grid grid-cols-4 items-center text-center py-2 card-bg border-t border-gray-800">
+        <nav class="bottom-nav sticky bottom-0 grid grid-cols-4 items-center text-center py-2 card-bg border-t border-gray-800 shadow-lg">
             <a href="#" class="nav-link" data-page="home-page"><i data-lucide="home" class="mx-auto w-6 h-6"></i><span class="text-xs">Home</span></a>
             <a href="#" class="nav-link" data-page="wallet-page"><i data-lucide="wallet" class="mx-auto w-6 h-6"></i><span class="text-xs">Wallet</span></a>
             <a href="#" class="nav-link" data-page="refer-page"><i data-lucide="users" class="mx-auto w-6 h-6"></i><span class="text-xs">Refer & Earn</span></a>
-            <a href="#" class="nav-link" data-page="profile-page"><i data-lucide="user" class="mx-auto w-6 h-6"></i><span class="text-xs">Profile</span></a>
+            <!-- 'Top' link is still here in bottom nav if user wants to keep the page accessible -->
+            <a href="#" class="nav-link" data-page="top-page"><i data-lucide="award" class="mx-auto w-6 h-6"></i><span class="text-xs">Top</span></a>
         </nav>
     </div>
     
@@ -233,7 +277,7 @@
         <div class="bg-gray-800 rounded-xl p-6 w-full max-w-sm text-center border border-accent shadow-2xl">
             <div class="mb-4 flex justify-center">
                 <div class="p-3 bg-gray-700 rounded-full">
-                    <i data-lucide="download-cloud" class="mx-auto w-10 h-10 text-accent"></i>
+                    <i data-lucide="download-cloud" class="w-10 h-10 text-accent"></i>
                 </div>
             </div>
             <h2 class="text-2xl font-bold mb-2 text-white">New Version Available!</h2>
@@ -253,12 +297,12 @@
 
     <!-- NEW: Redeem Code Form Modal -->
     <div id="redeem-modal" class="hidden fixed inset-0 modal-overlay flex items-center justify-center z-50 p-4">
-        <div class="bg-gray-800 rounded-lg p-6 w-full max-w-sm">
+        <div class="bg-gray-800 rounded-lg p-6 w-full max-w-sm shadow-lg">
             <h3 class="text-xl font-bold text-center mb-4">Redeem Code Request</h3>
             <p class="text-sm text-gray-400 mb-4 text-center">Redeem Code paane ke liye details bharein</p>
             
-            <label class="block text-xs text-gray-400 mb-1">Coin Amount</label>
-            <input id="redeem-amount" type="number" placeholder="Coins (e.g., 5000)" class="w-full p-3 rounded-lg input-field mb-3">
+            <label class="block text-xs text-gray-400 mb-1">Amount</label>
+            <input id="redeem-amount" type="number" placeholder="Amount (e.g., 5000)" class="w-full p-3 rounded-lg input-field mb-3">
             
             <label class="block text-xs text-gray-400 mb-1">Apna Naam</label>
             <input id="redeem-name" type="text" placeholder="Naam Daalein" class="w-full p-3 rounded-lg input-field mb-3">
@@ -284,7 +328,7 @@
         };
         
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
@@ -302,8 +346,10 @@
         const loader = document.getElementById('loader');
         const coinBalanceEl = document.getElementById('coin-balance');
         const walletCoinBalanceEl = document.getElementById('wallet-coin-balance');
+        // New: Profile elements
         const profileNameEl = document.getElementById('profile-name');
         const profileEmailEl = document.getElementById('profile-email');
+
         const referralCodeEl = document.getElementById('referral-code');
         const minWithdrawalInfoEl = document.getElementById('min-withdrawal-info');
         const coinValueInfoEl = document.getElementById('coin-value-info');
@@ -311,19 +357,30 @@
         const notificationDot = document.getElementById('notification-dot');
         const adsLeftCountEl = document.getElementById('ads-left-count');
         const paymentDetailsContainer = document.getElementById('payment-details-container');
-        const inAppTaskStartBtn = document.getElementById('inApp-task-start-btn'); // 'Tasks' button
-        const inAppTaskDescriptionEl = document.getElementById('inApp-task-description'); // 'Tasks' description text
+        const strikeDisplayEl = document.getElementById('strike-display'); 
+        const currentActivityLevelEl = document.getElementById('current-activity-level'); // New: Activity level element
+
+        // --- NEW COOLDOWN/RESTRICTION VARIABLES ---
+        let lastNonTaskAdClaimTime = 0; // Timestamp of last successful non-Tasks ad claim
+        const EARLY_ACCESS_RESTRICTION_DURATION = 14 * 1000; // 14 seconds
+        const AD_COOLDOWN_DURATION = 5 * 1000; // 5 seconds
+        let adCooldownIntervalId = null; // To hold the setInterval ID for the 5s cooldown
+
+        const adButtons = document.querySelectorAll('.ad-button');
+        const adCooldownMessageEl = document.getElementById('ad-cooldown-message');
+        // ------------------------------------------
 
         window.onload = () => {
             lucide.createIcons();
             setupEventListeners();
+            showMainPage('auth-section');
+            loader.style.display = 'none';
             onAuthStateChanged(auth, handleAuthStateChange);
         };
 
         async function handleAuthStateChange(user) {
-            loader.style.display = 'flex'; // Ensure loader is shown at the start of handling auth state
-
             if (user) {
+                loader.style.display = 'flex';
                 currentUser = user;
                 
                 // Fetch Config FIRST to check for updates
@@ -331,7 +388,7 @@
                 
                 // If update modal is shown, do NOT proceed
                 if (!document.getElementById('update-modal').classList.contains('hidden')) {
-                    loader.style.display = 'none'; // Ensure loader is hidden if update modal takes over
+                    loader.style.display = 'none';
                     return; 
                 }
 
@@ -339,7 +396,7 @@
                 if (userData && userData.isBlocked) {
                     showAlert("Aapka account block kar diya gaya hai.");
                     await signOut(auth);
-                    loader.style.display = 'none'; // Hide loader if user is blocked
+                    loader.style.display = 'none';
                     return;
                 }
                 
@@ -347,12 +404,11 @@
                 updateUI();
                 showMainPage('app-container');
                 navigateTo('home-page');
-                loader.style.display = 'none'; // Hide loader after app content is displayed
+                loader.style.display = 'none';
             } else {
                 currentUser = null;
                 userData = null;
                 showMainPage('auth-section');
-                loader.style.display = 'none'; // *** Fix: Ensure loader is hidden when showing auth section ***
             }
         }
 
@@ -363,28 +419,34 @@
                 const userSnap = await getDoc(userRef);
                 if (userSnap.exists()) {
                     userData = userSnap.data();
-                    // Ensure new fields are initialized for existing users if they don't exist
-                    userData.dailyInAppTaskCount = userData.dailyInAppTaskCount || 0;
-                    userData.lastInAppTaskDate = userData.lastInAppTaskDate || new Date().toISOString().split('T')[0];
                 } else {
                     const ownReferralCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-                    const todayIsoString = new Date().toISOString().split('T')[0];
                     const defaultUserData = {
-                        uid: currentUser.uid, name: currentUser.email.split('@')[0], email: currentUser.email,
-                        balance: 50, referralCode: ownReferralCode, referredBy: null,
+                        uid: currentUser.uid, name: currentUser.email.split('@')[0], email: currentUser.email, // Default name from email
+                        balance: 50, referralCode: ownReferralCode, referredBy: null, 
                         lastNotificationCheck: new Date(),
                         createdAt: serverTimestamp(),
-                        dailyAdCount: 0, lastAdWatchDate: todayIsoString,
-                        dailyInAppTaskCount: 0, lastInAppTaskDate: todayIsoString, // NEW: Specific for 'inApp' tasks
-                        isBlocked: false
+                        dailyAdCount: 0, 
+                        lastAdWatchDate: new Date().toISOString().split('T')[0], 
+                        isBlocked: false,
+                        strikeCount: 0, 
+                        lastStrikeDate: null 
                     };
                     await setDoc(userRef, defaultUserData);
                     userData = defaultUserData;
                 }
+                // New: Check and reset strike count if not consecutive
+                const today = new Date().toISOString().split('T')[0];
+                const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0];
+
+                if (userData.lastStrikeDate && userData.lastStrikeDate !== today && userData.lastStrikeDate !== yesterday) {
+                    // Strike broken if last activity was not today or yesterday
+                    userData.strikeCount = 0;
+                    await updateDoc(userRef, { strikeCount: 0 });
+                }
             } catch (error) {
                 console.error("Error fetching user data:", error);
                 showAlert("User data load karne mein error aayi.");
-                loader.style.display = 'none'; // Ensure loader is hidden on error
             }
         }
 
@@ -394,32 +456,12 @@
                 const configSnap = await getDoc(configRef);
                 if (configSnap.exists()) {
                     appConfig = configSnap.data();
-                    // Ensure dailyAdLimit and dailyInAppTaskLimit are updated if present in config, otherwise use default
-                    appConfig.dailyAdLimit = appConfig.dailyAdLimit || 5; // Default to 5 for general ads
-                    appConfig.dailyInAppTaskLimit = appConfig.dailyInAppTaskLimit || 5; // NEW: Default to 5 for 'inApp' tasks
                     checkForForceUpdate(appConfig); // Check for update here
                 } else {
-                    // Default configuration with daily limits
-                    appConfig = { 
-                        minWithdrawal: 5000, 
-                        paymentMethods: ["UPI", "Paytm"], 
-                        dailyAdLimit: 5, // Default for general ads
-                        dailyInAppTaskLimit: 5, // Default for 'inApp' tasks
-                        coinValueCoins: 1000, 
-                        coinValueInr: 10 
-                    };
+                    appConfig = { minWithdrawal: 5000, paymentMethods: ["UPI", "Paytm"], dailyAdLimit: 10, coinValueCoins: 1000, coinValueInr: 10 };
                 }
             } catch (error) {
                 console.error("Error fetching app config:", error);
-                // Fallback config if there's an error fetching from Firestore
-                appConfig = { 
-                    minWithdrawal: 5000, 
-                    paymentMethods: ["UPI", "Paytm"], 
-                    dailyAdLimit: 5, 
-                    dailyInAppTaskLimit: 5, // Fallback for 'inApp' tasks
-                    coinValueCoins: 1000, 
-                    coinValueInr: 10 
-                };
             }
         }
 
@@ -435,7 +477,7 @@
                 
                 // Show modal and hide everything else
                 document.getElementById('update-modal').classList.remove('hidden');
-                document.getElementById('loader').style.display = 'none'; // Hide loader when update modal is shown
+                document.getElementById('loader').style.display = 'none';
                 
                 // Ensure auth section or app container is hidden to prevent interaction
                 document.getElementById('auth-section').style.display = 'none';
@@ -449,11 +491,12 @@
             const balance = userData.balance || 0;
             coinBalanceEl.textContent = balance;
             walletCoinBalanceEl.textContent = balance;
-            profileNameEl.textContent = userData.name || 'No Name';
-            profileEmailEl.textContent = userData.email || 'No Email';
+            // New: Update profile details
+            profileNameEl.textContent = userData.name || 'N/A';
+            profileEmailEl.textContent = userData.email || 'N/A';
             referralCodeEl.textContent = userData.referralCode || '...';
-            minWithdrawalInfoEl.textContent = `${appConfig.minWithdrawal || 5000} Coins`;
-            coinValueInfoEl.textContent = `${appConfig.coinValueCoins || 1000} Coins = ₹${appConfig.coinValueInr || 10}`;
+            minWithdrawalInfoEl.textContent = `${appConfig.minWithdrawal || 5000}`; // Removed "Coins"
+            coinValueInfoEl.textContent = `${appConfig.coinValueCoins || 1000} = ₹${appConfig.coinValueInr || 10}`; // Removed "Coins"
             withdrawMethodSelect.innerHTML = '';
             (appConfig.paymentMethods || []).forEach(method => {
                 const option = document.createElement('option');
@@ -463,49 +506,33 @@
             });
             updateDynamicPaymentFields();
             updateAdsLeftCount();
-            updateInAppTaskButtonState(); // NEW: Update 'Tasks' button state
+            updateStrikeDisplay(); // New: Update strike display
         }
 
         function updateAdsLeftCount() {
             const today = new Date().toISOString().split('T')[0];
-            // Reset dailyAdCount if it's a new day
             if (userData.lastAdWatchDate !== today) {
                 userData.dailyAdCount = 0;
             }
-            const adsLeft = Math.max(0, (appConfig.dailyAdLimit || 5) - userData.dailyAdCount);
+            const adsLeft = Math.max(0, (appConfig.dailyAdLimit || 10) - userData.dailyAdCount);
             adsLeftCountEl.textContent = adsLeft;
         }
 
-        // NEW: Function to manage the 'inApp' task button state
-        function updateInAppTaskButtonState() {
-            if (!inAppTaskStartBtn || !inAppTaskDescriptionEl || !userData) return;
-
-            const today = new Date().toISOString().split('T')[0];
-            const inAppTaskLimit = appConfig.dailyInAppTaskLimit || 5;
-
-            // Reset dailyInAppTaskCount if it's a new day
-            if (userData.lastInAppTaskDate !== today) {
-                userData.dailyInAppTaskCount = 0;
-                // No Firestore update here; it will be done on the first interaction of the day
-            }
-            
-            const tasksCompleted = userData.dailyInAppTaskCount || 0;
-
-            if (tasksCompleted >= inAppTaskLimit) {
-                inAppTaskStartBtn.disabled = true;
-                inAppTaskStartBtn.textContent = "Your limit end";
-                inAppTaskStartBtn.classList.remove('btn-accent', 'btn-glow'); // Remove active styling
-                inAppTaskStartBtn.classList.add('bg-gray-700', 'text-gray-400', 'btn-disabled-limit'); // Add disabled styling
-                inAppTaskDescriptionEl.textContent = "Please try again 24 hr"; // Update descriptive text
+        // New: Function to update strike display
+        function updateStrikeDisplay() {
+            const strikeCount = userData.strikeCount || 0;
+            // Update the main strike display next to coins
+            if (strikeCount > 0) {
+                strikeDisplayEl.textContent = `🔥 x${strikeCount}`;
+                strikeDisplayEl.classList.remove('hidden');
             } else {
-                inAppTaskStartBtn.disabled = false;
-                inAppTaskStartBtn.textContent = "Start";
-                inAppTaskStartBtn.classList.remove('bg-gray-700', 'text-gray-400', 'btn-disabled-limit'); // Remove disabled styling
-                inAppTaskStartBtn.classList.add('btn-accent', 'btn-glow'); // Add active styling
-                inAppTaskDescriptionEl.textContent = "More Coin"; // Reset descriptive text
+                strikeDisplayEl.classList.add('hidden');
+            }
+            // Update the new Activity Level indicator
+            if (currentActivityLevelEl) {
+                currentActivityLevelEl.textContent = strikeCount;
             }
         }
-
 
         function updateDynamicPaymentFields() {
             const selectedMethod = withdrawMethodSelect.value.toLowerCase();
@@ -530,6 +557,15 @@
                 link.classList.remove('active', 'text-accent');
                 if (link.dataset.page === pageId) link.classList.add('active', 'text-accent');
             });
+
+            // New: Load specific content for top-page
+            if (pageId === 'top-page') {
+                loadTopEarners();
+            }
+            // Existing: Load specific content for wallet-page
+            if (pageId === 'wallet-page') loadWithdrawalHistory();
+            // No specific load for profile-page needed, updateUI handles it.
+            lucide.createIcons(); // Re-render lucide icons for newly visible page
         }
         window.navigateTo = navigateTo;
 
@@ -538,18 +574,37 @@
             document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('signup-view').classList.add('hidden'); document.getElementById('login-view').classList.remove('hidden'); });
             document.getElementById('signup-btn').addEventListener('click', handleSignup);
             document.getElementById('login-btn').addEventListener('click', handleLogin);
-            document.getElementById('logout-btn').addEventListener('click', handleLogout);
+            // Logout button is now part of profile-page
+            document.getElementById('logout-btn').addEventListener('click', handleLogout); 
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
                     const pageId = link.dataset.page;
                     if (pageId === 'wallet-page') loadWithdrawalHistory();
+                    if (pageId === 'top-page') loadTopEarners(); // Ensure top earners load
                     navigateTo(pageId);
                 });
             });
             document.getElementById('notification-bell').addEventListener('click', () => { navigateTo('notifications-page'); loadNotifications(); });
             document.getElementById('copy-code-btn').addEventListener('click', copyReferralCode);
-            document.getElementById('share-btn').addEventListener('click', shareReferralCode);
+            // Modified share button event listener
+            document.getElementById('share-btn').addEventListener('click', () => {
+                showAlert("अगर आपका दोस्त इस लिंक से साइन अप करेगा तो आपको 200 coin मिलेंगे", () => {
+                    const shareLink = "https://t.me/Secure_Earn_Robotes";
+                    if (navigator.share) {
+                        navigator.share({
+                            title: 'Secure Earn Join Karein!',
+                            text: 'Secure Earn join karein aur paise kamayein! Ye link use karke aapki referral se join kar sakte hain.',
+                            url: shareLink
+                        }).catch((error) => console.error("Share failed:", error));
+                    } else {
+                        // Fallback for browsers that don't support Web Share API
+                        // Simply opening the link, or copying it. For simplicity, we'll open.
+                        window.open(shareLink, '_blank');
+                        showAlert("Share feature available nahi hai. Link naye tab mein khol diya gaya hai!");
+                    }
+                });
+            });
             document.getElementById('withdraw-btn').addEventListener('click', handleWithdrawal);
             
             // Listeners for Redeem Code feature
@@ -575,8 +630,8 @@
             const mobile = document.getElementById('redeem-mobile').value;
             const minWithdrawal = appConfig.minWithdrawal || 5000;
 
-            if (!amount || amount <= 0) return showAlert("Kripya valid coin amount daalein.");
-            if (amount < minWithdrawal) return showAlert(`Minimum withdrawal ${minWithdrawal} coins hai.`);
+            if (!amount || amount <= 0) return showAlert("Kripya valid amount daalein.");
+            if (amount < minWithdrawal) return showAlert(`Minimum withdrawal ${minWithdrawal} hai.`);
             if (amount > userData.balance) return showAlert("Insufficient balance.");
             if (!name) return showAlert("Kripya apna naam daalein.");
             if (!mobile || mobile.length < 10) return showAlert("Kripya valid mobile number daalein.");
@@ -622,15 +677,56 @@
         // -------------------------------------
 
         async function handleSignup() {
-            const name = document.getElementById('signup-name').value;
-            const email = document.getElementById('signup-email').value;
+            const name = document.getElementById('signup-name').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
             const password = document.getElementById('signup-password').value;
+
             if (!name || !email || !password) return showAlert("Kripya sabhi fields bharein.");
+            if (name.length < 3) return showAlert("Naam kam se kam 3 akshar ka hona chahiye.");
+            if (password.length < 6) return showAlert("Password kam se kam 6 akshar ka hona chahiye.");
+
             loader.style.display = 'flex';
+
             try {
-                await createUserWithEmailAndPassword(auth, email, password);
+                // Step 1: Check for duplicate name
+                const nameQuery = query(collection(db, "users"), where("name", "==", name));
+                const nameSnapshot = await getDocs(nameQuery);
+                if (!nameSnapshot.empty) {
+                    showAlert("Yeh naam pehle se maujood hai. Kripya koi aur naam chunein.");
+                    loader.style.display = 'none';
+                    return;
+                }
+
+                // Step 2: Create user with Firebase Authentication
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const newUser = userCredential.user;
+
+                // Step 3: Save user data to Firestore, including the custom name
+                const ownReferralCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+                const defaultUserData = {
+                    uid: newUser.uid, 
+                    name: name, // Use the name from signup form
+                    email: newUser.email,
+                    balance: 50, 
+                    referralCode: ownReferralCode, 
+                    referredBy: null, 
+                    lastNotificationCheck: new Date(),
+                    createdAt: serverTimestamp(),
+                    dailyAdCount: 0, 
+                    lastAdWatchDate: new Date().toISOString().split('T')[0], 
+                    isBlocked: false,
+                    strikeCount: 0, 
+                    lastStrikeDate: null 
+                };
+                await setDoc(doc(db, "users", newUser.uid), defaultUserData);
+
+                // No need for separate update to userData, handleAuthStateChange will fetch it
+                // and update UI.
+                
+                // showAlert("Signup successful!"); // handleAuthStateChange will implicitly show app content
             } catch (error) {
                 showAlert(error.message);
+            } finally {
                 loader.style.display = 'none';
             }
         }
@@ -648,8 +744,50 @@
             }
         }
 
-        async function handleLogout() { await signOut(auth); }
+        async function handleLogout() { 
+            loader.style.display = 'flex';
+            try {
+                await signOut(auth); 
+            } catch (error) {
+                console.error("Logout error:", error);
+                showAlert("Logout karte samay error aayi.");
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
         
+        // NEW: Handle Password Change (Placeholder)
+        async function handlePasswordChange() {
+            // Firebase allows updating password of the currently signed-in user.
+            // You might want to ask the user for their current password for re-authentication
+            // before allowing them to set a new one, for security reasons.
+            // Example:
+            // const newPassword = prompt("Naya password daalein:");
+            // if (newPassword && newPassword.length >= 6) {
+            //     try {
+            //         await updatePassword(auth.currentUser, newPassword);
+            //         showAlert("Password safaltapoorvak badal gaya hai!");
+            //     } catch (error) {
+            //         console.error("Password badalne mein error:", error);
+            //         // Handle errors like 'auth/requires-recent-login' (user needs to re-authenticate)
+            //         showAlert("Password badalne mein error aayi. Kripya dobara login karke prayas karein.");
+            //     }
+            // } else if (newPassword !== null) { // If user didn't cancel prompt
+            //     showAlert("Password kam se kam 6 akshar ka hona chahiye.");
+            // }
+            showAlert("Password badalne ka vikalp jald hi aayega. Suraksha ke liye, aap Firebase console ya app ke authentication section ka upyog kar sakte hain.", null);
+        }
+        window.handlePasswordChange = handlePasswordChange; // Make it globally accessible
+
+        // NEW: Function to open help chat
+        function openHelpChat() {
+            showAlert("Kya aap app ke owner se baat karna chahte hai?", () => {
+                // If user clicks OK (Yes), open the Telegram link
+                window.open('https://t.me/secure_earn1', '_blank');
+            });
+        }
+        window.openHelpChat = openHelpChat; // Make it globally accessible
+
         async function checkNewNotifications() {
             const lastCheck = userData.lastNotificationCheck;
             if (!lastCheck || typeof lastCheck.seconds === 'undefined') {
@@ -675,7 +813,7 @@
                 querySnapshot.forEach(doc => {
                     const msg = doc.data();
                     const date = msg.createdAt ? msg.createdAt.toDate().toLocaleDateString() : 'N/A';
-                    listEl.innerHTML += `<div class="card-bg p-4 rounded-lg"><div class="flex justify-between items-center mb-1"><h3 class="font-bold">${msg.title}</h3><p class="text-xs text-gray-400">${date}</p></div><p class="text-sm text-gray-300">${msg.message}</p></div>`;
+                    listEl.innerHTML += `<div class="card-bg p-4 rounded-lg shadow-lg"><div class="flex justify-between items-center mb-1"><h3 class="font-bold">${msg.title}</h3><p class="text-xs text-gray-400">${date}</p></div><p class="text-sm text-gray-300">${msg.message}</p></div>`;
                 });
                 await updateDoc(doc(db, "users", currentUser.uid), { lastNotificationCheck: serverTimestamp() });
             } catch (error) {
@@ -721,10 +859,10 @@
                     }
 
                     historyList.innerHTML += `
-                        <div class="card-bg p-3 rounded-lg mb-3">
+                        <div class="card-bg p-3 rounded-lg mb-3 shadow-lg">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="font-semibold">${request.amount} Coins - ${request.method}</p>
+                                    <p class="font-semibold">${request.amount} - ${request.method}</p>
                                     <p class="text-xs text-gray-400">${date}</p>
                                 </div>
                                 <p class="font-bold ${statusColor} capitalize">${status}</p>
@@ -735,6 +873,103 @@
             } catch (error) {
                 console.error("Error fetching withdrawal history: ", error);
                 historyList.innerHTML = '<p class="text-red-400">History load karne mein error aayi.</p>';
+            }
+        }
+        // -----------------------------------------------------
+
+        // New: Function to load top earners for the leaderboard
+        async function loadTopEarners() {
+            const leaderboardList = document.getElementById('leaderboard-list');
+            leaderboardList.innerHTML = '<p class="text-gray-400 text-center">Loading Top Strikers...</p>';
+            
+            try {
+                // Order by strikeCount instead of balance
+                const topUsersQuery = query(collection(db, "users"), orderBy("strikeCount", "desc"), limit(10)); 
+                const querySnapshot = await getDocs(topUsersQuery);
+                
+                let topEarners = [];
+                let currentUserRank = -1; // To store current user's actual rank
+                let foundCurrentUserInTop = false;
+
+                querySnapshot.forEach((doc, index) => {
+                    const user = doc.data();
+                    topEarners.push({ rank: index + 1, ...user });
+                    if (user.uid === currentUser.uid) {
+                        currentUserRank = index + 1;
+                        foundCurrentUserInTop = true;
+                    }
+                });
+                
+                leaderboardList.innerHTML = ''; // Clear loading message
+
+                if (topEarners.length === 0) {
+                    leaderboardList.innerHTML = '<p class="text-gray-400 text-center">Koi top striker nahi mila.</p>';
+                    return;
+                }
+
+                topEarners.forEach(user => {
+                    let rankDisplayHtml = '';
+                    let userNameClass = 'text-white';
+                    
+                    // Username Formatting
+                    let displayUsername = user.name || user.email || 'Unknown User';
+                    if (displayUsername.includes('@gmail.com')) {
+                        displayUsername = displayUsername.replace('@gmail.com', '');
+                    }
+                    if (displayUsername === 'NaN' || displayUsername === 'undefined' || displayUsername.trim() === '') {
+                        displayUsername = 'User';
+                    }
+
+                    if (user.rank === 1) {
+                        rankDisplayHtml = '<span class="medal-icon">🥇</span>';
+                        userNameClass = 'font-bold text-yellow-300';
+                    } else if (user.rank === 2) {
+                        rankDisplayHtml = '<span class="medal-icon">🥈</span>';
+                        userNameClass = 'font-semibold text-gray-300';
+                    } else if (user.rank === 3) {
+                        rankDisplayHtml = '<span class="medal-icon">🥉</span>';
+                        userNameClass = 'font-semibold text-orange-300';
+                    } else {
+                        rankDisplayHtml = `<span class="text-lg font-bold w-8 text-center">${user.rank}</span>`;
+                    }
+                    
+                    // Highlight current user's entry
+                    const isCurrentUser = user.uid === currentUser.uid;
+                    const cardBorderClass = isCurrentUser ? 'border border-accent' : '';
+                    const usernameHighlightClass = isCurrentUser ? ' border-l-2 border-accent pl-2' : '';
+
+                    leaderboardList.innerHTML += `
+                        <div class="card-bg p-3 rounded-lg flex items-center justify-between ${cardBorderClass} shadow-lg">
+                            <div class="flex items-center space-x-3">
+                                ${rankDisplayHtml}
+                                <h3 class="${userNameClass}${usernameHighlightClass}">${displayUsername}</h3>
+                            </div>
+                            <p class="font-bold text-accent">🔥 ${user.strikeCount || 0} Strikes</p>
+                        </div>
+                    `;
+                });
+
+                // If current user is not in top 10, display their info separately at the bottom
+                if (!foundCurrentUserInTop && currentUser && userData) {
+                    // To get the actual rank of the current user if not in top 10,
+                    // you would need to count all users with higher strikeCount, which can be expensive.
+                    // For now, we'll show a placeholder rank and their own strike count.
+                    // If a precise rank is needed, another query to count users with higher strikeCount is required.
+                    leaderboardList.innerHTML += `
+                        <div class="card-bg p-3 rounded-lg flex items-center justify-between mt-4 border border-blue-400 shadow-lg">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-lg font-bold w-8 text-center">...</span>
+                                <h3 class="font-bold text-blue-300">Your: ${userData.name || userData.email.replace('@gmail.com', '') || 'User'}</h3>
+                            </div>
+                            <p class="font-bold text-blue-400">🔥 ${userData.strikeCount || 0} Strikes</p>
+                        </div>
+                    `;
+                }
+
+                lucide.createIcons(); // Re-render lucide icons after adding new HTML
+            } catch (error) {
+                console.error("Error loading top earners:", error);
+                leaderboardList.innerHTML = '<p class="text-red-400 text-center">Top strikers load karne mein error aayi.</p>';
             }
         }
         // -----------------------------------------------------
@@ -760,12 +995,18 @@
                     const referrerDoc = querySnapshot.docs[0];
                     const referrerRef = doc(db, "users", referrerDoc.id);
                     const referrerData = referrerDoc.data();
-                    await updateDoc(referrerRef, { balance: (referrerData.balance || 0) + 100 });
+                    // Referrer gets 200 coins
+                    await updateDoc(referrerRef, { balance: (referrerData.balance || 0) + 200 }); 
+                    
                     const newUserRef = doc(db, "users", currentUser.uid);
+                    // New user gets 100 coins
                     await updateDoc(newUserRef, { balance: (userData.balance || 0) + 100, referredBy: referrerCode });
-                    userData.balance += 100; userData.referredBy = referrerCode;
+                    
+                    // Update local userData for immediate UI reflection
+                    userData.balance += 100; // New user gets 100 coins
+                    userData.referredBy = referrerCode;
                     updateUI();
-                    if(isManualApply) showAlert("Code safaltapoorvak apply ho gaya! Aapko 100 coins mile hain.");
+                    if(isManualApply) showAlert("Code safaltapoorvak apply ho gaya! Aapko 100 mile hain aur aapke dost ko 200.");
                 } else {
                     if(isManualApply) showAlert("Galat referral code.");
                 }
@@ -792,7 +1033,7 @@
             const minWithdrawal = appConfig.minWithdrawal || 5000;
 
             if (!amount || amount <= 0) return showAlert("Kripya valid amount daalein.");
-            if (amount < minWithdrawal) return showAlert(`Minimum withdrawal ${minWithdrawal} coins hai.`);
+            if (amount < minWithdrawal) return showAlert(`Minimum withdrawal ${minWithdrawal} hai.`);
             if (amount > userData.balance) return showAlert("Insufficient balance.");
             if (!paymentDetail) return showAlert("Kripya payment detail daalein (UPI ID ya Paytm Number).");
 
@@ -828,16 +1069,8 @@
             document.body.removeChild(textArea);
         }
         
-        function shareReferralCode() {
-            const text = `Secure Earn join karein aur paise kamayein! Bonus paane ke liye mera referral code use karein: ${userData.referralCode}`;
-            if (navigator.share) {
-                navigator.share({ title: 'Secure Earn Join Karein!', text: text, url: window.location.href })
-                    .catch((error) => console.error("Share failed:", error));
-            } else {
-                copyReferralCode();
-                showAlert("Share feature available nahi hai. Iske bajaye referral code copy kar diya gaya hai!");
-            }
-        }
+        // Original shareReferralCode function is replaced by the event listener logic
+        // No need for a separate shareReferralCode function if the event listener handles it directly.
 
         // showAlert फंक्शन को अब एक optional callback फंक्शन accept karne ke liye modify kiya gaya hai
         function showAlert(message, okCallback = null) {
@@ -852,161 +1085,161 @@
         }
         window.showAlert = showAlert; // Global scope mein available rakhein
 
-        window.claimReward = async function(taskType, event) { // 'event' parameter add kiya gaya hai
+        /**
+         * Sets the disabled state for all non-Tasks ad buttons and updates a cooldown message.
+         * @param {boolean} disabled True to disable buttons, false to enable.
+         * @param {string} message Optional message to display in the cooldown area.
+         */
+        function setAdButtonsState(disabled, message = '') {
+            adButtons.forEach(button => {
+                button.disabled = disabled;
+            });
+            if (message) {
+                adCooldownMessageEl.textContent = message;
+                adCooldownMessageEl.style.display = 'block';
+            } else {
+                adCooldownMessageEl.textContent = '';
+                adCooldownMessageEl.style.display = 'none';
+            }
+        }
+
+        /**
+         * Starts the 5-second cooldown timer after a non-Tasks ad is successfully watched.
+         */
+        function startAdCooldown() {
+            let timeLeft = AD_COOLDOWN_DURATION / 1000; // in seconds
+            setAdButtonsState(true, `Next ad available in ${timeLeft}s...`);
+
+            if (adCooldownIntervalId) clearInterval(adCooldownIntervalId); // Clear any previous timer
+
+            adCooldownIntervalId = setInterval(() => {
+                timeLeft--;
+                if (timeLeft > 0) {
+                    setAdButtonsState(true, `Next ad available in ${timeLeft}s...`);
+                } else {
+                    clearInterval(adCooldownIntervalId);
+                    adCooldownIntervalId = null;
+                    setAdButtonsState(false, ''); // Re-enable buttons and clear message
+                    // Optional: Show a "Ready!" message briefly if desired
+                }
+            }, 1000);
+        }
+
+        window.claimReward = async function(taskType) {
             const today = new Date().toISOString().split('T')[0];
+            const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0];
             const userRef = doc(db, "users", currentUser.uid);
 
-            // General Ad Limit (for interstitial, rewardedVideo, miniApp)
+            // --- Handle 'inApp' task separately (no cooldowns/restrictions) ---
+            if (taskType === 'inApp') {
+                showAlert("2 min wait karo uske baad back aao reward paao", async () => {
+                    window.open('https://otieu.com/4/10502742', '_blank');
+                    loader.style.display = 'flex';
+                    showAlert("कृपया 2 मिनट प्रतीक्षा करें...", null);
+                    
+                    setTimeout(async () => {
+                        // Reward logic for inApp task
+                        const newCount = (userData.dailyAdCount || 0) + 1;
+                        await updateDoc(userRef, { dailyAdCount: newCount });
+                        userData.dailyAdCount = newCount;
+                        const rewardAmount = 100; 
+                        await updateBalance(rewardAmount);
+                        // Strike logic for inApp task (same as other ads)
+                        let newStrikeCount = userData.strikeCount || 0;
+                        if (userData.lastStrikeDate !== today) { // Only increment if not already incremented today for *any* ad
+                            if (userData.lastStrikeDate === new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0]) {
+                                newStrikeCount += 1;
+                            } else {
+                                newStrikeCount = 1;
+                            }
+                        }
+                        userData.strikeCount = newStrikeCount;
+                        userData.lastStrikeDate = today;
+                        await updateDoc(userRef, { strikeCount: newStrikeCount, lastStrikeDate: today });
+                        updateStrikeDisplay(); 
+
+                        showAlert(`Badhai ho! Aapne ${rewardAmount} jeete hain.`);
+                        updateAdsLeftCount();
+                        loader.style.display = 'none';
+                    }, 2 * 60 * 1000); // 2 minutes
+                });
+                return; // Exit here for inApp tasks
+            }
+
+            // --- For other ad types (interstitial, popup, miniApp) apply restrictions/cooldowns ---
+
+            // Early Access Restriction Check (14 seconds)
+            const timeSinceLastAd = Date.now() - lastNonTaskAdClaimTime;
+            if (lastNonTaskAdClaimTime !== 0 && timeSinceLastAd < EARLY_ACCESS_RESTRICTION_DURATION) {
+                showAlert("⏳ Aap time se pehle aa gaye ho, please thoda wait karein.");
+                return;
+            }
+
+            // Daily Ad Limit Check
             if (userData.lastAdWatchDate !== today) {
                 await updateDoc(userRef, { dailyAdCount: 0, lastAdWatchDate: today });
                 userData.dailyAdCount = 0;
                 userData.lastAdWatchDate = today;
             }
-
-            // General Ad Limit Check
-            if (taskType !== 'inApp' && userData.dailyAdCount >= (appConfig.dailyAdLimit || 5)) {
+            if (userData.dailyAdCount >= (appConfig.dailyAdLimit || 10)) {
                 return showAlert("Aapki aaj ki ad dekhne ki seema poori ho gayi hai.");
             }
             
-            // Monetag ad types (interstitial, rewardedVideo, miniApp) ke liye original logic
-            if (taskType === 'interstitial' || taskType === 'rewardedVideo' || taskType === 'miniApp') {
-                 if (typeof window.show_10495819 !== 'function') {
-                    return showAlert("Ad service abhi uplabdh nahi hai. Kripya baad mein prayas karein.");
-                }
-                let adPromise;
-                let rewardAmount = 0;
-                const requiredAdWatchTime = 14 * 1000; // 14 seconds in milliseconds
-                const startTime = Date.now(); // Start timer when ad is initiated
+            // Disable buttons and clear any existing cooldown display message
+            setAdButtonsState(true, 'Loading Ad...'); // Set general message during ad loading
 
-                switch(taskType) {
-                    case 'interstitial':
-                        adPromise = window.show_10495819();
-                        rewardAmount = 50;
-                        break;
-                    case 'rewardedVideo':
-                        adPromise = window.show_10495819();
-                        rewardAmount = 50;
-                        break;
-                    case 'miniApp':
-                        adPromise = window.show_10495819();
-                        rewardAmount = 60; 
-                        break;
-                    default:
-                        return;
-                }
-
-                adPromise.then(async () => {
-                    const elapsedTime = Date.now() - startTime; // Calculate elapsed time
-                    
-                    const newCount = (userData.dailyAdCount || 0) + 1;
-                    await updateDoc(userRef, { dailyAdCount: newCount });
-                    userData.dailyAdCount = newCount;
-
-                    if (elapsedTime >= requiredAdWatchTime) {
-                        if (rewardAmount > 0) {
-                            updateBalance(rewardAmount);
-                            showAlert(`Badhai ho! Aapne ${rewardAmount} coins jeete hain.`);
-                        }
-                    } else {
-                        showAlert("Apko reward nahi milega ap time se pahle aagye.");
+            let adPromise;
+            switch(taskType) {
+                case 'interstitial':
+                case 'popup':
+                case 'miniApp':
+                    if (typeof window.show_10495819 !== 'function') {
+                        setAdButtonsState(false, ''); // Re-enable if ad service not available
+                        return showAlert("Ad service abhi uplabdh nahi hai. Kripya baad mein prayas karein.");
                     }
-                    updateAdsLeftCount();
-                }).catch(e => {
-                    console.error(`${taskType} Ad error:`, e);
-                    showAlert(`Ad nahi dikhaya ja saka (${taskType}). Kripya baad mein prayas karein.`);
-                    
-                    // Even if ad fails, increment count to prevent infinite retries for a broken ad
-                    const newCount = (userData.dailyAdCount || 0) + 1;
-                    updateDoc(userRef, { dailyAdCount: newCount });
-                    userData.dailyAdCount = newCount;
-                    updateAdsLeftCount();
-                });
-            }
-            else if (taskType === 'inApp') { // 'Tasks' button ke liye naya logic
-                const inAppTaskLimit = appConfig.dailyInAppTaskLimit || 5;
+                    adPromise = (taskType === 'popup') ? window.show_10495819('pop') : window.show_10495819();
+                    adPromise.then(async () => {
+                        const newCount = (userData.dailyAdCount || 0) + 1;
+                        await updateDoc(userRef, { dailyAdCount: newCount });
+                        userData.dailyAdCount = newCount;
+                        
+                        let rewardAmount = 50;
+                        if (taskType === 'miniApp') rewardAmount = 100;
 
-                // Reset dailyInAppTaskCount if it's a new day
-                if (userData.lastInAppTaskDate !== today) {
-                    await updateDoc(userRef, { dailyInAppTaskCount: 0, lastInAppTaskDate: today });
-                    userData.dailyInAppTaskCount = 0;
-                    userData.lastInAppTaskDate = today;
-                }
-                
-                // Check 'inApp' task limit BEFORE proceeding
-                if (userData.dailyInAppTaskCount >= inAppTaskLimit) {
-                    updateInAppTaskButtonState(); // Ensure button reflects the limit
-                    return showAlert("Aapki aaj ki Tasks ki seema poori ho gayi hai. Kripya 24 ghante baad prayas karein.");
-                }
+                        await updateBalance(rewardAmount);
 
-                const taskStartButton = event.target; // 'event.target' se button element milta hai
-                taskStartButton.disabled = true; // बटन को तुरंत अक्षम करें ताकि डबल-क्लिक न हो
-                taskStartButton.classList.remove('btn-glow'); // Stop glow immediately
-
-                // पहला अलर्ट: यूज़र को निर्देश दें
-                showAlert("आपको एक नया वेब पेज खुलेगा, आपको उसे 30 सेकंड तक उपयोग करना है और उसके बाद ही वापस आना है।", () => {
-                    // यह कॉलबैक तब चलता है जब यूज़र पहले अलर्ट पर 'OK' क्लिक करता है।
-                    const externalUrl = 'https://otieu.com/4/10502742';
-                    const newWindow = window.open(externalUrl, '_blank'); 
-
-                    // यदि पॉपअप ब्लॉक हो गया है या पेज नहीं खुल पाया
-                    if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
-                        taskStartButton.disabled = false; // बटन को फिर से सक्षम करें
-                        taskStartButton.classList.add('btn-glow'); // Glow effect wapas lagayein
-                        loader.style.display = 'none'; // लोडर को छुपाएं
-                        updateInAppTaskButtonState(); // Update state to ensure it's correct
-                        return showAlert("पॉपअप ब्लॉक कर दिया गया है या पेज खोलने में त्रुटि हुई। कृपया पॉपअप ब्लॉकर अक्षम करें।");
-                    }
-
-                    loader.style.display = 'flex'; // लोडर दिखाएं
-
-                    const startTime = Date.now();
-                    const requiredTime = 30 * 1000; // 30 सेकंड मिलीसेकंड्स में
-                    let intervalId;
-
-                    intervalId = setInterval(async () => {
-                        const currentTime = Date.now();
-                        const elapsedTime = currentTime - startTime;
-
-                        if (elapsedTime >= requiredTime) {
-                            // कार्य सफलतापूर्वक पूरा हुआ (30 सेकंड बीत गए)
-                            clearInterval(intervalId); // इंटरवल बंद करें
-                            loader.style.display = 'none'; // लोडर छुपाएं
-                            
-                            // कॉइन देने से पहले फिर से दैनिक सीमा जांचें (अत्यधिक सुरक्षा के लिए)
-                            if (userData.dailyInAppTaskCount >= inAppTaskLimit) {
-                                showAlert("आज की आपकी कार्य सीमा पूरी हो गई है।");
-                                updateInAppTaskButtonState(); // Update button state
-                                return;
+                        // Strike logic
+                        let newStrikeCount = userData.strikeCount || 0;
+                        if (userData.lastStrikeDate !== today) { // Only increment if not already incremented today for *any* ad
+                            if (userData.lastStrikeDate === yesterday) {
+                                newStrikeCount += 1; // Continue streak
+                            } else {
+                                newStrikeCount = 1; // New streak
                             }
-
-                            const newInAppCount = (userData.dailyInAppTaskCount || 0) + 1;
-                            await updateDoc(userRef, { dailyInAppTaskCount: newInAppCount, lastInAppTaskDate: today });
-                            userData.dailyInAppTaskCount = newInAppCount; // लोकल डेटा भी अपडेट करें
-                            
-                            const rewardAmount = 200; // इस टास्क के लिए 200 कॉइन्स
-                            await updateBalance(rewardAmount); // बैलेंस अपडेट करें (यह UI भी अपडेट करेगा)
-                            
-                            showAlert("आपका कार्य पूरा हो गया है! यह लो 200 Rs।");
-                            updateInAppTaskButtonState(); // 'Tasks' बटन को रिफ्रेश करें
-                            
-                            // newWindow.close(); // वैकल्पिक: यदि आप चाहते हैं कि इनाम के बाद नया विंडो अपने आप बंद हो जाए
-                        } else if (newWindow.closed) {
-                            // नया विंडो 30 सेकंड पूरे होने से पहले बंद कर दिया गया
-                            clearInterval(intervalId); // इंटरवल बंद करें
-                            loader.style.display = 'none'; // लोडर छुपाएं
-                            // अपडेट किया गया मैसेज
-                            showAlert("Apko reward nahi milega ap time se aphle aagye ."); 
-                            // कोई कॉइन नहीं दिए जाएंगे, dailyInAppTaskCount भी नहीं बढ़ाया जाएगा।
-                            updateInAppTaskButtonState(); // बटन को फिर से सक्षम करें और उसकी सही स्थिति दिखाएं
                         }
-                    }, 1000); // हर 1 सेकंड में स्थिति जांचें
-                });
+                        userData.strikeCount = newStrikeCount;
+                        userData.lastStrikeDate = today;
+                        await updateDoc(userRef, { strikeCount: newStrikeCount, lastStrikeDate: today });
+                        updateStrikeDisplay();
+
+                        showAlert(`Badhai ho! Aapne ${rewardAmount} jeete hain.`);
+                        updateAdsLeftCount();
+                        
+                        // --- Start 5-second Cooldown ---
+                        lastNonTaskAdClaimTime = Date.now(); // Update timestamp for early access check
+                        startAdCooldown(); // Call the new cooldown function
+
+                    }).catch(e => {
+                        console.error(`${taskType} Ad error:`, e);
+                        showAlert('Ad nahi dikhaya ja saka. Kripya baad mein prayas karein.');
+                        setAdButtonsState(false, ''); // Re-enable buttons on ad failure
+                    });
+                    break;
+                default:
+                    setAdButtonsState(false, ''); // Re-enable buttons if taskType is unknown
+                    return;
             }
-            else {
-                // यदि कोई अज्ञात taskType आता है
-                return;
-            }
-        }
+        };
     </script>
 </body>
 </html>
