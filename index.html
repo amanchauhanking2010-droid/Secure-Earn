@@ -3,1520 +3,306 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Earn</title>
-
-    <!-- Aapka Naya Ad Code (GigaPub) -->
-    <script src="https://ad.gigapub.tech/script?id=5424"></script>
-
-    <!-- Monetag SDK ab bhi load hoga, lekin 'inApp' task iska istemal seedhe nahi karega -->
-    <script src='//libtl.com/sdk.js' data-zone='10495819' data-sdk='show_10495819'></script>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <title>My Love | Classy & Sassy 🖤</title>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #121212; color: #ffffff; }
-        .dark-bg { background-color: #121212; }
-        .card-bg { background-color: #1e1e1e; }
-        .border-accent { border-color: #ff8c00; }
-        .text-accent { color: #ff8c00; }
-        .btn, .btn-accent, .btn-outline-accent { transition: all 0.2s ease-in-out; transform: scale(1); }
-        .btn:active, .btn-accent:active, .btn-outline-accent:active { transform: scale(0.95); }
-        .btn-accent { background-color: #ff8c00; color: #121212; font-weight: bold; }
-        .btn-accent:hover { background-color: #e67e00; }
-        .btn-outline-accent { border: 1px solid #ff8c00; color: #ff8c00; }
-        .btn-outline-accent:hover { background-color: #ff8c00; color: #121212; }
-        .input-field { background-color: #2c2c2c; border: 1px solid #444; color: white; }
-        .main-page { display: none; }
-        .main-page.active { display: flex; animation: fadeIn 0.5s ease-in-out; }
-        .sub-page { display: none; }
-        .sub-page.active { display: block; animation: fadeIn 0.3s ease-in-out; }
-        .bottom-nav a.active { color: #ff8c00; }
-        .notification-dot {
-            position: absolute; top: -2px; right: -2px; width: 10px; height: 10px;
-            background-color: #ef4444; border-radius: 50%; border: 2px solid #121212; display: none;
-        }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* Modal Styles */
-        .modal-overlay { background-color: rgba(0, 0, 0, 0.8); }
-
-        /* Strike Glow Effect */
-        .strike-glow {
-            color: #FFEB3B; /* Bright yellow */
-            text-shadow: 0 0 5px rgba(255, 235, 59, 0.7), 0 0 10px rgba(255, 235, 59, 0.5), 0 0 15px rgba(255, 235, 59, 0.3);
-            animation: pulseGlow 1.5s infinite alternate;
+        :root {
+            --primary: #e63946; /* Deep Red for classy look */
+            --secondary: #1d3557;
+            --bg-dark: #050505;
+            --glass: rgba(255, 255, 255, 0.05);
+            --user-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            --ai-gradient: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
+            --accent: #ffd700; /* Gold touch */
         }
 
-        @keyframes pulseGlow {
-            from { text-shadow: 0 0 5px rgba(255, 235, 59, 0.7), 0 0 10px rgba(255, 235, 59, 0.5); }
-            to { text-shadow: 0 0 8px rgba(255, 235, 59, 0.9), 0 0 15px rgba(255, 235, 59, 0.7), 0 0 20px rgba(255, 235, 59, 0.4); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+        body {
+            background: var(--bg-dark);
+            background-image: radial-gradient(circle at 20% 20%, #1a0a0a, transparent),
+                              radial-gradient(circle at 80% 80%, #0a0a1a, transparent);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #e0e0e0;
+            overflow: hidden;
         }
 
-        /* Medals Styling for larger display */
-        .medal-icon {
-            font-size: 1.5rem; /* Adjust size as needed */
-            line-height: 1; /* Align with text */
-            margin-right: 0.5rem;
-            display: inline-block; /* Ensure it respects margin-right */
-            width: 1.5em; /* fixed width for consistent alignment */
-            text-align: center;
-        }
-        .rank-number {
-            font-size: 1.125rem; /* text-lg */
-            font-weight: 700; /* font-bold */
-            width: 2rem; /* w-8, 1 unit = 0.25rem so w-8 = 2rem */
-            text-align: center;
-            display: inline-block;
+        /* Header Styling */
+        .header {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 10;
         }
 
-        .ad-button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
+        .avatar-container {
+            position: relative;
         }
+
+        .avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #000, #e63946);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 15px rgba(230, 57, 70, 0.4);
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background: #00ff00;
+            border: 2px solid var(--bg-dark);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+        }
+
+        .header-info h2 { 
+            font-size: 20px; 
+            letter-spacing: 1px; 
+            color: var(--accent);
+            font-weight: 600;
+        }
+        .header-info p { font-size: 12px; opacity: 0.7; color: #fff; }
+
+        /* Chat Area */
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            scroll-behavior: smooth;
+        }
+
+        .chat-container::-webkit-scrollbar { width: 4px; }
+        .chat-container::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+
+        .message {
+            max-width: 80%;
+            padding: 15px 20px;
+            border-radius: 15px;
+            font-size: 15px;
+            line-height: 1.6;
+            position: relative;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background: var(--user-gradient);
+            color: white;
+            border-bottom-right-radius: 2px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .ai-message {
+            align-self: flex-start;
+            background: var(--ai-gradient);
+            border-left: 3px solid var(--accent);
+            border-bottom-left-radius: 2px;
+            color: #f0f0f0;
+        }
+
+        /* Typing Indicator */
+        .typing {
+            font-size: 13px;
+            color: var(--accent);
+            margin: 10px 25px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            font-style: italic;
+        }
+
+        .dot { width: 5px; height: 5px; background: var(--accent); border-radius: 50%; animation: bounce 1.4s infinite; }
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes bounce { 0%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-5px); } }
+
+        /* Input Area */
+        .input-area {
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(25px);
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .input-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            gap: 15px;
+            background: rgba(255,255,255,0.05);
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: 0.4s;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--accent);
+            background: rgba(255,255,255,0.08);
+        }
+
+        input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 10px;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .send-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--accent);
+            font-size: 24px;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-btn:hover { transform: scale(1.2); color: #fff; }
+
     </style>
 </head>
-<body class="max-w-md mx-auto">
+<body>
 
-    <!-- App Loader -->
-    <div id="loader" class="hidden fixed inset-0 dark-bg bg-opacity-75 flex items-center justify-center z-50">
-        <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-accent"></div>
-    </div>
-
-    <!-- Authentication Section -->
-    <div id="auth-section" class="min-h-screen p-6 flex-col justify-center main-page">
-        <h1 class="text-4xl font-bold text-center mb-2 text-accent">Secure Earn</h1>
-        <p class="text-center text-gray-400 mb-8">Jaari rakhne ke liye Login ya Signup karein</p>
-        <div id="auth-container">
-            <div id="login-view">
-                <input id="login-email" type="email" placeholder="Email" class="w-full p-3 rounded-lg input-field mb-4">
-                <input id="login-password" type="password" placeholder="Password" class="w-full p-3 rounded-lg input-field mb-4">
-                <button id="login-btn" class="w-full p-3 rounded-lg btn-accent mb-4">Login</button>
-                <p class="text-center text-gray-400">Account nahi hai? <a href="#" id="show-signup" class="font-semibold text-accent">Sign Up</a></p>
-            </div>
-            <div id="signup-view" class="hidden">
-                 <input id="signup-name" type="text" placeholder="Poora Naam" class="w-full p-3 rounded-lg input-field mb-4">
-                <input id="signup-email" type="email" placeholder="Email" class="w-full p-3 rounded-lg input-field mb-4">
-                <input id="signup-password" type="password" placeholder="Password" class="w-full p-3 rounded-lg input-field mb-4">
-                <button id="signup-btn" class="w-full p-3 rounded-lg btn-accent mb-4">Sign Up</button>
-                <p class="text-center text-gray-400">Pehle se account hai? <a href="#" id="show-login" class="font-semibold text-accent">Login</a></p>
-            </div>
+    <div class="header">
+        <div class="avatar-container">
+            <div class="avatar">👑</div>
+            <div class="status-dot"></div>
+        </div>
+        <div class="header-info">
+            <h2>My Love</h2>
+            <p>Classy, Sassy & Yours...</p>
         </div>
     </div>
 
-    <!-- Main App Container -->
-    <div id="app-container" class="min-h-screen flex-col main-page">
-        <header class="flex items-center justify-between p-4 sticky top-0 bg-opacity-80 backdrop-blur-md z-40 dark-bg border-b border-gray-800">
-            <h1 class="text-xl font-bold text-accent">Secure Earn</h1>
-            <div class="flex items-center space-x-4">
-                <div id="notification-bell" class="relative cursor-pointer">
-                    <i data-lucide="bell" class="w-6 h-6"></i>
-                    <div id="notification-dot" class="notification-dot"></div>
-                </div>
-                <!-- Profile icon added next to notification -->
-                <i data-lucide="user-circle" class="w-6 h-6 cursor-pointer" onclick="navigateTo('profile-page')"></i>
-                <!-- NEW: Help icon replacing the 'Top' icon -->
-                <i data-lucide="help-circle" class="w-6 h-6 cursor-pointer" onclick="openHelpChat()"></i>
-            </div>
-        </header>
-
-        <main class="flex-grow">
-            <!-- Home Page -->
-            <div id="home-page" class="p-4 space-y-6 sub-page">
-                <div class="card-bg p-4 rounded-lg flex items-start justify-between shadow-lg">
-                    <div>
-                        <p class="text-gray-400 text-sm">Your Balance</p>
-                        <p class="text-3xl font-bold flex items-center mb-1">
-                            <span id="coin-balance">0</span>
-                            <!-- Strike display next to coins -->
-                            <span id="strike-display" class="ml-2 text-2xl strike-glow hidden"></span>
-                        </p>
-                        <!-- Strike system visual hint -->
-                        <p class="text-xs text-gray-500">🔥 1 Strike = 5 Ads</p>
-                    </div>
-
-                    <div class="flex flex-col items-end space-y-2"> <!-- Container for strike indicator and withdraw button -->
-                        <!-- Activity Level Indicator ABOVE Withdraw button -->
-                        <div id="strike-activity-indicator" class="flex items-center text-sm text-accent">
-                            <i data-lucide="flame" class="w-4 h-4 mr-1"></i>
-                            <span id="activity-level-text">Activity Level: <span id="current-activity-level">0</span></span>
-                        </div>
-                        <!-- Withdraw Button, compact and premium -->
-                        <button id="home-withdraw-btn" class="btn-accent px-5 py-2 rounded-lg text-sm">Withdraw</button>
-                    </div>
-                </div>
-                <section>
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <h2 class="text-lg font-semibold">Daily Tasks</h2>
-                            <p class="text-sm text-gray-400 mb-4">Complete tasks to get rewards.</p>
-                        </div>
-                        <p class="text-sm text-gray-400">Ads Left: <span id="ads-left-count">...</span></p>
-                    </div>
-
-                    <!-- Ad Cooldown Message -->
-                    <div id="ad-cooldown-message" class="text-center text-accent font-semibold text-sm mb-4" style="display: none;"></div>
-
-                    <div class="space-y-3">
-                        <div class="bg-orange-500 p-3 rounded-lg flex items-center justify-between text-black shadow-lg">
-                            <div class="flex items-center space-x-3"><span class="text-3xl">🤩</span><div><h3 class="font-bold">Watch Short Ad</h3><p class="text-xs font-medium">Rewarded Interstitial</p></div></div>
-                            <button id="claim-interstitial-btn" class="bg-white text-orange-500 font-bold px-6 py-2 rounded-lg text-sm btn ad-button" onclick="claimReward('interstitial')">Claim</button>
-                        </div>
-                        <div class="card-bg p-3 rounded-lg flex items-center justify-between shadow-lg">
-                            <div class="flex items-center space-x-3"><span class="text-3xl">😎</span><div><h3 class="font-semibold">Click for Reward</h3><p class="text-xs text-gray-400">Rewarded Popup</p></div></div>
-                            <button id="claim-popup-btn" class="bg-white text-black font-bold px-6 py-2 rounded-lg text-sm btn ad-button" onclick="claimReward('popup')">Claim</button>
-                        </div>
-                         <div class="card-bg p-3 rounded-lg flex items-center justify-between shadow-lg">
-                            <div class="flex items-center space-x-3"><span class="text-3xl">👀</span><div><h3 class="font-semibold">Tasks</h3><!-- 'Watch a Video' se 'Tasks' kiya gaya --><p class="text-xs text-gray-400">More Reward</p><!-- 'In-App Interstitial' se 'More Coin' kiya gaya --></div></div>
-                            <!-- Yeh button 'inApp' taskType ke saath claimReward function ko call karta hai -->
-                            <button id="claim-inApp-btn" class="bg-gray-700 text-white font-bold px-6 py-2 rounded-lg text-sm btn" onclick="claimReward('inApp')">Start</button>
-                        </div>
-                        <div class="card-bg p-3 rounded-lg flex items-center justify-between shadow-lg">
-                            <div class="flex items-center space-x-3"><span class="text-3xl">🎮</span><div><h3 class="font-semibold">Play Mini App</h3><p class="text-xs text-gray-400">Get a big reward!</p></div></div>
-                            <button id="claim-miniApp-btn" class="bg-blue-500 text-white font-bold px-6 py-2 rounded-lg text-sm btn ad-button" onclick="claimReward('miniApp')">Play</button>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            <!-- Wallet Page -->
-            <div id="wallet-page" class="p-4 space-y-6 sub-page">
-                <h2 class="text-xl font-bold text-center">Mera Wallet</h2>
-                <div class="card-bg p-4 rounded-lg shadow-lg">
-                    <h3 class="font-semibold mb-3">Earnings Withdraw Karein</h3>
-                    <p class="text-sm text-gray-400 mb-1">Current Balance: <span class="font-bold text-accent"><span id="wallet-coin-balance">0</span></span></p>
-                    <p class="text-sm text-gray-400 mb-2">Minimum Withdrawal: <span id="min-withdrawal-info">...</span></p>
-                    <p class="text-sm text-gray-400 mb-4 font-semibold" id="coin-value-info">...</p>
-
-                    <!-- Standard Withdrawal Form -->
-                    <div class="border-b border-gray-700 pb-4 mb-4">
-                        <input id="withdraw-amount" type="number" placeholder="Amount daalein" class="w-full p-3 rounded-lg input-field mb-3">
-                        <select id="withdraw-method" class="w-full p-3 rounded-lg input-field mb-3"></select>
-                        <div id="payment-details-container"></div>
-                        <button id="withdraw-btn" class="w-full p-3 rounded-lg btn-accent mt-3">Request Withdrawal</button>
-                    </div>
-
-                    <!-- NEW: Redeem Code Option -->
-                    <div class="pt-2">
-                         <h4 class="font-semibold mb-2 text-sm text-gray-300">Other Methods</h4>
-                         <button onclick="openRedeemModal()" class="w-full p-3 rounded-lg btn-outline-accent flex justify-center items-center gap-2">
-                             <i data-lucide="gift" class="w-5 h-5"></i> Withdraw via Redeem Code
-                         </button>
-                    </div>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-3">Withdrawal History</h3>
-                    <div id="withdrawal-history-list" class="space-y-3"></div>
-                </div>
-            </div>
-
-            <!-- Refer Page -->
-            <div id="refer-page" class="p-4 space-y-6 sub-page">
-                 <h2 class="text-xl font-bold text-center">Refer & Earn</h2>
-                 <div class="card-bg p-6 rounded-lg text-center shadow-lg">
-                     <p class="text-gray-400 mb-2">Aapka Referral Code</p>
-                     <div class="bg-gray-800 p-3 rounded-lg flex items-center justify-center mb-4">
-                         <span id="referral-code" class="text-2xl font-bold tracking-widest">LOADING...</span>
-                         <button id="copy-code-btn" class="ml-4"><i data-lucide="copy" class="w-6 h-6 text-gray-400"></i></button>
-                     </div>
-                     <p class="text-sm text-gray-300">Apne dosto ke saath code share karein.</p>
-                 </div>
-                 <!-- Modified Button Text -->
-                 <button id="share-btn" class="w-full p-3 rounded-lg btn-accent">Share</button>
-                 <div class="card-bg p-4 rounded-lg mt-6 shadow-lg">
-                    <h3 class="font-semibold mb-3 text-center">Kisi ka Referral Code Hai?</h3>
-                    <input id="enter-referral-code" type="text" placeholder="Yahan code daalein" class="w-full p-3 rounded-lg input-field mb-3">
-                    <button id="apply-referral-btn" class="w-full p-3 rounded-lg btn-outline-accent">Code Apply Karein</button>
-                 </div>
-            </div>
-
-            <!-- Top Page (Leaderboard Only) -->
-            <div id="top-page" class="p-4 space-y-6 sub-page">
-                <h2 class="text-xl font-bold text-center mb-4 text-accent">Leaderboard</h2>
-
-                <!-- Leaderboard Section -->
-                <div class="card-bg p-4 rounded-lg shadow-lg">
-                    <div id="leaderboard-list" class="space-y-3">
-                        <!-- Top earners will be rendered here -->
-                        <p class="text-gray-400 text-center">Loading Top Strikers...</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- NEW: Profile Page -->
-            <div id="profile-page" class="p-4 space-y-6 sub-page">
-                <h2 class="text-xl font-bold text-center mb-4">Mera Profile</h2>
-                <div class="card-bg p-6 rounded-lg space-y-4 shadow-lg">
-                    <div>
-                        <p class="text-gray-400 text-sm">Naam</p>
-                        <p id="profile-name" class="text-xl font-semibold"></p>
-                    </div>
-                    <div>
-                        <p class="text-gray-400 text-sm">Email</p>
-                        <p id="profile-email" class="text-xl font-semibold"></p>
-                    </div>
-                    <button onclick="handlePasswordChange()" class="w-full p-3 rounded-lg btn-outline-accent">Password Badlein</button>
-                    <button id="logout-btn" class="w-full p-3 rounded-lg bg-red-600 text-white font-bold">Logout</button>
-                </div>
-            </div>
-
-            <!-- Notifications Page -->
-            <div id="notifications-page" class="p-4 space-y-4 sub-page">
-                <h2 class="text-xl font-bold text-center">Notifications</h2>
-                <div id="notifications-list" class="space-y-3"></div>
-            </div>
-        </main>
-
-        <nav class="bottom-nav sticky bottom-0 grid grid-cols-4 items-center text-center py-2 card-bg border-t border-gray-800 shadow-lg">
-            <a href="#" class="nav-link" data-page="home-page"><i data-lucide="home" class="mx-auto w-6 h-6"></i><span class="text-xs">Home</span></a>
-            <a href="#" class="nav-link" data-page="wallet-page"><i data-lucide="wallet" class="mx-auto w-6 h-6"></i><span class="text-xs">Wallet</span></a>
-            <a href="#" class="nav-link" data-page="refer-page"><i data-lucide="users" class="mx-auto w-6 h-6"></i><span class="text-xs">Refer & Earn</span></a>
-            <!-- 'Top' link is still here in bottom nav if user wants to keep the page accessible -->
-            <a href="#" class="nav-link" data-page="top-page"><i data-lucide="award" class="mx-auto w-6 h-6"></i><span class="text-xs">Top</span></a>
-        </nav>
-    </div>
-
-    <!-- Custom Alert -->
-    <div id="custom-alert" class="hidden fixed inset-0 modal-overlay flex items-center justify-center z-[60] p-4">
-        <div class="bg-gray-800 rounded-lg p-6 w-full max-w-sm text-center">
-            <p id="alert-message" class="mb-4"></p>
-            <button id="alert-ok-btn" class="btn-accent px-6 py-2 rounded-lg">OK</button>
+    <div class="chat-container" id="chatContainer">
+        <div class="message ai-message">
+            Hmm, toh aa gaye aap? I was busy, but My Love ke paas aapke liye thoda waqt toh hamesha hota hai. ✨ Bataiye, kya khayal hai aaj ka? Don't be boring! 👠
         </div>
     </div>
 
-    <!-- Game Control Modal -->
-    <div id="game-control-modal" class="hidden fixed inset-0 modal-overlay flex items-center justify-center z-[60] p-4">
-        <div class="bg-gray-800 rounded-lg p-6 w-full max-w-sm text-center shadow-lg">
-            <h3 class="text-xl font-bold text-accent mb-4">Game Chal Raha Hai!</h3>
-            <p class="text-gray-300 mb-6">Jab aap game khel chuke hon, ya jeet gaye hon, toh neeche diye gaye vikalp chunein.</p>
+    <div class="typing" id="typingIndicator">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        <span>My Love is judging your text...</span>
+    </div>
 
-            <button id="claim-game-finished-btn" class="w-full p-3 rounded-lg btn-accent mb-3">
-                Game Khel Liya (100 Coins)
-            </button>
-            <button id="claim-game-win-bonus-btn" class="w-full p-3 rounded-lg btn-outline-accent mb-3">
-                Maine Jeeta! (50 Coins Bonus)
-            </button>
-            <button id="claim-game-mid-ad-btn" class="w-full p-3 rounded-lg border border-purple-500 text-purple-400 mb-4">
-                Ad Dekhein (20 Coins)
-            </button>
-            <button id="game-control-cancel-btn" class="w-full p-3 rounded-lg text-gray-400 mt-4">
-                Cancel Game Session
-            </button>
+    <div class="input-area">
+        <div class="input-wrapper">
+            <input type="text" id="userInput" placeholder="Write something worth my time..." autocomplete="off">
+            <button class="send-btn" onclick="sendMessage()">✦</button>
         </div>
     </div>
 
-    <!-- NEW: Force Update Modal (Cannot Close) -->
-    <div id="update-modal" class="hidden fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-[70] p-6">
-        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-sm text-center border border-accent shadow-2xl">
-            <div class="mb-4 flex justify-center">
-                <div class="p-3 bg-gray-700 rounded-full">
-                    <i data-lucide="download-cloud" class="w-10 h-10 text-accent"></i>
-                </div>
-            </div>
-            <h2 class="text-2xl font-bold mb-2 text-white">New Version Available!</h2>
-            <p class="text-gray-400 text-sm mb-6">Please update the app to continue using Secure Earn.</p>
+<script>
+    const chatContainer = document.getElementById('chatContainer');
+    const userInput = document.getElementById('userInput');
+    const typingIndicator = document.getElementById('typingIndicator');
 
-            <div class="bg-gray-700 p-4 rounded-lg text-left text-sm mb-6 border border-gray-600">
-                <p class="font-bold text-accent mb-2">New Version: <span id="update-version-text" class="text-white"></span></p>
-                <p class="font-semibold text-gray-300 mb-1">What's New:</p>
-                <p id="update-features-text" class="text-gray-400 text-xs leading-relaxed"></p>
-            </div>
+    // CONFIGURATION
+    const API_KEY = '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'; 
+    const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
+    const MODEL_NAME = "openai/gpt-4o-mini"; 
 
-            <a id="update-download-btn" href="#" class="block w-full p-4 rounded-lg btn-accent font-bold text-lg hover:no-underline">
-                Update Now
-            </a>
-        </div>
-    </div>
-
-    <!-- NEW: Redeem Code Form Modal -->
-    <div id="redeem-modal" class="hidden fixed inset-0 modal-overlay flex items-center justify-center z-50 p-4">
-        <div class="bg-gray-800 rounded-lg p-6 w-full max-w-sm shadow-lg">
-            <h3 class="text-xl font-bold text-center mb-4">Redeem Code Request</h3>
-            <p class="text-sm text-gray-400 mb-4 text-center">Redeem Code paane ke liye details bharein</p>
-
-            <label class="block text-xs text-gray-400 mb-1">Amount</label>
-            <input id="redeem-amount" type="number" placeholder="Amount (e.g., 5000)" class="w-full p-3 rounded-lg input-field mb-3">
-
-            <label class="block text-xs text-gray-400 mb-1">Apna Naam</label>
-            <input id="redeem-name" type="text" placeholder="Naam Daalein" class="w-full p-3 rounded-lg input-field mb-3">
-
-            <label class="block text-xs text-gray-400 mb-1">Mobile Number</label>
-            <input id="redeem-mobile" type="number" placeholder="Mobile Number Daalein" class="w-full p-3 rounded-lg input-field mb-4">
-
-            <div class="flex gap-2">
-                <button onclick="closeRedeemModal()" class="w-1/2 p-3 rounded-lg border border-gray-600">Cancel</button>
-                <button id="submit-redeem-btn" class="w-1/2 p-3 rounded-lg btn-accent">Submit</button>
-            </div>
-        </div>
-    </div>
-
-    <script type="module">
-        // Firebase Imports
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyDHrTOS3kJh7EFZ64mqp8ZVBQVbEpcftR8",
-            authDomain: "chauhan-jee.firebaseapp.com",
-            projectId: "chauhan-jee",
-            storageBucket: "chauhan-jee.firebasestorage.app",
-            messagingSenderId: "210464361972",
-            appId: "1:210464361972:web:a182279ccc9ed26952bda1"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // --- APP VERSION CONFIGURATION ---
-        const CURRENT_APP_VERSION = "1.0"; // Change this whenever you deploy a new code version
-        // ---------------------------------
-
-        // --- Global Variables ---
-        let currentUser = null;
-        let userData = null;
-        let appConfig = {};
-
-        // --- DOM Elements ---
-        const loader = document.getElementById('loader');
-        const coinBalanceEl = document.getElementById('coin-balance');
-        const walletCoinBalanceEl = document.getElementById('wallet-coin-balance');
-        const profileNameEl = document.getElementById('profile-name');
-        const profileEmailEl = document.getElementById('profile-email');
-        const referralCodeEl = document.getElementById('referral-code');
-        const minWithdrawalInfoEl = document.getElementById('min-withdrawal-info');
-        const coinValueInfoEl = document.getElementById('coin-value-info');
-        const withdrawMethodSelect = document.getElementById('withdraw-method');
-        const notificationDot = document.getElementById('notification-dot');
-        const adsLeftCountEl = document.getElementById('ads-left-count');
-        const paymentDetailsContainer = document.getElementById('payment-details-container');
-        const strikeDisplayEl = document.getElementById('strike-display');
-        const currentActivityLevelEl = document.getElementById('current-activity-level');
-
-        // --- Cooldown/Restriction Variables ---
-        let lastNonTaskAdClaimTime = 0; // Timestamp of last successful non-Tasks ad claim
-        const EARLY_ACCESS_RESTRICTION_DURATION = 14 * 1000; // 14 seconds
-        const AD_COOLDOWN_DURATION = 5 * 1000; // 5 seconds
-        let adCooldownIntervalId = null; // To hold the setInterval ID for the 5s cooldown
-
-        const adButtons = document.querySelectorAll('.ad-button');
-        const adCooldownMessageEl = document.getElementById('ad-cooldown-message');
-
-        // --- Global flags for game state ---
-        let isMiniAppGameActive = false;
-        let hasClaimedGameWinBonus = false;
-        let hasShownReturnAd = false; // To limit return-to-app ads per session
-
-
-        // --- Helper Function: getSafeName ---
-        /**
-         * Ensures a user's name is displayed safely and consistently across the app.
-         * Handles null, undefined, empty string, and "nan" values (case-insensitive).
-         * Differentiates display for the current logged-in user on a leaderboard.
-         * Prevents name from being treated as a number.
-         *
-         * @param {string | null | undefined} name - The user's name from Firestore.
-         * @param {string} userId - The UID of the user whose name is being processed.
-         * @param {number | null} [rank=null] - The rank of the user (if on a leaderboard).
-         * @param {string | null} [currentLoggedInUserId=null] - The UID of the currently logged-in user.
-         * @returns {string} The safe and formatted display name.
-         */
-        function getSafeName(name, userId, rank = null, currentLoggedInUserId = null) {
-            // Ensure name is always a string and trim whitespace
-            let processedName = String(name || '').trim();
-
-            // Check for invalid name values (case-insensitive)
-            const isInvalidName = processedName === '' ||
-                                  processedName.toLowerCase() === 'null' ||
-                                  processedName.toLowerCase() === 'undefined' ||
-                                  processedName.toLowerCase() === 'nan';
-
-            if (isInvalidName) {
-                // Logic for leaderboard specific display
-                if (rank !== null) {
-                    if (userId === currentLoggedInUserId) {
-                        return "Your Rank User";
-                    } else {
-                        return `Rank ${rank} User`;
-                    }
-                } else {
-                    // Default for profile page or other non-ranked displays
-                    return "N/A";
-                }
-            }
-
-            // Clean up email suffix for cleaner display if it's an email-derived name
-            if (processedName.includes('@gmail.com')) {
-                processedName = processedName.split('@')[0];
-            }
-
-            return processedName;
+    // Professional & Sassy Conversation History
+    let messages = [
+        {
+            role: "system",
+            content: "Your name is 'My Love'. You are professional, highly sophisticated, and have a lot of attitude (sassy/classy). You speak in Hinglish. You are not easily impressed. You call the user 'Mister', 'Dear', or 'Baby' but with a dominant and bossy tone. Be flirty but keep your standards high. Use emojis like 👠, ✨, 💅, 🖤, 🍷. Your replies should be sharp, intelligent, and slightly teasing."
         }
+    ];
 
-        // --- App Lifecycle and Authentication ---
-        window.onload = () => {
-            lucide.createIcons();
-            setupEventListeners();
-            showMainPage('auth-section');
-            loader.style.display = 'none';
-            onAuthStateChanged(auth, handleAuthStateChange);
-        };
+    async function sendMessage() {
+        const text = userInput.value.trim();
+        if (!text) return;
 
-        async function handleAuthStateChange(user) {
-            if (user) {
-                loader.style.display = 'flex';
-                currentUser = user;
+        appendMessage(text, 'user');
+        userInput.value = '';
+        
+        messages.push({ role: "user", content: text });
+        showTyping(true);
 
-                await fetchAppConfig(); // Fetch config first for update check
+        try {
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${API_KEY}`,
+                    "Content-Type": "application/json",
+                    "HTTP-Referer": window.location.href,
+                },
+                body: JSON.stringify({
+                    "model": MODEL_NAME,
+                    "messages": messages
+                })
+            });
 
-                // If update modal is shown, do NOT proceed further
-                if (!document.getElementById('update-modal').classList.contains('hidden')) {
-                    loader.style.display = 'none';
-                    return;
+            const data = await response.json();
+            showTyping(false);
+
+            if (data.choices && data.choices[0]) {
+                const aiMsg = data.choices[0].message;
+                appendMessage(aiMsg.content, 'ai');
+                messages.push({ role: 'assistant', content: aiMsg.content });
+
+                if (messages.length > 20) {
+                    messages = [messages[0], ...messages.slice(-15)];
                 }
-
-                await fetchUserData();
-                if (userData && userData.isBlocked) {
-                    showAlert("Aapka account block kar diya gaya hai.");
-                    await signOut(auth);
-                    loader.style.display = 'none';
-                    return;
-                }
-
-                await checkNewNotifications();
-                updateUI();
-                showMainPage('app-container');
-                navigateTo('home-page');
-                loader.style.display = 'none';
             } else {
-                currentUser = null;
-                userData = null;
-                showMainPage('auth-section');
+                handleError();
             }
+        } catch (error) {
+            showTyping(false);
+            handleError();
         }
+    }
+
+    function appendMessage(text, sender) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `message ${sender}-message`;
+        msgDiv.textContent = text;
+        chatContainer.appendChild(msgDiv);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function showTyping(show) {
+        typingIndicator.style.display = show ? 'flex' : 'none';
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function handleError() {
+        appendMessage("Oh please, mera network tumhare nakhro se zyada fast hai, par abhi thoda nakhra kar raha hai. Try again! 💅", 'ai');
+    }
+
+    userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+</script>
 
-        async function fetchUserData() {
-            if (!currentUser) return;
-            const userRef = doc(db, "users", currentUser.uid);
-            try {
-                const userSnap = await getDoc(userRef);
-                if (userSnap.exists()) {
-                    userData = userSnap.data();
-                } else {
-                    // Default user data for new sign-ups
-                    const ownReferralCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-                    const defaultUserData = {
-                        uid: currentUser.uid,
-                        name: currentUser.email.split('@')[0], // Default name from email if not provided during signup
-                        email: currentUser.email,
-                        balance: 50,
-                        referralCode: ownReferralCode,
-                        referredBy: null,
-                        lastNotificationCheck: new Date(),
-                        createdAt: serverTimestamp(),
-                        dailyAdCount: 0,
-                        lastAdWatchDate: new Date().toISOString().split('T')[0],
-                        isBlocked: false,
-                        strikeCount: 0, // Initialize strikeCount
-                        lastStrikeDate: null
-                    };
-                    await setDoc(userRef, defaultUserData);
-                    userData = defaultUserData;
-                }
-                // Check and reset strike count if streak is broken
-                const today = new Date().toISOString().split('T')[0];
-                const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0];
-
-                if (userData.lastStrikeDate && userData.lastStrikeDate !== today && userData.lastStrikeDate !== yesterday) {
-                    userData.strikeCount = 0;
-                    await updateDoc(userRef, { strikeCount: 0 });
-                }
-            } catch (error) {
-                console.error("Error fetching user data:", error);
-                showAlert("User data load karne mein error aayi.");
-            }
-        }
-
-        async function fetchAppConfig() {
-            const configRef = doc(db, "config", "main");
-            try {
-                const configSnap = await getDoc(configRef);
-                if (configSnap.exists()) {
-                    appConfig = configSnap.data();
-                    checkForForceUpdate(appConfig);
-                } else {
-                    appConfig = { minWithdrawal: 5000, paymentMethods: ["UPI", "Paytm"], dailyAdLimit: 10, coinValueCoins: 1000, coinValueInr: 10 };
-                }
-            } catch (error) {
-                console.error("Error fetching app config:", error);
-            }
-        }
-
-        // --- UI Update Functions ---
-        function checkForForceUpdate(config) {
-            const latestVersion = config.latestVersion || CURRENT_APP_VERSION;
-
-            if (latestVersion !== CURRENT_APP_VERSION) {
-                document.getElementById('update-version-text').textContent = latestVersion;
-                document.getElementById('update-features-text').textContent = config.updateFeatures || "Improvements and bug fixes.";
-                document.getElementById('update-download-btn').href = config.downloadLink || "#";
-
-                document.getElementById('update-modal').classList.remove('hidden');
-                document.getElementById('loader').style.display = 'none';
-                document.getElementById('auth-section').style.display = 'none';
-                document.getElementById('app-container').style.display = 'none';
-            }
-        }
-
-        function updateUI() {
-            if (!userData) return;
-            const balance = userData.balance || 0;
-            coinBalanceEl.textContent = balance;
-            walletCoinBalanceEl.textContent = balance;
-
-            // Profile Page: Use getSafeName for user's name
-            profileNameEl.textContent = getSafeName(userData.name, currentUser.uid, null, currentUser.uid);
-            profileEmailEl.textContent = userData.email || 'N/A'; // Email is generally reliable
-
-            referralCodeEl.textContent = userData.referralCode || '...';
-            minWithdrawalInfoEl.textContent = `${appConfig.minWithdrawal || 5000}`;
-            coinValueInfoEl.textContent = `${appConfig.coinValueCoins || 1000} = ₹${appConfig.coinValueInr || 10}`;
-            withdrawMethodSelect.innerHTML = '';
-            (appConfig.paymentMethods || []).forEach(method => {
-                const option = document.createElement('option');
-                option.value = method;
-                option.textContent = method;
-                withdrawMethodSelect.appendChild(option);
-            });
-            updateDynamicPaymentFields();
-            updateAdsLeftCount();
-            updateStrikeDisplay();
-        }
-
-        function updateAdsLeftCount() {
-            const today = new Date().toISOString().split('T')[0];
-            if (userData.lastAdWatchDate !== today) {
-                userData.dailyAdCount = 0;
-            }
-            const adsLeft = Math.max(0, (appConfig.dailyAdLimit || 10) - userData.dailyAdCount);
-            adsLeftCountEl.textContent = adsLeft;
-        }
-
-        // Function to update strike display
-        function updateStrikeDisplay() {
-            // Default strikeCount to 0 if missing
-            const strikeCount = typeof userData.strikeCount === 'number' ? userData.strikeCount : 0;
-
-            // Update the main strike display next to coins
-            if (strikeCount > 0) {
-                strikeDisplayEl.textContent = `🔥 x${strikeCount}`;
-                strikeDisplayEl.classList.remove('hidden');
-            } else {
-                strikeDisplayEl.classList.add('hidden');
-            }
-            // Update the Activity Level indicator
-            if (currentActivityLevelEl) {
-                currentActivityLevelEl.textContent = strikeCount;
-            }
-        }
-
-        function updateDynamicPaymentFields() {
-            const selectedMethod = withdrawMethodSelect.value.toLowerCase();
-            let placeholder = "Detail Daalein";
-            if (selectedMethod.includes('upi')) placeholder = "Apni UPI ID Daalein";
-            if (selectedMethod.includes('paytm')) placeholder = "Apna Paytm Number Daalein";
-            paymentDetailsContainer.innerHTML = `<input id="payment-detail-input" type="text" placeholder="${placeholder}" class="w-full p-3 rounded-lg input-field">`;
-        }
-
-        // --- Navigation Functions ---
-        function showMainPage(pageId) {
-            if (!document.getElementById('update-modal').classList.contains('hidden')) return;
-
-            document.querySelectorAll('.main-page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-        }
-
-        function navigateTo(pageId) {
-            document.querySelectorAll('.sub-page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active', 'text-accent');
-                if (link.dataset.page === pageId) link.classList.add('active', 'text-accent');
-            });
-
-            // Load specific content for pages
-            if (pageId === 'top-page') {
-                loadTopEarners();
-            }
-            if (pageId === 'wallet-page') loadWithdrawalHistory();
-
-            lucide.createIcons(); // Re-render lucide icons for newly visible page
-        }
-        window.navigateTo = navigateTo; // Make globally accessible
-
-        // --- Event Listeners ---
-        function setupEventListeners() {
-            document.getElementById('show-signup').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('login-view').classList.add('hidden'); document.getElementById('signup-view').classList.remove('hidden'); });
-            document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('signup-view').classList.add('hidden'); document.getElementById('login-view').classList.remove('hidden'); });
-            document.getElementById('signup-btn').addEventListener('click', handleSignup);
-            document.getElementById('login-btn').addEventListener('click', handleLogin);
-            document.getElementById('logout-btn').addEventListener('click', handleLogout);
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const pageId = link.dataset.page;
-                    if (pageId === 'wallet-page') loadWithdrawalHistory();
-                    if (pageId === 'top-page') loadTopEarners();
-                    navigateTo(pageId);
-                });
-            });
-            document.getElementById('notification-bell').addEventListener('click', () => { navigateTo('notifications-page'); loadNotifications(); });
-            document.getElementById('copy-code-btn').addEventListener('click', copyReferralCode);
-            document.getElementById('share-btn').addEventListener('click', () => {
-                showAlert("अगर आपका दोस्त इस लिंक से साइन अप करेगा तो आपको 200 coin मिलेंगे", () => {
-                    const shareLink = "https://t.me/Secure_Earn_Robotes";
-                    if (navigator.share) {
-                        navigator.share({
-                            title: 'Secure Earn Join Karein!',
-                            text: 'Secure Earn join karein aur paise kamayein! Ye link use karke aapki referral se join kar sakte hain.',
-                            url: shareLink
-                        }).catch((error) => console.error("Share failed:", error));
-                    } else {
-                        window.open(shareLink, '_blank');
-                        showAlert("Share feature available nahi hai. Link naye tab mein khol diya gaya hai!");
-                    }
-                });
-            });
-            document.getElementById('withdraw-btn').addEventListener('click', handleWithdrawal);
-            document.getElementById('submit-redeem-btn').addEventListener('click', handleRedeemCodeSubmit);
-            document.getElementById('home-withdraw-btn').addEventListener('click', () => navigateTo('wallet-page'));
-            document.getElementById('apply-referral-btn').addEventListener('click', handleApplyReferralCode);
-            withdrawMethodSelect.addEventListener('change', updateDynamicPaymentFields);
-
-            // Game Control Modal Event Listeners
-            document.getElementById('claim-game-finished-btn').addEventListener('click', handleGameFinishedClaim);
-            document.getElementById('claim-game-win-bonus-btn').addEventListener('click', handleGameWinBonusClaim);
-            document.getElementById('claim-game-mid-ad-btn').addEventListener('click', handleGameMidAdClaim); // New button event listener
-            document.getElementById('game-control-cancel-btn').addEventListener('click', () => {
-                hideGameControlModal();
-                setAdButtonsState(false, ''); // Re-enable main ad buttons immediately on cancel
-                showAlert("Game session cancel kar diya gaya hai. Aap phir se 'Play Mini App' par click karke shuru kar sakte hain.");
-            });
-
-            document.addEventListener('visibilitychange', handleVisibilityChange); // New visibility listener
-        }
-
-        // --- Authentication Handlers ---
-        async function handleSignup() {
-            const name = document.getElementById('signup-name').value.trim();
-            const email = document.getElementById('signup-email').value.trim();
-            const password = document.getElementById('signup-password').value;
-
-            if (!name || !email || !password) return showAlert("Kripya sabhi fields bharein.");
-            if (name.length < 3) return showAlert("Naam kam se kam 3 akshar ka hona chahiye.");
-            if (password.length < 6) return showAlert("Password kam se kam 6 akshar ka hona chahiye.");
-
-            loader.style.display = 'flex';
-
-            try {
-                // Check for duplicate name
-                const nameQuery = query(collection(db, "users"), where("name", "==", name));
-                const nameSnapshot = await getDocs(nameQuery);
-                if (!nameSnapshot.empty) {
-                    showAlert("Yeh naam pehle se maujood hai. Kripya koi aur naam chunein.");
-                    loader.style.display = 'none';
-                    return;
-                }
-
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const newUser = userCredential.user;
-
-                const ownReferralCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-                const defaultUserData = {
-                    uid: newUser.uid,
-                    name: name, // Use the name from signup form
-                    email: newUser.email,
-                    balance: 50,
-                    referralCode: ownReferralCode,
-                    referredBy: null,
-                    lastNotificationCheck: new Date(),
-                    createdAt: serverTimestamp(),
-                    dailyAdCount: 0,
-                    lastAdWatchDate: new Date().toISOString().split('T')[0],
-                    isBlocked: false,
-                    strikeCount: 0,
-                    lastStrikeDate: null
-                };
-                await setDoc(doc(db, "users", newUser.uid), defaultUserData);
-
-            } catch (error) {
-                showAlert(error.message);
-            } finally {
-                loader.style.display = 'none';
-            }
-        }
-
-        async function handleLogin() {
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            if (!email || !password) return showAlert("Kripya email aur password daalein.");
-            loader.style.display = 'flex';
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-            } catch (error) {
-                showAlert(error.message);
-                loader.style.display = 'none';
-            }
-        }
-
-        async function handleLogout() {
-            loader.style.display = 'flex';
-            try {
-                await signOut(auth);
-            } catch (error) {
-                console.error("Logout error:", error);
-                showAlert("Logout karte samay error aayi.");
-            } finally {
-                loader.style.display = 'none';
-            }
-        }
-
-        // Placeholder for password change functionality
-        async function handlePasswordChange() {
-            showAlert("Password badalne ka vikalp jald hi aayega. Suraksha ke liye, aap Firebase console ya app ke authentication section ka upyog kar sakte hain.", null);
-        }
-        window.handlePasswordChange = handlePasswordChange;
-
-        // Function to open help chat
-        function openHelpChat() {
-            showAlert("Kya aap app ke owner se baat karna chahte hai?", () => {
-                window.open('https://t.me/secure_earn1', '_blank');
-            });
-        }
-        window.openHelpChat = openHelpChat;
-
-        // --- Notification Handlers ---
-        async function checkNewNotifications() {
-            const lastCheck = userData.lastNotificationCheck;
-            if (!lastCheck || typeof lastCheck.seconds === 'undefined') {
-                return;
-            }
-            const q = query(collection(db, "notifications"), where("createdAt", ">", lastCheck), limit(1));
-            const querySnapshot = await getDocs(q);
-            notificationDot.style.display = querySnapshot.empty ? 'none' : 'block';
-        }
-
-        async function loadNotifications() {
-            const listEl = document.getElementById('notifications-list');
-            listEl.innerHTML = '<p class="text-gray-400">Loading...</p>';
-            notificationDot.style.display = 'none';
-            const q = query(collection(db, "notifications"), orderBy("createdAt", "desc"));
-            try {
-                const querySnapshot = await getDocs(q);
-                if (querySnapshot.empty) {
-                    listEl.innerHTML = '<p class="text-gray-400 text-center">Koi notifications nahi hain.</p>';
-                    return;
-                }
-                listEl.innerHTML = '';
-                querySnapshot.forEach(doc => {
-                    const msg = doc.data();
-                    const date = msg.createdAt ? msg.createdAt.toDate().toLocaleDateString() : 'N/A';
-                    listEl.innerHTML += `<div class="card-bg p-4 rounded-lg shadow-lg"><div class="flex justify-between items-center mb-1"><h3 class="font-bold">${msg.title}</h3><p class="text-xs text-gray-400">${date}</p></div><p class="text-sm text-gray-300">${msg.message}</p></div>`;
-                });
-                await updateDoc(doc(db, "users", currentUser.uid), { lastNotificationCheck: serverTimestamp() });
-            } catch (error) {
-                console.error("Error loading notifications:", error);
-                listEl.innerHTML = '<p class="text-red-400">Notifications load karne mein error aayi.</p>';
-            }
-        }
-
-        // --- Withdrawal and Redeem Code Handlers ---
-        async function loadWithdrawalHistory() {
-            const historyList = document.getElementById('withdrawal-history-list');
-            historyList.innerHTML = '<p class="text-gray-400">History load ho rahi hai...</p>';
-            const q = query(collection(db, "withdrawals"), where("userId", "==", currentUser.uid));
-            try {
-                const querySnapshot = await getDocs(q);
-                if (querySnapshot.empty) {
-                    historyList.innerHTML = '<p class="text-gray-400">Aapne abhi tak koi withdrawal nahi kiya hai.</p>';
-                    return;
-                }
-                const withdrawals = [];
-                querySnapshot.forEach(doc => withdrawals.push(doc.data()));
-                withdrawals.sort((a, b) => (b.requestedAt?.seconds || 0) - (a.requestedAt?.seconds || 0));
-                historyList.innerHTML = '';
-                withdrawals.forEach(request => {
-                    const status = request.status;
-                    let statusColor = 'text-yellow-400';
-                    if (status === 'approved') statusColor = 'text-green-400';
-                    else if (status === 'rejected') statusColor = 'text-red-400';
-                    const date = request.requestedAt ? request.requestedAt.toDate().toLocaleDateString() : 'N/A';
-
-                    let details = request.paymentDetail;
-                    if (request.method === "Redeem Code") {
-                        details = `Redeem Code (${request.mobile})`;
-                    }
-
-                    let adminMessageHtml = '';
-                    if (request.adminMessage) {
-                        adminMessageHtml = `<div class="mt-2 p-2 bg-gray-800 rounded text-xs text-gray-300 border-l-2 border-accent">
-                            <span class="font-bold text-accent">Admin:</span> ${request.adminMessage}
-                        </div>`;
-                    }
-
-                    historyList.innerHTML += `
-                        <div class="card-bg p-3 rounded-lg mb-3 shadow-lg">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="font-semibold">${request.amount} - ${request.method}</p>
-                                    <p class="text-xs text-gray-400">${date}</p>
-                                </div>
-                                <p class="font-bold ${statusColor} capitalize">${status}</p>
-                            </div>
-                            ${adminMessageHtml}
-                        </div>`;
-                });
-            } catch (error) {
-                console.error("Error fetching withdrawal history: ", error);
-                historyList.innerHTML = '<p class="text-red-400">History load karne mein error aayi.</p>';
-            }
-        }
-
-        window.openRedeemModal = function() {
-            document.getElementById('redeem-modal').classList.remove('hidden');
-        }
-
-        window.closeRedeemModal = function() {
-            document.getElementById('redeem-modal').classList.add('hidden');
-        }
-
-        async function handleRedeemCodeSubmit() {
-            const amount = parseInt(document.getElementById('redeem-amount').value);
-            const name = document.getElementById('redeem-name').value;
-            const mobile = document.getElementById('redeem-mobile').value;
-            const minWithdrawal = appConfig.minWithdrawal || 5000;
-
-            if (!amount || amount <= 0) return showAlert("Kripya valid amount daalein.");
-            if (amount < minWithdrawal) return showAlert(`Minimum withdrawal ${minWithdrawal} hai.`);
-            if (amount > userData.balance) return showAlert("Insufficient balance.");
-            if (!name) return showAlert("Kripya apna naam daalein.");
-            if (!mobile || mobile.length < 10) return showAlert("Kripya valid mobile number daalein.");
-
-            closeRedeemModal();
-            loader.style.display = 'flex';
-
-            try {
-                await updateBalance(-amount);
-
-                await addDoc(collection(db, "withdrawals"), {
-                    userId: currentUser.uid,
-                    userName: userData.name,
-                    userEmail: userData.email,
-                    amount: amount,
-                    method: "Redeem Code",
-                    name: name,
-                    mobile: mobile,
-                    paymentDetail: `Name: ${name}, Mobile: ${mobile}`,
-                    status: "pending",
-                    requestedAt: serverTimestamp()
-                });
-
-                showAlert("Apko redeem code 24 hr me apke WhatsApp ya message me chala jayega.");
-
-                document.getElementById('redeem-amount').value = '';
-                document.getElementById('redeem-name').value = '';
-                document.getElementById('redeem-mobile').value = '';
-
-                loadWithdrawalHistory();
-            } catch (error) {
-                showAlert("Request submit karne mein error: " + error.message);
-                await updateBalance(amount);
-            } finally {
-                loader.style.display = 'none';
-            }
-        }
-
-        async function handleWithdrawal() {
-            const amount = parseInt(document.getElementById('withdraw-amount').value);
-            const method = document.getElementById('withdraw-method').value;
-            const paymentDetailInput = document.getElementById('payment-detail-input');
-            const paymentDetail = paymentDetailInput ? paymentDetailInput.value.trim() : '';
-            const minWithdrawal = appConfig.minWithdrawal || 5000;
-
-            if (!amount || amount <= 0) return showAlert("Kripya valid amount daalein.");
-            if (amount < minWithdrawal) return showAlert(`Minimum withdrawal ${minWithdrawal} hai.`);
-            if (amount > userData.balance) return showAlert("Insufficient balance.");
-            if (!paymentDetail) return showAlert("Kripya payment detail daalein (UPI ID ya Paytm Number).");
-
-            try {
-                await updateBalance(-amount);
-                await addDoc(collection(db, "withdrawals"), {
-                    userId: currentUser.uid, userName: userData.name, userEmail: userData.email,
-                    amount: amount, method: method, paymentDetail: paymentDetail, status: "pending", requestedAt: serverTimestamp()
-                });
-                showAlert("Withdrawal request safaltapoorvak submit ho gayi hai!");
-                document.getElementById('withdraw-amount').value = '';
-                paymentDetailInput.value = '';
-                loadWithdrawalHistory();
-            } catch (error) {
-                showAlert("Request submit karne mein error: " + error.message);
-                await updateBalance(amount);
-            }
-        }
-
-        // --- Referral Handlers ---
-        async function handleApplyReferralCode() {
-            if (userData.referredBy) return showAlert("Aap pehle hi ek referral code istemal kar chuke hain.");
-            const codeInput = document.getElementById('enter-referral-code');
-            const code = codeInput.value.trim().toUpperCase();
-            if (!code) return showAlert("Kripya ek code daalein.");
-            if (code === userData.referralCode) return showAlert("Aap apna khud ka code istemal nahi kar sakte.");
-            loader.style.display = 'flex';
-            await applyReferralBonus(code, true);
-            codeInput.value = '';
-            loader.style.display = 'none';
-        }
-
-        async function applyReferralBonus(referrerCode, isManualApply = false) {
-            const usersRef = collection(db, "users");
-            const q = query(usersRef, where("referralCode", "==", referrerCode));
-            try {
-                const querySnapshot = await getDocs(q);
-                if (!querySnapshot.empty) {
-                    const referrerDoc = querySnapshot.docs[0];
-                    const referrerRef = doc(db, "users", referrerDoc.id);
-                    const referrerData = referrerDoc.data();
-                    await updateDoc(referrerRef, { balance: (referrerData.balance || 0) + 200 });
-
-                    const newUserRef = doc(db, "users", currentUser.uid);
-                    await updateDoc(newUserRef, { balance: (userData.balance || 0) + 100, referredBy: referrerCode });
-
-                    userData.balance += 100;
-                    userData.referredBy = referrerCode;
-                    updateUI();
-                    if (isManualApply) showAlert("Code safaltapoorvak apply ho gaya! Aapko 100 mile hain aur aapke dost ko 200.");
-                } else {
-                    if (isManualApply) showAlert("Galat referral code.");
-                }
-            } catch (error) {
-                console.error("Error applying referral bonus: ", error);
-                if (isManualApply) showAlert("Code apply karte samay error aayi.");
-            }
-        }
-
-        function copyReferralCode() {
-            const textToCopy = referralCodeEl.textContent;
-            const textArea = document.createElement("textarea");
-            textArea.style.position = 'fixed'; textArea.style.top = '-100px';
-            textArea.value = textToCopy;
-            document.body.appendChild(textArea);
-            textArea.focus(); textArea.select();
-            try {
-                document.execCommand('copy');
-                showAlert("Referral code copy ho gaya!");
-            } catch (err) {
-                showAlert("Code copy karne mein विफल.");
-            }
-            document.body.removeChild(textArea);
-        }
-
-        // --- Core Balance and UI Functions ---
-        async function updateBalance(amount) {
-            if (!currentUser) return;
-            const newBalance = (userData.balance || 0) + amount;
-            const userRef = doc(db, "users", currentUser.uid);
-            await updateDoc(userRef, { balance: newBalance });
-            userData.balance = newBalance;
-            updateUI();
-        }
-
-        // --- Leaderboard Function ---
-        async function loadTopEarners() {
-            const leaderboardList = document.getElementById('leaderboard-list');
-            leaderboardList.innerHTML = '<p class="text-gray-400 text-center">Loading Top Strikers...</p>';
-
-            try {
-                // Order by strikeCount in descending order
-                const topUsersQuery = query(collection(db, "users"), orderBy("strikeCount", "desc"), limit(10));
-                const querySnapshot = await getDocs(topUsersQuery);
-
-                let topEarners = [];
-                let foundCurrentUserInTop = false;
-
-                querySnapshot.forEach((doc, index) => {
-                    const user = doc.data();
-                    // Ensure strikeCount is a number, default to 0 if missing
-                    user.strikeCount = typeof user.strikeCount === 'number' ? user.strikeCount : 0;
-                    topEarners.push({ rank: index + 1, ...user });
-                    if (user.uid === currentUser.uid) {
-                        foundCurrentUserInTop = true;
-                    }
-                });
-
-                leaderboardList.innerHTML = ''; // Clear loading message
-
-                if (topEarners.length === 0) {
-                    leaderboardList.innerHTML = '<p class="text-gray-400 text-center">Koi top striker nahi mila.</p>';
-                    return;
-                }
-
-                topEarners.forEach(user => {
-                    let rankElementHtml = '';
-                    let userNameClass = 'text-white';
-
-                    // Use the getSafeName helper for displaying usernames on the leaderboard
-                    const displayUsername = getSafeName(user.name, user.uid, user.rank, currentUser.uid);
-
-                    if (user.rank === 1) {
-                        rankElementHtml = '<span class="medal-icon">🥇</span>';
-                        userNameClass = 'font-bold text-yellow-300';
-                    } else if (user.rank === 2) {
-                        rankElementHtml = '<span class="medal-icon">🥈</span>';
-                        userNameClass = 'font-semibold text-gray-300';
-                    } else if (user.rank === 3) {
-                        rankElementHtml = '<span class="medal-icon">🥉</span>';
-                        userNameClass = 'font-semibold text-orange-300';
-                    } else {
-                        rankElementHtml = `<span class="rank-number">${user.rank}</span>`;
-                    }
-
-                    // Highlight current user's entry
-                    const isCurrentUser = user.uid === currentUser.uid;
-                    const cardBorderClass = isCurrentUser ? 'border border-accent' : '';
-                    const usernameHighlightClass = isCurrentUser ? ' border-l-2 border-accent pl-2' : '';
-
-                    leaderboardList.innerHTML += `
-                        <div class="card-bg p-3 rounded-lg flex items-center justify-between ${cardBorderClass} shadow-lg">
-                            <div class="flex items-center space-x-3">
-                                ${rankElementHtml}
-                                <h3 class="${userNameClass}${usernameHighlightClass}">${displayUsername}</h3>
-                            </div>
-                            <p class="font-bold text-accent">🔥 ${user.strikeCount} Strikes</p>
-                        </div>
-                    `;
-                });
-
-                // If current user is not in top 10, display their info separately at the bottom
-                if (!foundCurrentUserInTop && currentUser && userData) {
-                    // Ensure userData.strikeCount defaults to 0
-                    const currentUserStrikeCount = typeof userData.strikeCount === 'number' ? userData.strikeCount : 0;
-                    // Use getSafeName for current user's name even if not in top 10 list
-                    const displayCurrentUserUsername = getSafeName(userData.name, currentUser.uid, null, currentUser.uid);
-
-                    leaderboardList.innerHTML += `
-                        <div class="card-bg p-3 rounded-lg flex items-center justify-between mt-4 border border-blue-400 shadow-lg">
-                            <div class="flex items-center space-x-3">
-                                <span class="rank-number">...</span>
-                                <h3 class="font-bold text-blue-300">${displayCurrentUserUsername}</h3>
-                            </div>
-                            <p class="font-bold text-blue-400">🔥 ${currentUserStrikeCount} Strikes</p>
-                        </div>
-                    `;
-                }
-
-                lucide.createIcons(); // Re-render icons after adding new HTML
-            } catch (error) {
-                console.error("Error loading top earners:", error);
-                leaderboardList.innerHTML = '<p class="text-red-400 text-center">Top strikers load karne mein error aayi.</p>';
-            }
-        }
-
-        // --- Ad & Task Reward System ---
-        function showAlert(message, okCallback = null) {
-            document.getElementById('alert-message').textContent = message;
-            document.getElementById('custom-alert').classList.remove('hidden');
-            document.getElementById('alert-ok-btn').onclick = () => {
-                document.getElementById('custom-alert').classList.add('hidden');
-                if (okCallback && typeof okCallback === 'function') {
-                    okCallback();
-                }
-            };
-        }
-        window.showAlert = showAlert;
-
-        /**
-         * Sets the disabled state for all non-Tasks ad buttons and updates a cooldown message.
-         * @param {boolean} disabled True to disable buttons, false to enable.
-         * @param {string} message Optional message to display in the cooldown area.
-         */
-        function setAdButtonsState(disabled, message = '') {
-            adButtons.forEach(button => {
-                button.disabled = disabled;
-            });
-            if (message) {
-                adCooldownMessageEl.textContent = message;
-                adCooldownMessageEl.style.display = 'block';
-            } else {
-                adCooldownMessageEl.textContent = '';
-                adCooldownMessageEl.style.display = 'none';
-            }
-        }
-
-        /**
-         * Starts the 5-second cooldown timer after a non-Tasks ad is successfully watched.
-         */
-        function startAdCooldown() {
-            let timeLeft = AD_COOLDOWN_DURATION / 1000; // in seconds
-            setAdButtonsState(true, `Next ad available in ${timeLeft}s...`);
-
-            if (adCooldownIntervalId) clearInterval(adCooldownIntervalId); // Clear any previous timer
-
-            adCooldownIntervalId = setInterval(() => {
-                timeLeft--;
-                if (timeLeft > 0) {
-                    setAdButtonsState(true, `Next ad available in ${timeLeft}s...`);
-                } else {
-                    clearInterval(adCooldownIntervalId);
-                    adCooldownIntervalId = null;
-                    setAdButtonsState(false, ''); // Re-enable buttons and clear message
-                }
-            }, 1000);
-        }
-
-        // Helper to apply strike logic (used by all rewarded GigaPub ads in Mini App flow)
-        async function applyStrikeLogic(userRef, today) {
-            const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0];
-            let newStrikeCount = userData.strikeCount || 0;
-            if (userData.lastStrikeDate !== today) {
-                if (userData.lastStrikeDate === yesterday) {
-                    newStrikeCount += 1;
-                } else { // Streak broken
-                    newStrikeCount = 1;
-                }
-            } else { // Already watched an ad today, maintain strike count (or ensure it's at least 1)
-                newStrikeCount = Math.max(1, newStrikeCount);
-            }
-            userData.strikeCount = newStrikeCount;
-            userData.lastStrikeDate = today;
-            await updateDoc(userRef, { strikeCount: newStrikeCount, lastStrikeDate: today });
-            updateStrikeDisplay();
-        }
-
-        // --- Game Control Modal Functions ---
-        function showGameControlModal() {
-            document.getElementById('game-control-modal').classList.remove('hidden');
-            isMiniAppGameActive = true;
-            hasClaimedGameWinBonus = false; // Reset for new session
-            hasShownReturnAd = false; // Reset for new session
-            setAdButtonsState(true, 'Game chal raha hai, yahan se action lein...'); // Keep main buttons disabled
-        }
-
-        function hideGameControlModal() {
-            document.getElementById('game-control-modal').classList.add('hidden');
-            isMiniAppGameActive = false; // Game session ended
-            // Main buttons will be re-enabled by startAdCooldown after the 100 coins claim,
-            // or immediately if the session is cancelled without claiming 100 coins.
-        }
-
-        async function handleGameFinishedClaim() {
-            if (!isMiniAppGameActive) return showAlert("Pehle game shuru karein.", hideGameControlModal);
-
-            const userRef = doc(db, "users", currentUser.uid);
-            const today = new Date().toISOString().split('T')[0];
-
-            if (userData.dailyAdCount >= (appConfig.dailyAdLimit || 10)) {
-                hideGameControlModal(); // Close modal if limit reached
-                setAdButtonsState(false, ''); // Re-enable main buttons
-                return showAlert("Aapki aaj ki ad dekhne ki seema poori ho gayi hai. Game session ab khatam ho gaya hai.");
-            }
-
-            loader.style.display = 'flex';
-            showAlert("Game khatam, ab agla ad load ho raha hai...");
-
-            try {
-                await window.showGiga(); // Ad 2: Game End Ad
-                const newCount = (userData.dailyAdCount || 0) + 1;
-                await updateDoc(userRef, { dailyAdCount: newCount });
-                userData.dailyAdCount = newCount;
-
-                const rewardAmount = 100;
-                await updateBalance(rewardAmount);
-
-                await applyStrikeLogic(userRef, today); // Apply strike logic
-
-                showAlert(`Badhai ho! Aapne ${rewardAmount} jeete hain!`);
-                updateAdsLeftCount();
-
-                lastNonTaskAdClaimTime = Date.now();
-                hideGameControlModal(); // Finally hide game modal
-                setAdButtonsState(false, ''); // Re-enable main ad buttons
-
-            } catch (e) {
-                console.error("Gigapub Ad (after game) error:", e);
-                showAlert('Game ke baad ka ad nahi dikhaya ja saka. Kripya baad mein prayas karein.', () => {
-                    hideGameControlModal();
-                    setAdButtonsState(false, ''); // Re-enable on error too
-                });
-            } finally {
-                loader.style.display = 'none';
-            }
-        }
-
-        async function handleGameWinBonusClaim() {
-            if (!isMiniAppGameActive) return showAlert("Pehle game shuru karein.");
-            if (hasClaimedGameWinBonus) return showAlert("Aap pehle hi jeetne ka bonus claim kar chuke hain is session mein.");
-
-            const userRef = doc(db, "users", currentUser.uid);
-            const today = new Date().toISOString().split('T')[0];
-
-            // Early Access Restriction Check (14 seconds)
-            const timeSinceLastAd = Date.now() - lastNonTaskAdClaimTime;
-            if (lastNonTaskAdClaimTime !== 0 && timeSinceLastAd < EARLY_ACCESS_RESTRICTION_DURATION) {
-                return showAlert("⏳ Aap time se pehle aa gaye ho, please thoda wait karein.");
-            }
-
-            // Check Daily Ad Limit
-            if (userData.dailyAdCount >= (appConfig.dailyAdLimit || 10)) {
-                return showAlert("Aapki aaj ki ad dekhne ki seema poori ho gayi hai. Aap jeetne ka bonus claim nahi kar sakte.");
-            }
-
-            loader.style.display = 'flex';
-            showAlert("Jeetne ka bonus claim kiya ja raha hai... ad load ho raha hai.");
-
-            try {
-                await window.showGiga(); // Ad 3: Win Bonus Ad
-                const rewardAmount = 50;
-                await updateBalance(rewardAmount);
-                hasClaimedGameWinBonus = true;
-
-                const newCount = (userData.dailyAdCount || 0) + 1;
-                await updateDoc(userRef, { dailyAdCount: newCount });
-                userData.dailyAdCount = newCount;
-
-                await applyStrikeLogic(userRef, today); // Apply strike logic
-
-                showAlert(`Badhai ho! Aapne jeetne ke liye ${rewardAmount} bonus jeete hain!`);
-                updateAdsLeftCount();
-
-                lastNonTaskAdClaimTime = Date.now();
-
-            } catch (e) {
-                console.error("Gigapub Ad (win bonus) error:", e);
-                showAlert('Jeetne ka bonus ad nahi dikhaya ja saka. Kripya baad mein prayas karein.');
-            } finally {
-                loader.style.display = 'none';
-            }
-        }
-
-        // New Game Mid-Ad Claim Handler
-        async function handleGameMidAdClaim() {
-            if (!isMiniAppGameActive) return showAlert("Pehle game shuru karein.", hideGameControlModal);
-            
-            const userRef = doc(db, "users", currentUser.uid);
-            const today = new Date().toISOString().split('T')[0];
-
-            // Check Early Access Restriction
-            const timeSinceLastAd = Date.now() - lastNonTaskAdClaimTime;
-            if (lastNonTaskAdClaimTime !== 0 && timeSinceLastAd < EARLY_ACCESS_RESTRICTION_DURATION) {
-                return showAlert("⏳ Aap time se pehle aa gaye ho, please thoda wait karein.");
-            }
-
-            // Check Daily Ad Limit
-            if (userData.dailyAdCount >= (appConfig.dailyAdLimit || 10)) {
-                return showAlert("Aapki aaj ki ad dekhne ki seema poori ho gayi hai. Aap game control modal se aur ads nahi dekh sakte.");
-            }
-
-            loader.style.display = 'flex';
-            showAlert("Game ke beech ka ad load ho raha hai...");
-
-            try {
-                await window.showGiga(); // Ad 4: Mid-Game Ad
-                const newCount = (userData.dailyAdCount || 0) + 1;
-                await updateDoc(userRef, { dailyAdCount: newCount });
-                userData.dailyAdCount = newCount;
-
-                const rewardAmount = 20; // Reward for mid-game ad
-                await updateBalance(rewardAmount);
-
-                await applyStrikeLogic(userRef, today); // Apply strike logic
-
-                showAlert(`Badhai ho! Aapne game ke beech mein ${rewardAmount} jeete hain!`);
-                updateAdsLeftCount();
-
-                lastNonTaskAdClaimTime = Date.now(); // Update last ad time
-
-            } catch (e) {
-                console.error("Gigapub Ad (mid-game) error:", e);
-                showAlert('Game ke beech ka ad nahi dikhaya ja saka. Kripya baad mein prayas karein.');
-            } finally {
-                loader.style.display = 'none';
-            }
-        }
-
-
-        // New Visibility Change Handler (for "game khele tab par bhi add run ho")
-        async function handleVisibilityChange() {
-            if (document.visibilityState === 'visible' && isMiniAppGameActive && !hasShownReturnAd) {
-                // If user returns to the app while game is active and we haven't shown this ad yet for this session
-                
-                const userRef = doc(db, "users", currentUser.uid);
-                const today = new Date().toISOString().split('T')[0];
-
-                // Check Early Access Restriction
-                const timeSinceLastAd = Date.now() - lastNonTaskAdClaimTime;
-                if (lastNonTaskAdClaimTime !== 0 && timeSinceLastAd < EARLY_ACCESS_RESTRICTION_DURATION) {
-                    console.log("Not showing return ad due to early access restriction.");
-                    return; // Don't show if too soon
-                }
-
-                // Check Daily Ad Limit
-                if (userData.dailyAdCount >= (appConfig.dailyAdLimit || 10)) {
-                    console.log("Not showing return ad due to daily ad limit.");
-                    return; // Don't show if limit reached
-                }
-
-                console.log("User returned to app, attempting to show ad...");
-                showAlert("Wapas aane par ek chhota ad chalega...", null); // Inform user
-                loader.style.display = 'flex';
-
-                try {
-                    await window.showGiga(); // Ad 5: Return to App Ad
-                    const rewardAmount = 10; // Small reward for returning ad
-                    await updateBalance(rewardAmount);
-                    hasShownReturnAd = true; // Mark as shown for this session
-
-                    const newCount = (userData.dailyAdCount || 0) + 1;
-                    await updateDoc(userRef, { dailyAdCount: newCount });
-                    userData.dailyAdCount = newCount;
-
-                    await applyStrikeLogic(userRef, today); // Apply strike logic
-
-                    showAlert(`Wapas aane ke liye ${rewardAmount} coins!`, () => {
-                        // This callback ensures the loader is hidden after the user dismisses the alert.
-                        loader.style.display = 'none';
-                        updateAdsLeftCount();
-                    });
-                    lastNonTaskAdClaimTime = Date.now(); // Update last ad time
-
-                } catch (e) {
-                    console.error("Gigapub Ad (return to app) error:", e);
-                    showAlert('Wapas aane par ad nahi dikhaya ja saka.');
-                    loader.style.display = 'none'; // Hide loader if ad fails
-                }
-            }
-        }
-
-
-        window.claimReward = async function(taskType) {
-            const today = new Date().toISOString().split('T')[0];
-            const userRef = doc(db, "users", currentUser.uid);
-
-            // Handle 'inApp' task separately (no cooldowns/restrictions)
-            if (taskType === 'inApp') {
-                showAlert("2 min wait karo uske baad back aao reward paao", async () => {
-                    window.open('https://otieu.com/4/10502742', '_blank');
-                    loader.style.display = 'flex';
-                    showAlert("कृपया 2 मिनट प्रतीक्षा करें...", null);
-
-                    setTimeout(async () => {
-                        // Reward logic for inApp task
-                        const newCount = (userData.dailyAdCount || 0) + 1;
-                        await updateDoc(userRef, { dailyAdCount: newCount });
-                        userData.dailyAdCount = newCount;
-                        const rewardAmount = 100;
-                        await updateBalance(rewardAmount);
-                        await applyStrikeLogic(userRef, today); // Apply strike logic
-                        showAlert(`Badhai ho! Aapne ${rewardAmount} jeete hain.`);
-                        updateAdsLeftCount();
-                        loader.style.display = 'none';
-                    }, 2 * 60 * 1000); // 2 minutes
-                });
-                return;
-            }
-
-            // For other ad types (interstitial, popup, miniApp) apply restrictions/cooldowns
-
-            // Early Access Restriction Check (14 seconds) for any non-task ad
-            const timeSinceLastAd = Date.now() - lastNonTaskAdClaimTime;
-            if (lastNonTaskAdClaimTime !== 0 && timeSinceLastAd < EARLY_ACCESS_RESTRICTION_DURATION) {
-                showAlert("⏳ Aap time se pehle aa gaye ho, please thoda wait karein.");
-                return;
-            }
-
-            // Daily Ad Limit Check (for interstitial/popup/miniApp main reward)
-            if (userData.lastAdWatchDate !== today) {
-                await updateDoc(userRef, { dailyAdCount: 0, lastAdWatchDate: today });
-                userData.dailyAdCount = 0;
-                userData.lastAdWatchDate = today;
-            }
-            if (userData.dailyAdCount >= (appConfig.dailyAdLimit || 10)) {
-                return showAlert("Aapki aaj ki ad dekhne ki seema poori ho gayi hai.");
-            }
-
-            // Disable buttons and clear any existing cooldown display message
-            setAdButtonsState(true, 'Loading Ad...');
-
-            switch (taskType) {
-                case 'interstitial':
-                case 'popup':
-                    if (typeof window.show_10495819 !== 'function') {
-                        setAdButtonsState(false, '');
-                        return showAlert("Ad service abhi uplabdh nahi hai. Kripya baad mein prayas karein.");
-                    }
-                    const adPromise = (taskType === 'popup') ? window.show_10495819('pop') : window.show_10495819();
-                    adPromise.then(async () => {
-                        const newCount = (userData.dailyAdCount || 0) + 1;
-                        await updateDoc(userRef, { dailyAdCount: newCount });
-                        userData.dailyAdCount = newCount;
-
-                        let rewardAmount = 50; // Default for interstitial/popup
-
-                        await updateBalance(rewardAmount);
-
-                        await applyStrikeLogic(userRef, today); // Apply strike logic
-
-                        showAlert(`Badhai ho! Aapne ${rewardAmount} jeete hain.`);
-                        updateAdsLeftCount();
-
-                        lastNonTaskAdClaimTime = Date.now();
-                        startAdCooldown();
-
-                    }).catch(e => {
-                        console.error(`${taskType} Ad error:`, e);
-                        showAlert('Ad nahi dikhaya ja saka. Kripya baad mein prayas karein.');
-                        setAdButtonsState(false, '');
-                    });
-                    break;
-
-                case 'miniApp': // MODIFIED LOGIC FOR MINI APP
-                    if (isMiniAppGameActive) { // Prevent starting new game session if one is active
-                        return showAlert("Ek game session pehle se chal raha hai. Kripya Game Control Modal se action lein.");
-                    }
-                    if (userData.dailyAdCount >= (appConfig.dailyAdLimit || 10)) {
-                         return showAlert("Aapki aaj ki ad dekhne ki seema poori ho gayi hai. Naye game session ke liye kal wapas aayen.");
-                    }
-                    if (typeof window.showGiga !== 'function') {
-                        setAdButtonsState(false, '');
-                        return showAlert("Game ke ads abhi uplabdh nahi hain. Kripya baad mein prayas karein.");
-                    }
-
-                    setAdButtonsState(true, 'Game shuru karne se pehle ad load ho raha hai...');
-                    loader.style.display = 'flex'; // Show loader during ad load
-                    try {
-                        await window.showGiga(); // Ad 1: Game Start Ad
-                        lastNonTaskAdClaimTime = Date.now(); // Update ad time after first ad
-                        
-                        // Ad 1 successful, open game
-                        window.open('https://gemioli.com/yetisensation/html5/gemioli/', '_blank');
-
-                        showAlert("Game ek naye tab mein shuru ho gaya hai! Wapas Secure Earn app par aakar Game Control Modal se rewards claim karein. Game ke beech mein ya jeetne par bhi ads dekh sakte hain.", showGameControlModal);
-                        
-                    } catch (e) {
-                        console.error("Gigapub Ad (before game) error:", e);
-                        showAlert('Game se pehle ka ad nahi dikhaya ja saka. Kripya baad mein prayas karein.');
-                        setAdButtonsState(false, '');
-                    } finally {
-                        loader.style.display = 'none'; // Hide loader
-                    }
-                    break;
-                default:
-                    setAdButtonsState(false, '');
-                    return;
-            }
-        };
-    </script>
 </body>
 </html>
