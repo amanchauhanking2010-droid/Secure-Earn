@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2374,6 +2376,62 @@
         }
 
         /************************************************************
+         * //// GEMINI AI CONFIGURATION ////
+         ************************************************************/
+        const GEMINI_API_KEY = "AQ.Ab8RN6Lf4evU3w6WUy5s1cQhmmjce7JW42QNUJY6UaXGi1va5w";
+
+        /**
+         * Reusable async function to communicate with Google Gemini 2.5 Flash API
+         * @param {string} userMessage - Prompt text from the user
+         * @returns {Promise<string>} - Model's response text, or fallback on error
+         */
+        async function askAI(userMessage) {
+            if (!GEMINI_API_KEY || GEMINI_API_KEY === "AQ.Ab8RN6Lf4evU3w6WUy5s1cQhmmjce7JW42QNUJY6UaXGi1va5w" || GEMINI_API_KEY.trim() === "") {
+                console.warn("Gemini API Key is not set or is still using the default placeholder.");
+                return "Gemini API Key is not configured. Please insert a valid API key in the source code.";
+            }
+
+            // Using the legacy content generation endpoint for maximum client compatibility
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        contents: [
+                            {
+                                parts: [
+                                    {
+                                        text: userMessage
+                                    }
+                                ]
+                            }
+                        ]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Gemini API HTTP Error Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                // Parse standard candidates node array to retrieve generated text
+                if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
+                    return data.candidates[0].content.parts[0].text;
+                } else {
+                    throw new Error("Unexpected empty JSON response format from Gemini engine.");
+                }
+            } catch (error) {
+                console.error("Gemini API call failed:", error);
+                return "Please try again.";
+            }
+        }
+
+        /************************************************************
          * 10. DYNAMIC CHAT CONVERSATION WORKER
          ************************************************************/
         const chatScroller = document.getElementById('chat-scroller');
@@ -2390,25 +2448,50 @@
             executeUserChatQuery();
         }
 
-        function executeUserChatQuery() {
+        async function executeUserChatQuery() {
             const queryRaw = chatInputEl.value.trim();
             if (!queryRaw) return;
 
-            // Render Bubble user
+            // Render User Bubble
             appendMessageBubble(queryRaw, 'user');
             chatInputEl.value = '';
 
-            // Inject temporary typing loaders
+            // Disable interactions to prevent overlapping requests
+            chatBtnSubmit.disabled = true;
+            chatInputEl.disabled = true;
+            chatBtnSubmit.style.opacity = '0.5';
+            chatBtnSubmit.style.pointerEvents = 'none';
+
+            // Inject temporary loading animation typing dots
             const loaderKey = appendChatTypingLoader();
             chatScroller.scrollTop = chatScroller.scrollHeight;
 
-            // Simulate tutor feedback loops
-            setTimeout(() => {
+            try {
+                // Fetch dynamic real response from Gemini 2.5 Flash via askAI
+                const computedAIResponse = await askAI(queryRaw);
+                
+                // Clean loading dots
                 removeChatTypingLoader(loaderKey);
-                const computedAIResponse = computeTutorFeedback(queryRaw);
+                
+                // Render System Bubble with markdown rendering
                 appendMessageBubble(computedAIResponse, 'system');
                 chatScroller.scrollTop = chatScroller.scrollHeight;
-            }, 1600);
+            } catch (error) {
+                console.error("Error executing user query:", error);
+                removeChatTypingLoader(loaderKey);
+                appendMessageBubble("Please try again.", 'system');
+                chatScroller.scrollTop = chatScroller.scrollHeight;
+            } finally {
+                // Re-enable interactions and restore element controls
+                chatBtnSubmit.disabled = false;
+                chatInputEl.disabled = false;
+                chatBtnSubmit.style.opacity = '1';
+                chatBtnSubmit.style.pointerEvents = 'auto';
+                
+                // Recenter focus and lock window to footer scroll position
+                chatInputEl.focus();
+                chatScroller.scrollTop = chatScroller.scrollHeight;
+            }
         }
 
         function appendMessageBubble(messageText, sender) {
@@ -2448,19 +2531,6 @@
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/`(.*?)`/g, '<code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; font-family: monospace; color: var(--neon-blue)">$1</code>')
                 .replace(/\n/g, '<br>');
-        }
-
-        function computeTutorFeedback(query) {
-            const cleanQuery = query.toLowerCase();
-
-            if (cleanQuery.includes('photosynthesis')) {
-                return `**Photosynthesis** is the chemical process plants use to convert sunlight into bio-energy!\n\n**Balanced Equation:**\n\`6CO₂ + 6H₂O + Sunlight ➔ C₆H₁₂O₆ + 6O₂\`\n\nChlorophyll within chloroplasts traps light packets, splitting water molecules to yield energetic sugars while venting oxygen.`;
-            } else if (cleanQuery.includes('quadratic') || cleanQuery.includes('root') || cleanQuery.includes('math')) {
-                return `For any standard quadratic layout \`ax² + bx + c = 0\`, roots are found via the **Quadratic Formula**:\n\n\`x = (-b ± √(b² - 4ac)) / 2a\`\n\nWhere the discriminant \`D = b² - 4ac\` dictates solution limits. If \`D < 0\`, real roots do not exist!`;
-            } else if (cleanQuery.includes('ohm') || cleanQuery.includes('electric') || cleanQuery.includes('circuit')) {
-                return `**Ohm's Law** dictates steady state electrical current layouts:\n\n\`V = I × R\`\n\nWhere:\n• \`V\` = Voltage (Volts)\n• \`I\` = Current (Amperes)\n• \`R\` = Resistance (Ohms)\n\nCurrent stays directly proportional to voltage across constant temperatures.`;
-            }
-            return `I have evaluated your request: **"${query}"**.\n\nHere is your step-by-step structural breakdown:\n• **Step 1:** Isolate standard formulas and clean physical parameters.\n• **Step 2:** Formulate systemic equations.\n• **Step 3:** Validate results using mock practice suites.\n\nLet me know if you would like to run step-by-step practice solutions for this topic!`;
         }
 
         /************************************************************
