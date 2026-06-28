@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -494,7 +492,7 @@
         .dash-scrollable-body {
             position: absolute;
             top: 76px;
-            bottom: 72px; /* Bottom space matches restructured menu bar heights */
+            bottom: 72px;
             left: 0;
             width: 100%;
             overflow-y: auto;
@@ -544,7 +542,6 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
-        /* Individual gradient borders using CSS absolute pseudo overlays */
         .premium-menu-card::before {
             content: '';
             position: absolute;
@@ -620,7 +617,6 @@
             flex-shrink: 0;
         }
 
-        /* Hover & focus micro-interactions */
         .premium-menu-card:hover {
             transform: translateY(-4px) scale(1.02);
             background: rgba(255, 255, 255, 0.05);
@@ -645,7 +641,6 @@
             transform: translateY(-1px) scale(0.99);
         }
 
-        /* Dynamic chip shadows */
         .glow-shimmer-wrap {
             position: relative;
             width: 100%;
@@ -671,7 +666,6 @@
          * SECONDARY CORES (LEARN, AI, STATS, PROFILE)
          * ==================================================== */
          
-        /* SUBJECT MODULES (LEARN TAB) */
         .subject-group-grid {
             display: flex;
             flex-direction: column;
@@ -738,7 +732,6 @@
             color: var(--text-secondary);
         }
 
-        /* Circular progress indicators */
         .progress-circle-wrap {
             position: relative;
             width: 38px;
@@ -809,7 +802,6 @@
             border-top-right-radius: 4px;
         }
 
-        /* Suggestions Pills Scroll */
         .chat-suggested-chips {
             display: flex;
             gap: 8px;
@@ -842,7 +834,6 @@
             color: #ffffff;
         }
 
-        /* Text Input controls */
         .chat-input-row {
             display: flex;
             align-items: center;
@@ -863,6 +854,11 @@
             padding: 10px 8px;
         }
 
+        .chat-text-area::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.6;
+        }
+
         .chat-submit-btn {
             width: 40px;
             height: 40px;
@@ -875,10 +871,16 @@
             align-items: center;
             justify-content: center;
             transition: transform 0.3s var(--transition-bounce);
+            flex-shrink: 0;
         }
 
         .chat-submit-btn:hover {
             transform: scale(1.1);
+        }
+
+        .chat-submit-btn:disabled {
+            opacity: 0.4;
+            pointer-events: none;
         }
 
         /* Typing Dots Animation styling */
@@ -904,7 +906,6 @@
             50% { transform: translateY(-5px); }
         }
 
-        /* HIGHLIGHT PERFORMANCE METRICS & CERTIFICATES */
         .metrics-grid-summary {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -935,7 +936,6 @@
             letter-spacing: 0.05em;
         }
 
-        /* Micro progress graph chart */
         .progress-analytics-graph {
             background: rgba(255, 255, 255, 0.01);
             border: 1px solid var(--border-glass);
@@ -983,13 +983,12 @@
             font-weight: 600;
         }
 
-        /* FIXED BOTTOM NAVIGATION BAR WITH PERFECT CENTERING */
         .premium-bottom-navigation {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 72px; /* Slimmer, cleaner production profile height */
+            height: 72px;
             background: rgba(3, 3, 3, 0.8);
             border-top: 1px solid var(--border-glass);
             backdrop-filter: blur(24px);
@@ -997,7 +996,7 @@
             z-index: 100;
             display: flex;
             align-items: center;
-            justify-content: space-evenly; /* Three menu tabs evenly distributed */
+            justify-content: space-evenly;
             padding-bottom: env(safe-area-inset-bottom);
         }
 
@@ -1025,7 +1024,6 @@
             letter-spacing: 0.04em;
         }
 
-        /* Hover indicator configurations */
         .nav-tab-item:hover {
             color: #ffffff;
         }
@@ -1043,7 +1041,6 @@
             filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.6));
         }
 
-        /* Active highlight dot glow indicator */
         .nav-tab-item::after {
             content: '';
             position: absolute;
@@ -1063,9 +1060,6 @@
             transform: scale(1);
         }
 
-        /* ====================================================
-         * FLOATING OVERLAYS (PROFILE & SEGMENTED LANGS)
-         * ==================================================== */
         .fullscreen-overlay-glass {
             position: fixed;
             top: 0;
@@ -1113,7 +1107,6 @@
             transform: scale(1) translateY(0);
         }
 
-        /* PROFILE SCREEN CONTAINER & CONTROL ITEMS */
         .profile-workspace-view {
             width: 100%;
             display: flex;
@@ -1197,7 +1190,6 @@
             flex-direction: column !important;
         }
 
-        /* PREMIUM SEGMENTED RADIO TRACK SELECTOR */
         .lang-selector-segment {
             display: flex;
             background: rgba(255, 255, 255, 0.03);
@@ -1239,14 +1231,12 @@
             box-shadow: 0 0 10px rgba(0, 242, 254, 0.25);
         }
 
-        /* Firebase Auth synchronization loading block */
         #app-loading-gate {
             background-color: var(--bg-darkest);
             z-index: 2000;
             display: flex;
         }
 
-        /* Micro Shimmer Light Layer */
         .btn-premium::before, .btn-glowing::before, .premium-menu-card::before {
             content: '';
             position: absolute;
@@ -1254,12 +1244,7 @@
             left: -150%;
             width: 50%;
             height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.1),
-                transparent
-            );
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
             transform: skewX(-20deg);
             animation: dynamicShimmer 6s infinite ease-in-out;
             pointer-events: none;
@@ -1271,50 +1256,22 @@
             100% { left: 150%; }
         }
 
-        /* RESPONSIVE LAYOUT CALIBRATIONS */
         @media (max-width: 480px) {
-            .card-wrapper {
-                padding: 32px 20px;
-                border-radius: 24px;
-            }
-            .app-title {
-                font-size: 2.3rem;
-            }
-            .premium-header {
-                padding: 0 16px;
-            }
-            .header-title-center {
-                font-size: 1rem;
-            }
+            .card-wrapper { padding: 32px 20px; border-radius: 24px; }
+            .app-title { font-size: 2.3rem; }
+            .premium-header { padding: 0 16px; }
+            .header-title-center { font-size: 1rem; }
         }
 
         @media (max-width: 360px) {
-            .app-title {
-                font-size: 1.9rem;
-            }
-            .premium-menu-card {
-                padding: 16px;
-            }
-            .card-emoji-box {
-                width: 46px;
-                height: 46px;
-                font-size: 1.3rem;
-            }
-            .card-meta-title {
-                font-size: 1rem;
-            }
-            .card-meta-desc {
-                font-size: 0.75rem;
-            }
-            .premium-bottom-navigation {
-                height: 68px;
-            }
-            .nav-tab-icon {
-                font-size: 1.2rem;
-            }
-            .nav-tab-text {
-                font-size: 0.65rem;
-            }
+            .app-title { font-size: 1.9rem; }
+            .premium-menu-card { padding: 16px; }
+            .card-emoji-box { width: 46px; height: 46px; font-size: 1.3rem; }
+            .card-meta-title { font-size: 1rem; }
+            .card-meta-desc { font-size: 0.75rem; }
+            .premium-bottom-navigation { height: 68px; }
+            .nav-tab-icon { font-size: 1.2rem; }
+            .nav-tab-text { font-size: 0.65rem; }
         }
     </style>
 </head>
@@ -1384,28 +1341,24 @@
             <p class="onboarding-subtitle" data-i18n="onboard_subtitle">Personalize your high-performance schedule.</p>
 
             <form class="onboarding-form" id="onboard-form" novalidate>
-                <!-- Full Name -->
                 <div class="input-group">
                     <label class="input-label" for="onboard-name" data-i18n="lbl_name">Full Name</label>
                     <input type="text" id="onboard-name" class="form-input" placeholder="Your full name" required autocomplete="name">
                     <div class="input-error" id="error-name">Name must be at least 2 characters.</div>
                 </div>
 
-                <!-- Mobile Phone Number -->
                 <div class="input-group">
                     <label class="input-label" for="onboard-mobile" data-i18n="lbl_mobile">Mobile Number</label>
                     <input type="tel" id="onboard-mobile" class="form-input" placeholder="e.g., +91 98765 43210" required autocomplete="tel">
                     <div class="input-error" id="error-mobile">Enter a valid 10-15 digit mobile number.</div>
                 </div>
 
-                <!-- Educational Aim -->
                 <div class="input-group">
                     <label class="input-label" for="onboard-goal" data-i18n="lbl_goal">Target Learning Goal</label>
                     <input type="text" id="onboard-goal" class="form-input" placeholder="Example: Secure 95%+ in Boards" required>
                     <div class="input-error" id="error-goal">Outline your academic target (min 5 chars).</div>
                 </div>
 
-                <!-- Syllabus Stream Selection -->
                 <div class="input-group">
                     <label class="input-label" for="onboard-exam" data-i18n="lbl_exam">Exam Target</label>
                     <select id="onboard-exam" class="form-select">
@@ -1446,9 +1399,7 @@
     <div class="page-view" id="page-dashboard" style="display: none;">
         <div class="dash-viewport">
             
-            <!-- FIXED TOP NAVIGATION HEADER -->
             <div class="premium-header">
-                <!-- Streak tracker -->
                 <div class="streak-pill" id="dashboard-streak-trigger">
                     <span class="streak-fire">🔥</span>
                     <span id="streak-count-txt">0 Days</span>
@@ -1456,19 +1407,16 @@
                 
                 <div class="header-title-center" data-i18n="dash_header_title">GoalQuest.AI Dashboard</div>
                 
-                <!-- Avatar triggers custom details overlay -->
                 <div class="profile-container-btn" id="header-profile-btn">
                     <div class="profile-inner-avatar" id="header-avatar-slot">G</div>
                 </div>
             </div>
 
-            <!-- SCROLLABLE DASHBOARD VIEWPORT -->
             <div class="dash-scrollable-body" id="dash-scroll-container">
                 
                 <!-- TAB 1: DASHBOARD HOME HUB -->
                 <div class="section-wrapper active" id="tab-section-home">
                     
-                    <!-- MENU CARD 1: Start Now -->
                     <div class="glow-shimmer-wrap">
                         <div class="premium-menu-card ripple-trigger" onclick="switchMainTab('learn')">
                             <div class="premium-menu-card-inner">
@@ -1482,7 +1430,6 @@
                         </div>
                     </div>
 
-                    <!-- MENU CARD 2: Check Your Knowledge -->
                     <div class="glow-shimmer-wrap">
                         <div class="premium-menu-card ripple-trigger" onclick="triggerMockAlert('PYQs & Dynamic Quizzes engine initializing...')">
                             <div class="premium-menu-card-inner">
@@ -1496,7 +1443,6 @@
                         </div>
                     </div>
 
-                    <!-- MENU CARD 3: AI Teacher -->
                     <div class="glow-shimmer-wrap">
                         <div class="premium-menu-card ripple-trigger" onclick="switchMainTab('ai')">
                             <div class="premium-menu-card-inner">
@@ -1510,7 +1456,6 @@
                         </div>
                     </div>
 
-                    <!-- MENU CARD 4: Performance Analytics -->
                     <div class="glow-shimmer-wrap">
                         <div class="premium-menu-card ripple-trigger" onclick="switchMainTab('learn')">
                             <div class="premium-menu-card-inner">
@@ -1530,7 +1475,6 @@
                     <h2 class="onboarding-title" style="text-align: left; font-size: 1.4rem;" data-i18n="subject_header">Select Active Subject</h2>
                     
                     <div class="subject-group-grid">
-                        <!-- Math Course Card -->
                         <div class="subject-metric-card ripple-trigger" onclick="triggerMockAlert('Launching CBSE 10 Math Module...')">
                             <div class="subject-left-set">
                                 <div class="subject-glyph" style="background: rgba(0, 242, 254, 0.1); border-color: rgba(0, 242, 254, 0.25);">📐</div>
@@ -1547,7 +1491,6 @@
                             </div>
                         </div>
 
-                        <!-- General Science Suite -->
                         <div class="subject-metric-card ripple-trigger" onclick="triggerMockAlert('Launching Science & Chemistry Workspace...')">
                             <div class="subject-left-set">
                                 <div class="subject-glyph" style="background: rgba(155, 81, 224, 0.1); border-color: rgba(155, 81, 224, 0.25);">🧬</div>
@@ -1565,7 +1508,6 @@
                         </div>
                     </div>
 
-                    <!-- PROGRESS SUMMARY GRAPH -->
                     <div class="progress-analytics-graph" style="margin-top: 14px;">
                         <h4 class="graph-header-lbl" data-i18n="weekly_activity">Weekly Learning Activity (XP)</h4>
                         <div class="analytic-graph-bar-row" id="anal-bar-row">
@@ -1601,24 +1543,21 @@
                     </div>
                 </div>
 
-                <!-- TAB 3: AI TUTOR WORKSPACE (AI TAB) -->
+                <!-- TAB 3: AI TUTOR WORKSPACE (AI TAB) - OPENROUTER INTEGRATED -->
                 <div class="section-wrapper" id="tab-section-ai">
                     <div class="teacher-chat-interface">
-                        <!-- Message viewport logs -->
                         <div class="chat-screen-logs" id="chat-scroller">
                             <div class="chat-bubble chat-bubble-system" data-i18n="chat_welcome">
                                 Hello! I am your <strong>GoalQuest AI Tutor</strong>. Ask me any CBSE Class 10 academic query, or select a dynamic suggestion chip below!
                             </div>
                         </div>
 
-                        <!-- Chip suggestions -->
                         <div class="chat-suggested-chips">
                             <div class="suggested-pill" onclick="sendSuggestionChat('Explain Photosynthesis formula step-by-step')" data-i18n="chat_photosynthesis">Photosynthesis</div>
                             <div class="suggested-pill" onclick="sendSuggestionChat('What is the formula of Quadratic roots?')" data-i18n="chat_roots">Quadratic Roots</div>
                             <div class="suggested-pill" onclick="sendSuggestionChat('Explain Ohm Law in electric circuits')" data-i18n="chat_ohms">Ohm's Law</div>
                         </div>
 
-                        <!-- Typing user command triggers -->
                         <div class="chat-input-row">
                             <input type="text" class="chat-text-area" id="chat-input-el" placeholder="Type your doubt here...">
                             <button class="chat-submit-btn ripple-trigger" id="chat-btn-submit">
@@ -1645,45 +1584,48 @@
                             <div class="mini-card-label" data-i18n="metric_lvl">Current Level</div>
                         </div>
                         <div class="summary-mini-card">
-                            <div class="mini-card-value" id="stats-solved-val">0</div>
-                            <div class="mini-card-label" data-i18n="metric_solved">Solved Quizzes</div>
-                        </div>
-                        <div class="summary-mini-card">
-                            <div class="mini-card-value" id="stats-accuracy-val">0%</div>
-                            <div class="mini-card-label" data-i18n="metric_accuracy">Overall Accuracy</div>
-                        </div>
-                    </div>
-
-                    <div class="subject-metric-card" style="margin-top: 10px;">
-                        <div class="subject-left-set">
-                            <div class="subject-glyph" style="background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.25);">👑</div>
-                            <div class="subject-text-stack">
-                                <h4 class="subject-name-lbl" id="stats-rank-lbl" data-i18n="rank_value">Scholar</h4>
-                                <span class="subject-subcompletion" data-i18n="lbl_rank">Dynamic Academic Rank</span>
+                            <div class
+<!-- TAB 4: SYSTEM METRIC SUMMARIES (STATS) -->
+                    <div class="section-wrapper" id="tab-section-stats">
+                        <h2 class="onboarding-title" style="text-align: left; font-size: 1.4rem;" data-i18n="metrics_header">Performance Metrics</h2>
+                        
+                        <div class="metrics-grid-summary">
+                            <div class="summary-mini-card">
+                                <div class="mini-card-value" id="stats-xp-val">120</div>
+                                <div class="mini-card-label" data-i18n="metric_xp">Total XP</div>
+                            </div>
+                            <div class="summary-mini-card">
+                                <div class="mini-card-value" id="stats-level-val">Level 1</div>
+                                <div class="mini-card-label" data-i18n="metric_lvl">Current Level</div>
+                            </div>
+                            <div class="summary-mini-card">
+                                <div class="mini-card-value" id="stats-solved-val">0</div>
+                                <div class="mini-card-label" data-i18n="metric_solved">Solved Quizzes</div>
+                            </div>
+                            <div class="summary-mini-card">
+                                <div class="mini-card-value" id="stats-accuracy-val">0%</div>
+                                <div class="mini-card-label" data-i18n="metric_accuracy">Overall Accuracy</div>
                             </div>
                         </div>
-                        <span style="font-weight: 800; font-size: 0.9rem; color: var(--neon-gold)" data-i18n="active_status">ACTIVE</span>
                     </div>
                 </div>
 
+                <!-- STATS NAV TAB (hidden but accessible via nav) -->
+                <div class="premium-bottom-navigation">
+                    <div class="nav-tab-item active" id="nav-item-home" onclick="switchMainTab('home')">
+                        <span class="nav-tab-icon">🏠</span>
+                        <span class="nav-tab-text" data-i18n="nav_home">Home</span>
+                    </div>
+                    <div class="nav-tab-item" id="nav-item-learn" onclick="switchMainTab('learn')">
+                        <span class="nav-tab-icon">📚</span>
+                        <span class="nav-tab-text" data-i18n="nav_learn">Learn</span>
+                    </div>
+                    <div class="nav-tab-item" id="nav-item-ai" onclick="switchMainTab('ai')">
+                        <span class="nav-tab-icon">🤖</span>
+                        <span class="nav-tab-text" data-i18n="nav_ai">AI</span>
+                    </div>
+                </div>
             </div>
-
-            <!-- FIXED BOTTOM TAB CONTROL MATRIX WITH PERFECT THREE-ICON SYMMETRY -->
-            <div class="premium-bottom-navigation">
-                <div class="nav-tab-item active" id="nav-item-home" onclick="switchMainTab('home')">
-                    <span class="nav-tab-icon">🏠</span>
-                    <span class="nav-tab-text" data-i18n="nav_home">Home</span>
-                </div>
-                <div class="nav-tab-item" id="nav-item-learn" onclick="switchMainTab('learn')">
-                    <span class="nav-tab-icon">📚</span>
-                    <span class="nav-tab-text" data-i18n="nav_learn">Learn</span>
-                </div>
-                <div class="nav-tab-item" id="nav-item-ai" onclick="switchMainTab('ai')">
-                    <span class="nav-tab-icon">🤖</span>
-                    <span class="nav-tab-text" data-i18n="nav_ai">AI</span>
-                </div>
-            </div>
-
         </div>
     </div>
 
@@ -1698,7 +1640,6 @@
                 <h3 class="profile-identity-name" id="pop-name-lbl">Student</h3>
                 <p class="profile-identity-email" id="pop-email-lbl">student@example.com</p>
 
-                <!-- Detailed Rows -->
                 <div class="profile-meta-rows">
                     <div class="meta-data-row">
                         <span class="meta-row-label" data-i18n="lbl_mobile">Mobile Number</span>
@@ -1713,7 +1654,6 @@
                         <span class="meta-row-value" id="pop-exam-lbl">CBSE Class 10</span>
                     </div>
 
-                    <!-- Language Selector Section -->
                     <div class="meta-data-row flex-column" style="align-items: flex-start; gap: 8px;">
                         <span class="meta-row-label" data-i18n="pop_language">Language / भाषा</span>
                         <div class="lang-selector-segment">
@@ -1733,7 +1673,6 @@
                     </div>
                 </div>
 
-                <!-- Signout interaction -->
                 <button class="btn-premium ripple-trigger" id="pop-logout-btn" style="border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.05); color: var(--neon-red); margin-top: 10px;" data-i18n="pop_logout">
                     Sign Out Account
                 </button>
@@ -1743,9 +1682,7 @@
             </div>
         </div>
     </div>
-
-    <!-- Script Implementations -->
-    <script>
+<script>
         /************************************************************
          * 1. FIREBASE CONFIGURATION & INITIALIZATION
          ************************************************************/
@@ -1764,12 +1701,70 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // System Core App State Holder
         let appUserContext = null;
         let appProfileContext = null;
 
         /************************************************************
-         * 2. TRANSLATION ENGINE (ENGLISH, हिन्दी, HINGLISH)
+         * 2. OPENROUTER AI CONFIGURATION
+         ************************************************************/
+        const OPENROUTER_API_KEY = "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";
+        const SITE_URL = window.location.origin || "https://goalquest.ai";
+        const SITE_NAME = "GoalQuest.AI";
+
+        async function askAI(userMessage) {
+            if (!OPENROUTER_API_KEY || OPENROUTER_API_KEY.trim() === "" || OPENROUTER_API_KEY.includes("sk-or-v1-bbbf")) {
+                return "⚠️ AI Tutor API key not configured. Please set your OpenRouter API key.";
+            }
+
+            const url = "https://openrouter.ai/api/v1/chat/completions";
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                        'HTTP-Referer': SITE_URL,
+                        'X-OpenRouter-Title': SITE_NAME,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: "deepseek/deepseek-r1:free",
+                        messages: [
+                            {
+                                role: "system",
+                                content: "You are GoalQuest AI Tutor, a helpful educational assistant for CBSE Class 10 students. Give clear, concise, step-by-step explanations. Respond in the same language the student uses. Use examples and simple language."
+                            },
+                            {
+                                role: "user",
+                                content: userMessage
+                            }
+                        ],
+                        temperature: 0.7,
+                        max_tokens: 2048
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error("OpenRouter error:", response.status, errorText);
+                    return "🤖 I'm having trouble connecting. Please try again later.";
+                }
+
+                const data = await response.json();
+                
+                if (data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
+                    return data.choices[0].message.content;
+                } else {
+                    return "🤖 I couldn't generate a response. Please try rephrasing your question.";
+                }
+            } catch (error) {
+                console.error("OpenRouter API call failed:", error);
+                return "🤖 Network error. Please check your connection and try again.";
+            }
+        }
+
+        /************************************************************
+         * 3. TRANSLATION ENGINE (ENGLISH, HINDI, HINGLISH)
          ************************************************************/
         const translations = {
             en: {
@@ -1801,7 +1796,7 @@
                 science_title: "Physics & Biology",
                 science_sub: "Syllabus • 75% Complete",
                 weekly_activity: "Weekly Learning Activity (XP)",
-                chat_welcome: "Hello! I am your <strong>GoalQuest AI Tutor</strong>. Ask me any CBSE Class 10 academic query, or select a dynamic suggestion chip below!",
+                chat_welcome: "Hello! I am your <strong>GoalQuest AI Tutor</strong>. Ask me any CBSE Class 10 academic query!",
                 chat_photosynthesis: "Photosynthesis",
                 chat_roots: "Quadratic Roots",
                 chat_ohms: "Ohm's Law",
@@ -1852,7 +1847,7 @@
                 science_title: "भौतिकी और जीव विज्ञान",
                 science_sub: "पाठ्यक्रम • 75% पूर्ण",
                 weekly_activity: "साप्ताहिक सीखने की गतिविधि (XP)",
-                chat_welcome: "नमस्ते! मैं आपका <strong>गोलक्वेस्ट एआई ट्यूटर</strong> हूं। मुझसे कोई भी सीबीएसई कक्षा 10 का शैक्षणिक प्रश्न पूछें, या नीचे दिए गए सुझाव चिप को चुनें!",
+                chat_welcome: "नमस्ते! मैं आपका <strong>गोलक्वेस्ट एआई ट्यूटर</strong> हूं। कोई भी सीबीएसई कक्षा 10 का प्रश्न पूछें!",
                 chat_photosynthesis: "प्रकाश संश्लेषण",
                 chat_roots: "द्विघात समीकरण",
                 chat_ohms: "ओम का नियम",
@@ -1903,7 +1898,7 @@
                 science_title: "Physics & Biology",
                 science_sub: "Syllabus • 75% Complete",
                 weekly_activity: "Weekly Learning Activity (XP)",
-                chat_welcome: "Hello! Main aapka <strong>GoalQuest AI Tutor</strong> hoon. Mujhse koi bhi CBSE Class 10 academic query pucho, ya neeche suggestions select karo!",
+                chat_welcome: "Hello! Main aapka <strong>GoalQuest AI Tutor</strong> hoon. Koi bhi CBSE Class 10 query pucho!",
                 chat_photosynthesis: "Photosynthesis",
                 chat_roots: "Quadratic Roots",
                 chat_ohms: "Ohm's Law",
@@ -1930,146 +1925,104 @@
         function applyLanguage(langCode) {
             if (!translations[langCode]) langCode = 'en';
             
-            // Premium smooth shifting transition
             document.body.style.opacity = '0';
             setTimeout(() => {
                 const dictionary = translations[langCode];
                 
                 document.querySelectorAll('[data-i18n]').forEach(element => {
-                    const translationKey = element.getAttribute('data-i18n');
-                    if (dictionary[translationKey]) {
+                    const key = element.getAttribute('data-i18n');
+                    if (dictionary[key]) {
                         if (element.tagName === 'INPUT' && element.hasAttribute('placeholder')) {
-                            element.setAttribute('placeholder', dictionary[translationKey]);
+                            element.setAttribute('placeholder', dictionary[key]);
                         } else {
-                            element.innerHTML = dictionary[translationKey];
+                            element.innerHTML = dictionary[key];
                         }
                     }
                 });
 
-                // Update specific dynamic placeholders
                 const chatInput = document.getElementById('chat-input-el');
-                if (chatInput) {
+                if (chatInput && dictionary['chat_placeholder']) {
                     chatInput.placeholder = dictionary['chat_placeholder'];
                 }
 
-                // Check correct radio selector button inside modal
                 const targetRadio = document.querySelector(`.lang-option input[value="${langCode}"]`);
-                if (targetRadio) {
-                    targetRadio.checked = true;
-                }
-
-                // Update dynamic translated streak count unit
-                if (appProfileContext) {
-                    const currentStreak = appProfileContext.streak || 1;
-                    let calculatedUnit = currentStreak === 1 ? 'Day' : 'Days';
-                    
-                    if (langCode === 'hi') {
-                        calculatedUnit = currentStreak === 1 ? 'दिन' : 'दिनों';
-                    } else if (langCode === 'hn') {
-                        calculatedUnit = currentStreak === 1 ? 'Din' : 'Dino';
-                    }
-                    document.getElementById('streak-count-txt').textContent = `${currentStreak} ${calculatedUnit}`;
-                }
+                if (targetRadio) targetRadio.checked = true;
 
                 document.body.style.opacity = '1';
             }, 200);
         }
 
-        // Initialize segmented change events inside Profile view
         document.querySelectorAll('.lang-option input').forEach(radioButton => {
             radioButton.addEventListener('change', async (e) => {
                 const selectedLang = e.target.value;
                 applyLanguage(selectedLang);
-
-                // Set local cache immediately
                 localStorage.setItem('gq_language', selectedLang);
-
-                // Sync back to profile collection in cloud
                 if (appUserContext) {
                     try {
                         await db.collection("users").doc(appUserContext.uid).update({
                             language: selectedLang
                         });
                     } catch (err) {
-                        console.error("Failed to update language setting in Firestore:", err);
+                        console.error(err);
                     }
                 }
             });
         });
 
         /************************************************************
-         * 3. PAGE TRANSITIONS ROUTER MATRIX
+         * 4. PAGE TRANSITIONS
          ************************************************************/
         function transitionToPage(fromPageId, toPageId) {
             const fromPage = document.getElementById(fromPageId);
             const toPage = document.getElementById(toPageId);
-
             if (!fromPage || !toPage) return;
 
-            // Trigger active state change with transitions
             fromPage.classList.remove('active');
-            
             setTimeout(() => {
                 fromPage.style.display = 'none';
                 toPage.style.display = 'flex';
-                
-                toPage.offsetHeight; // force rendering engine tick
+                toPage.offsetHeight;
                 toPage.classList.add('active');
-
-                // If navigating to dashboard workspace, synchronize components
-                if (toPageId === 'page-dashboard') {
-                    animateDashboardProgressBars();
-                }
+                if (toPageId === 'page-dashboard') animateDashboardProgressBars();
             }, 500);
         }
 
         /************************************************************
-         * 4. SIGN-IN & AUTH STATE CHANGE WORKERS
+         * 5. AUTH STATE MANAGEMENT
          ************************************************************/
         auth.onAuthStateChanged(async (user) => {
             const loadingGate = document.getElementById('app-loading-gate');
-
-            // Fallback language extraction
             const currentCacheLang = localStorage.getItem('gq_language') || 'en';
             applyLanguage(currentCacheLang);
 
             if (user) {
                 appUserContext = user;
                 try {
-                    const profileReference = db.collection("users").doc(user.uid);
-                    const userDoc = await profileReference.get();
+                    const profileRef = db.collection("users").doc(user.uid);
+                    const userDoc = await profileRef.get();
 
                     if (userDoc.exists) {
                         appProfileContext = userDoc.data();
-                        
-                        // Set persistent language setting if present in db
                         if (appProfileContext.language) {
                             applyLanguage(appProfileContext.language);
                             localStorage.setItem('gq_language', appProfileContext.language);
                         }
-
-                        // Handle streak compilation
                         await verifyAndSynchronizeStreak(user.uid);
-                        
-                        // Synchronize UI layouts
                         synchronizeDashboardHUD();
-
-                        // Route to dashboard
+                        
                         loadingGate.classList.remove('active');
                         setTimeout(() => {
                             loadingGate.style.display = 'none';
-                            document.getElementById('page-landing').style.display = 'none';
-                            document.getElementById('page-onboarding').style.display = 'none';
-                            document.getElementById('page-success').style.display = 'none';
-
-                            document.getElementById('page-dashboard').style.display = 'flex';
-                            document.getElementById('page-dashboard').offsetHeight;
-                            document.getElementById('page-dashboard').classList.add('active');
+                            ['page-landing','page-onboarding','page-success'].forEach(id => {
+                                document.getElementById(id).style.display = 'none';
+                            });
+                            const dash = document.getElementById('page-dashboard');
+                            dash.style.display = 'flex';
+                            dash.offsetHeight;
+                            dash.classList.add('active');
                             animateDashboardProgressBars();
                         }, 500);
-
                     } else {
-                        // Forward to personalization wizard
                         if (user.displayName) {
                             document.getElementById('onboard-name').value = user.displayName;
                         }
@@ -2077,21 +2030,19 @@
                         setTimeout(() => {
                             loadingGate.style.display = 'none';
                             document.getElementById('page-landing').style.display = 'none';
-                            
-                            document.getElementById('page-onboarding').style.display = 'flex';
-                            document.getElementById('page-onboarding').offsetHeight;
-                            document.getElementById('page-onboarding').classList.add('active');
+                            const onboard = document.getElementById('page-onboarding');
+                            onboard.style.display = 'flex';
+                            onboard.offsetHeight;
+                            onboard.classList.add('active');
                         }, 500);
                     }
-
                 } catch (error) {
-                    console.error("Secure initial fetch failure:", error);
+                    console.error(error);
                     loadingGate.style.display = 'none';
                     document.getElementById('page-landing').style.display = 'flex';
                     document.getElementById('page-landing').classList.add('active');
                 }
             } else {
-                // Clear user contexts and route back to landing
                 appUserContext = null;
                 appProfileContext = null;
                 loadingGate.classList.remove('active');
@@ -2099,40 +2050,35 @@
                     loadingGate.style.display = 'none';
                     document.getElementById('page-dashboard').style.display = 'none';
                     document.getElementById('page-dashboard').classList.remove('active');
-
-                    document.getElementById('page-landing').style.display = 'flex';
-                    document.getElementById('page-landing').offsetHeight;
-                    document.getElementById('page-landing').classList.add('active');
+                    const landing = document.getElementById('page-landing');
+                    landing.style.display = 'flex';
+                    landing.offsetHeight;
+                    landing.classList.add('active');
                 }, 500);
             }
         });
 
         /************************************************************
-         * 5. AUTH & GOOGLE POPUP TRIGGERS
+         * 6. GOOGLE SSO
          ************************************************************/
-        const ssoButton = document.getElementById('sso-trigger');
-        ssoButton.addEventListener('click', async (e) => {
+        document.getElementById('sso-trigger').addEventListener('click', async (e) => {
             e.preventDefault();
-            ssoButton.style.pointerEvents = 'none';
-            ssoButton.style.opacity = '0.7';
-
-            const authProvider = new firebase.auth.GoogleAuthProvider();
+            const btn = e.currentTarget;
+            btn.style.pointerEvents = 'none';
+            btn.style.opacity = '0.7';
 
             try {
-                const response = await auth.signInWithPopup(authProvider);
+                const response = await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
                 appUserContext = response.user;
+                const profileRef = db.collection("users").doc(appUserContext.uid);
+                const snapshot = await profileRef.get();
 
-                const profileReference = db.collection("users").doc(appUserContext.uid);
-                const snapshotDoc = await profileReference.get();
-
-                if (snapshotDoc.exists) {
-                    appProfileContext = snapshotDoc.data();
-                    
+                if (snapshot.exists) {
+                    appProfileContext = snapshot.data();
                     if (appProfileContext.language) {
                         applyLanguage(appProfileContext.language);
                         localStorage.setItem('gq_language', appProfileContext.language);
                     }
-
                     await verifyAndSynchronizeStreak(appUserContext.uid);
                     synchronizeDashboardHUD();
                     transitionToPage('page-landing', 'page-success');
@@ -2144,110 +2090,90 @@
                     transitionToPage('page-landing', 'page-onboarding');
                 }
             } catch (err) {
-                console.error("Single Sign On error logs:", err);
-                alert("Sign-in process cancelled or timed out.");
+                console.error(err);
+                alert("Sign-in cancelled or failed.");
             } finally {
-                ssoButton.style.pointerEvents = 'all';
-                ssoButton.style.opacity = '1';
+                btn.style.pointerEvents = 'all';
+                btn.style.opacity = '1';
             }
         });
 
         /************************************************************
-         * 6. PERSONALIZATION ONBOARDING WORKERS
+         * 7. ONBOARDING FORM
          ************************************************************/
         const onboardForm = document.getElementById('onboard-form');
-        const onboardingName = document.getElementById('onboard-name');
-        const onboardingMobile = document.getElementById('onboard-mobile');
-        const onboardingGoal = document.getElementById('onboard-goal');
-        const onboardingExam = document.getElementById('onboard-exam');
-        const submitOnboardBtn = document.getElementById('onboard-submit');
+        const onboardName = document.getElementById('onboard-name');
+        const onboardMobile = document.getElementById('onboard-mobile');
+        const onboardGoal = document.getElementById('onboard-goal');
+        const onboardExam = document.getElementById('onboard-exam');
+        const submitBtn = document.getElementById('onboard-submit');
         const onboardSpinner = document.getElementById('onboard-spinner');
 
-        // Reset validity on form edits
-        [onboardingName, onboardingMobile, onboardingGoal].forEach(inputEl => {
-            inputEl.addEventListener('input', () => {
-                inputEl.classList.remove('invalid');
-                const errDiv = document.getElementById('error-' + inputEl.id.split('-')[1]);
+        [onboardName, onboardMobile, onboardGoal].forEach(el => {
+            el.addEventListener('input', () => {
+                el.classList.remove('invalid');
+                const errDiv = document.getElementById('error-' + el.id.split('-')[1]);
                 if (errDiv) errDiv.style.display = 'none';
             });
         });
 
-        function performFormValidations() {
+        function validateForm() {
             let pass = true;
-
-            if (onboardingName.value.trim().length < 2) {
-                onboardingName.classList.add('invalid');
+            if (onboardName.value.trim().length < 2) {
+                onboardName.classList.add('invalid');
                 document.getElementById('error-name').style.display = 'block';
                 pass = false;
             }
-
-            const cleanMobile = onboardingMobile.value.replace(/[\s\-\+\(\)]/g, '');
+            const cleanMobile = onboardMobile.value.replace(/[\s\-\+\(\)]/g, '');
             if (cleanMobile.length < 10 || cleanMobile.length > 15 || isNaN(cleanMobile)) {
-                onboardingMobile.classList.add('invalid');
+                onboardMobile.classList.add('invalid');
                 document.getElementById('error-mobile').style.display = 'block';
                 pass = false;
             }
-
-            if (onboardingGoal.value.trim().length < 5) {
-                onboardingGoal.classList.add('invalid');
+            if (onboardGoal.value.trim().length < 5) {
+                onboardGoal.classList.add('invalid');
                 document.getElementById('error-goal').style.display = 'block';
                 pass = false;
             }
-
             return pass;
         }
 
         onboardForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            if (!validateForm()) return;
 
-            if (!performFormValidations()) return;
-
-            submitOnboardBtn.style.pointerEvents = 'none';
-            submitOnboardBtn.querySelector('.btn-text').style.display = 'none';
+            submitBtn.style.pointerEvents = 'none';
+            submitBtn.querySelector('.btn-text').style.display = 'none';
             onboardSpinner.style.display = 'inline-block';
 
             try {
-                if (!appUserContext) throw new Error("Auth session frame dropped. Relog required.");
-
-                const currentCacheLang = localStorage.getItem('gq_language') || 'en';
-
-                const userPayload = {
+                if (!appUserContext) throw new Error("No auth session");
+                const lang = localStorage.getItem('gq_language') || 'en';
+                const payload = {
                     uid: appUserContext.uid,
-                    name: onboardingName.value.trim(),
+                    name: onboardName.value.trim(),
                     email: appUserContext.email || "",
                     photoURL: appUserContext.photoURL || "",
-                    mobileNumber: onboardingMobile.value.trim(),
-                    goal: onboardingGoal.value.trim(),
-                    board: "CBSE",
-                    class: "10",
-                    exam: onboardingExam.value,
+                    mobileNumber: onboardMobile.value.trim(),
+                    goal: onboardGoal.value.trim(),
+                    board: "CBSE", class: "10",
+                    exam: onboardExam.value,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    language: currentCacheLang,
-                    
-                    // Gamified values
+                    language: lang,
                     streak: 1,
                     lastActiveDate: new Date().toISOString().split('T')[0],
-                    xp: 120,
-                    coins: 50,
-                    level: 1,
-                    solved: 0,
-                    accuracy: 0,
-                    rank: "Scholar"
+                    xp: 120, coins: 50, level: 1, solved: 0, accuracy: 0, rank: "Scholar"
                 };
-
-                await db.collection("users").doc(appUserContext.uid).set(userPayload);
-                appProfileContext = userPayload;
-
+                await db.collection("users").doc(appUserContext.uid).set(payload);
+                appProfileContext = payload;
                 synchronizeDashboardHUD();
                 transitionToPage('page-onboarding', 'page-success');
                 triggerConfettiExplosion();
-
             } catch (err) {
-                console.error("Firestore serialization failure:", err);
-                alert("Failed to initialize remote database: " + err.message);
+                alert("Error: " + err.message);
             } finally {
-                submitOnboardBtn.style.pointerEvents = 'all';
-                submitOnboardBtn.querySelector('.btn-text').style.display = 'inline-block';
+                submitBtn.style.pointerEvents = 'all';
+                submitBtn.querySelector('.btn-text').style.display = 'inline-block';
                 onboardSpinner.style.display = 'none';
             }
         });
@@ -2257,504 +2183,312 @@
         });
 
         /************************************************************
-         * 7. CALIBRATE STREAKS AND DAILY PROGRESS IN FIRESTORE
+         * 8. STREAK MANAGEMENT
          ************************************************************/
         async function verifyAndSynchronizeStreak(uid) {
-            const todayDateStr = new Date().toISOString().split('T')[0];
-            let activeStreak = appProfileContext.streak || 1;
-            let lastRecordedActive = appProfileContext.lastActiveDate;
+            const today = new Date().toISOString().split('T')[0];
+            let streak = appProfileContext.streak || 1;
+            const lastActive = appProfileContext.lastActiveDate;
 
-            if (lastRecordedActive) {
-                const today = new Date(todayDateStr);
-                const lastActive = new Date(lastRecordedActive);
-                const elapsedDiff = Math.abs(today - lastActive);
-                const daysDiff = Math.ceil(elapsedDiff / (1000 * 60 * 60 * 24));
-
-                if (daysDiff === 1) {
-                    activeStreak += 1;
-                } else if (daysDiff > 1) {
-                    activeStreak = 1;
-                }
-            } else {
-                activeStreak = 1;
+            if (lastActive) {
+                const diff = Math.ceil(Math.abs(new Date(today) - new Date(lastActive)) / (1000*60*60*24));
+                if (diff === 1) streak += 1;
+                else if (diff > 1) streak = 1;
             }
-
-            appProfileContext.streak = activeStreak;
-            appProfileContext.lastActiveDate = todayDateStr;
-
-            await db.collection("users").doc(uid).update({
-                streak: activeStreak,
-                lastActiveDate: todayDateStr
-            });
+            appProfileContext.streak = streak;
+            appProfileContext.lastActiveDate = today;
+            await db.collection("users").doc(uid).update({ streak, lastActiveDate: today });
         }
 
         /************************************************************
-         * 8. FRONTEND MODEL DOM BINDER
+         * 9. DASHBOARD UI SYNC
          ************************************************************/
         function synchronizeDashboardHUD() {
             if (!appProfileContext) return;
-
-            // Header profile settings
             const avatarUrl = appProfileContext.photoURL;
-            const fallbackLetter = appProfileContext.name ? appProfileContext.name.charAt(0).toUpperCase() : 'G';
-            const avatarSlot = document.getElementById('header-avatar-slot');
-            const popAvatarSlot = document.getElementById('pop-avatar-slot');
-
+            const letter = appProfileContext.name ? appProfileContext.name.charAt(0).toUpperCase() : 'G';
+            const headerAvatar = document.getElementById('header-avatar-slot');
+            const popAvatar = document.getElementById('pop-avatar-slot');
+            
             if (avatarUrl) {
-                avatarSlot.innerHTML = `<img src="${avatarUrl}" alt="Avatar">`;
-                popAvatarSlot.innerHTML = `<img src="${avatarUrl}" alt="Avatar">`;
+                headerAvatar.innerHTML = `<img src="${avatarUrl}" alt="Avatar">`;
+                popAvatar.innerHTML = `<img src="${avatarUrl}" alt="Avatar">`;
             } else {
-                avatarSlot.textContent = fallbackLetter;
-                popAvatarSlot.textContent = fallbackLetter;
+                headerAvatar.textContent = letter;
+                popAvatar.textContent = letter;
             }
 
-            // Streak pills
-            const currentStreak = appProfileContext.streak || 1;
-            const activeLang = localStorage.getItem('gq_language') || 'en';
-            let calculatedUnit = currentStreak === 1 ? 'Day' : 'Days';
-            if (activeLang === 'hi') {
-                calculatedUnit = currentStreak === 1 ? 'दिन' : 'दिनों';
-            } else if (activeLang === 'hn') {
-                calculatedUnit = currentStreak === 1 ? 'Din' : 'Dino';
-            }
-            document.getElementById('streak-count-txt').textContent = `${currentStreak} ${calculatedUnit}`;
-
-            // Dashboard Metrics Panel Bindings
+            const streak = appProfileContext.streak || 1;
+            document.getElementById('streak-count-txt').textContent = `${streak} Day${streak !== 1 ? 's' : ''}`;
             document.getElementById('stats-xp-val').textContent = appProfileContext.xp || 120;
             document.getElementById('stats-level-val').textContent = `Level ${appProfileContext.level || 1}`;
             document.getElementById('stats-solved-val').textContent = appProfileContext.solved || 0;
             document.getElementById('stats-accuracy-val').textContent = `${appProfileContext.accuracy || 0}%`;
-
-            // Glass popup overlays bindings
             document.getElementById('pop-name-lbl').textContent = appProfileContext.name || "Student";
-            document.getElementById('pop-email-lbl').textContent = appProfileContext.email || "student@example.com";
+            document.getElementById('pop-email-lbl').textContent = appProfileContext.email || "";
             document.getElementById('pop-mobile-lbl').textContent = appProfileContext.mobileNumber || "N/A";
             document.getElementById('pop-goal-lbl').textContent = appProfileContext.goal || "Not Specified";
             document.getElementById('pop-exam-lbl').textContent = appProfileContext.exam || "CBSE Class 10";
         }
 
         function animateDashboardProgressBars() {
-            const graphs = document.querySelectorAll('.analytics-col-fill');
-            graphs.forEach(bar => {
+            document.querySelectorAll('.analytics-col-fill').forEach(bar => {
                 bar.style.height = '0%';
                 setTimeout(() => {
-                    const targetHeight = bar.getAttribute('data-percentage');
-                    bar.style.height = targetHeight;
+                    bar.style.height = bar.getAttribute('data-percentage');
                 }, 150);
             });
         }
 
         /************************************************************
-         * 9. DYNAMIC NAVIGATION CONTROLLER & MAIN ROUTERS
+         * 10. TAB NAVIGATION
          ************************************************************/
-        function switchMainTab(targetSection) {
-            // Scroll to top automatically
+        function switchMainTab(target) {
             document.getElementById('dash-scroll-container').scrollTop = 0;
+            document.querySelectorAll('.section-wrapper').forEach(w => w.classList.remove('active'));
+            document.querySelectorAll('.nav-tab-item').forEach(n => n.classList.remove('active'));
 
-            // Deactivate all sections first
-            document.querySelectorAll('.section-wrapper').forEach(wrap => {
-                wrap.classList.remove('active');
-            });
-
-            // Deactivate all navigation bar items
-            document.querySelectorAll('.nav-tab-item').forEach(item => {
-                item.classList.remove('active');
-            });
-
-            // Activate corresponding page structures
-            if (targetSection === 'home') {
+            if (target === 'home') {
                 document.getElementById('tab-section-home').classList.add('active');
                 document.getElementById('nav-item-home').classList.add('active');
-            } else if (targetSection === 'learn') {
+            } else if (target === 'learn') {
                 document.getElementById('tab-section-learn').classList.add('active');
                 document.getElementById('nav-item-learn').classList.add('active');
-                animateDashboardProgressBars();
-            } else if (targetSection === 'ai') {
+                setTimeout(animateDashboardProgressBars, 100);
+            } else if (target === 'ai') {
                 document.getElementById('tab-section-ai').classList.add('active');
                 document.getElementById('nav-item-ai').classList.add('active');
             }
         }
 
         /************************************************************
-         * //// GEMINI AI CONFIGURATION ////
-         ************************************************************/
-        const GEMINI_API_KEY = "AQ.Ab8RN6Lf4evU3w6WUy5s1cQhmmjce7JW42QNUJY6UaXGi1va5w";
-
-        /**
-         * Reusable async function to communicate with Google Gemini 2.5 Flash API
-         * @param {string} userMessage - Prompt text from the user
-         * @returns {Promise<string>} - Model's response text, or fallback on error
-         */
-        async function askAI(userMessage) {
-            if (!GEMINI_API_KEY || GEMINI_API_KEY === "AQ.Ab8RN6Lf4evU3w6WUy5s1cQhmmjce7JW42QNUJY6UaXGi1va5w" || GEMINI_API_KEY.trim() === "") {
-                console.warn("Gemini API Key is not set or is still using the default placeholder.");
-                return "Gemini API Key is not configured. Please insert a valid API key in the source code.";
-            }
-
-            // Using the legacy content generation endpoint for maximum client compatibility
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-            
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        contents: [
-                            {
-                                parts: [
-                                    {
-                                        text: userMessage
-                                    }
-                                ]
-                            }
-                        ]
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Gemini API HTTP Error Status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                
-                // Parse standard candidates node array to retrieve generated text
-                if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
-                    return data.candidates[0].content.parts[0].text;
-                } else {
-                    throw new Error("Unexpected empty JSON response format from Gemini engine.");
-                }
-            } catch (error) {
-                console.error("Gemini API call failed:", error);
-                return "Please try again.";
-            }
-        }
-
-        /************************************************************
-         * 10. DYNAMIC CHAT CONVERSATION WORKER
+         * 11. CHAT SYSTEM (OPENROUTER POWERED)
          ************************************************************/
         const chatScroller = document.getElementById('chat-scroller');
         const chatInputEl = document.getElementById('chat-input-el');
-        const chatBtnSubmit = document.getElementById('chat-btn-submit');
+        const chatSubmitBtn = document.getElementById('chat-btn-submit');
 
-        chatBtnSubmit.addEventListener('click', () => executeUserChatQuery());
+        chatSubmitBtn.addEventListener('click', executeUserChatQuery);
         chatInputEl.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') executeUserChatQuery();
         });
 
-        function sendSuggestionChat(promptMsg) {
-            chatInputEl.value = promptMsg;
+        function sendSuggestionChat(prompt) {
+            chatInputEl.value = prompt;
             executeUserChatQuery();
         }
 
         async function executeUserChatQuery() {
-            const queryRaw = chatInputEl.value.trim();
-            if (!queryRaw) return;
+            const query = chatInputEl.value.trim();
+            if (!query) return;
 
-            // Render User Bubble
-            appendMessageBubble(queryRaw, 'user');
+            appendMessageBubble(query, 'user');
             chatInputEl.value = '';
-
-            // Disable interactions to prevent overlapping requests
-            chatBtnSubmit.disabled = true;
+            chatSubmitBtn.disabled = true;
             chatInputEl.disabled = true;
-            chatBtnSubmit.style.opacity = '0.5';
-            chatBtnSubmit.style.pointerEvents = 'none';
 
-            // Inject temporary loading animation typing dots
-            const loaderKey = appendChatTypingLoader();
+            const loaderId = appendChatTypingLoader();
             chatScroller.scrollTop = chatScroller.scrollHeight;
 
             try {
-                // Fetch dynamic real response from Gemini 2.5 Flash via askAI
-                const computedAIResponse = await askAI(queryRaw);
-                
-                // Clean loading dots
-                removeChatTypingLoader(loaderKey);
-                
-                // Render System Bubble with markdown rendering
-                appendMessageBubble(computedAIResponse, 'system');
+                const response = await askAI(query);
+                removeChatTypingLoader(loaderId);
+                appendMessageBubble(response, 'system');
                 chatScroller.scrollTop = chatScroller.scrollHeight;
-            } catch (error) {
-                console.error("Error executing user query:", error);
-                removeChatTypingLoader(loaderKey);
-                appendMessageBubble("Please try again.", 'system');
-                chatScroller.scrollTop = chatScroller.scrollHeight;
+            } catch (err) {
+                removeChatTypingLoader(loaderId);
+                appendMessageBubble("🤖 Error getting response. Please try again.", 'system');
             } finally {
-                // Re-enable interactions and restore element controls
-                chatBtnSubmit.disabled = false;
+                chatSubmitBtn.disabled = false;
                 chatInputEl.disabled = false;
-                chatBtnSubmit.style.opacity = '1';
-                chatBtnSubmit.style.pointerEvents = 'auto';
-                
-                // Recenter focus and lock window to footer scroll position
                 chatInputEl.focus();
-                chatScroller.scrollTop = chatScroller.scrollHeight;
             }
         }
 
-        function appendMessageBubble(messageText, sender) {
-            const bubbleEl = document.createElement('div');
-            bubbleEl.className = `chat-bubble chat-bubble-${sender}`;
-            
+        function appendMessageBubble(text, sender) {
+            const el = document.createElement('div');
+            el.className = `chat-bubble chat-bubble-${sender}`;
             if (sender === 'system') {
-                bubbleEl.innerHTML = formatMarkdown(messageText);
+                el.innerHTML = formatMarkdown(text);
             } else {
-                bubbleEl.textContent = messageText;
+                el.textContent = text;
             }
-            chatScroller.appendChild(bubbleEl);
+            chatScroller.appendChild(el);
         }
 
         function appendChatTypingLoader() {
-            const loaderDiv = document.createElement('div');
-            const rawId = 'tutor-loader-' + Date.now();
-            loaderDiv.id = rawId;
-            loaderDiv.className = 'chat-bubble chat-bubble-system';
-            loaderDiv.innerHTML = `
-                <div class="typing-loader">
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                </div>`;
-            chatScroller.appendChild(loaderDiv);
-            return rawId;
+            const id = 'loader-' + Date.now();
+            const div = document.createElement('div');
+            div.id = id;
+            div.className = 'chat-bubble chat-bubble-system';
+            div.innerHTML = `<div class="typing-loader"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+            chatScroller.appendChild(div);
+            return id;
         }
 
-        function removeChatTypingLoader(targetId) {
-            const loader = document.getElementById(targetId);
-            if (loader) loader.remove();
+        function removeChatTypingLoader(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
         }
 
-        function formatMarkdown(rawText) {
-            return rawText
+        function formatMarkdown(text) {
+            return text
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/`(.*?)`/g, '<code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; font-family: monospace; color: var(--neon-blue)">$1</code>')
+                .replace(/`(.*?)`/g, '<code style="background:rgba(0,0,0,0.3);padding:2px 6px;border-radius:4px;color:var(--neon-blue)">$1</code>')
                 .replace(/\n/g, '<br>');
         }
 
         /************************************************************
-         * 11. SYSTEM MODALS OVERLAY CONTROLLERS (PROFILE VIEW)
+         * 12. PROFILE OVERLAY
          ************************************************************/
-        const headerProfileBtn = document.getElementById('header-profile-btn');
-        const profilePopupOverlay = document.getElementById('profile-popup-overlay');
-        const popCloseBtn = document.getElementById('pop-close-btn');
-        const popLogoutBtn = document.getElementById('pop-logout-btn');
-
-        headerProfileBtn.addEventListener('click', () => {
-            profilePopupOverlay.classList.add('show');
+        document.getElementById('header-profile-btn').addEventListener('click', () => {
+            document.getElementById('profile-popup-overlay').classList.add('show');
         });
-
-        popCloseBtn.addEventListener('click', () => {
-            profilePopupOverlay.classList.remove('show');
+        document.getElementById('pop-close-btn').addEventListener('click', () => {
+            document.getElementById('profile-popup-overlay').classList.remove('show');
         });
-
-        profilePopupOverlay.addEventListener('click', (e) => {
-            if (e.target === profilePopupOverlay) {
-                profilePopupOverlay.classList.remove('show');
+        document.getElementById('profile-popup-overlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('profile-popup-overlay')) {
+                document.getElementById('profile-popup-overlay').classList.remove('show');
+            }
+        });
+        document.getElementById('pop-logout-btn').addEventListener('click', async () => {
+            if (confirm("Sign out of current session?")) {
+                await auth.signOut();
+                document.getElementById('profile-popup-overlay').classList.remove('show');
             }
         });
 
-        popLogoutBtn.addEventListener('click', async () => {
-            if (confirm("Sign out of current active session?")) {
-                try {
-                    await auth.signOut();
-                    profilePopupOverlay.classList.remove('show');
-                    transitionToPage('page-dashboard', 'page-landing');
-                } catch (err) {
-                    alert("Auth termination error: " + err.message);
-                }
-            }
-        });
-
-        // Debug alerts helper
-        function triggerMockAlert(msgText) {
-            alert(msgText);
-        }
+        function triggerMockAlert(msg) { alert(msg); }
 
         /************************************************************
-         * 12. CUSTOM SYSTEM CLICK FEEDBACKS (RIPPLES)
+         * 13. RIPPLE EFFECT
          ************************************************************/
-        document.addEventListener('click', function (e) {
-            let targetEl = e.target;
-            while (targetEl && targetEl !== document.body) {
-                if (targetEl.classList.contains('ripple-trigger') || targetEl.classList.contains('premium-menu-card')) {
-                    createClickRipple(e, targetEl);
+        document.addEventListener('click', function(e) {
+            let el = e.target;
+            while (el && el !== document.body) {
+                if (el.classList.contains('ripple-trigger') || el.classList.contains('premium-menu-card')) {
+                    const ripple = document.createElement('span');
+                    ripple.className = 'ripple';
+                    const size = Math.max(el.clientWidth, el.clientHeight);
+                    ripple.style.width = ripple.style.height = `${size}px`;
+                    const rect = el.getBoundingClientRect();
+                    ripple.style.left = `${e.clientX - rect.left - size/2}px`;
+                    ripple.style.top = `${e.clientY - rect.top - size/2}px`;
+                    el.appendChild(ripple);
+                    ripple.addEventListener('animationend', () => ripple.remove());
                     break;
                 }
-                targetEl = targetEl.parentNode;
+                el = el.parentNode;
             }
         });
 
-        function createClickRipple(event, element) {
-            const rippleSpan = document.createElement('span');
-            rippleSpan.className = 'ripple';
-            
-            const dimensions = Math.max(element.clientWidth, element.clientHeight);
-            rippleSpan.style.width = rippleSpan.style.height = `${dimensions}px`;
-            
-            const elementRect = element.getBoundingClientRect();
-            const rippleX = event.clientX - elementRect.left - (dimensions / 2);
-            const rippleY = event.clientY - elementRect.top - (dimensions / 2);
-            
-            rippleSpan.style.left = `${rippleX}px`;
-            rippleSpan.style.top = `${rippleY}px`;
-            
-            element.appendChild(rippleSpan);
-            
-            rippleSpan.addEventListener('animationend', () => {
-                rippleSpan.remove();
-            });
-        }
-
         /************************************************************
-         * 13. CANVAS PARTICLE RENDERING CONTROLLER (60FPS FLUID PHYSICS)
+         * 14. CANVAS PARTICLES
          ************************************************************/
-        const particlesCanvas = document.getElementById('particles');
-        const ctx2d = particlesCanvas.getContext('2d');
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const COUNT = 40;
 
-        let elementsRegistry = [];
-        const configLimit = 40;
-
-        function setViewportSpecs() {
-            particlesCanvas.width = window.innerWidth;
-            particlesCanvas.height = window.innerHeight;
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         }
-        window.addEventListener('resize', setViewportSpecs);
-        setViewportSpecs();
+        window.addEventListener('resize', resize);
+        resize();
 
-        class SystemCoordinate {
-            constructor(spawnConfetti = false) {
-                this.isConfetti = spawnConfetti;
-                if (spawnConfetti) {
-                    this.initConfetti();
+        class Particle {
+            constructor(isConfetti = false) {
+                this.isConfetti = isConfetti;
+                if (isConfetti) {
+                    this.x = canvas.width / 2;
+                    this.y = canvas.height / 2;
+                    this.size = Math.random() * 7 + 4;
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = Math.random() * 8 + 4;
+                    this.vx = Math.cos(angle) * speed;
+                    this.vy = Math.sin(angle) * speed - 2.5;
+                    this.color = ['#10b981','#00f2fe','#9b51e0','#f59e0b'][Math.floor(Math.random()*4)];
+                    this.alpha = 1;
+                    this.gravity = 0.16;
+                    this.rotation = Math.random() * 360;
+                    this.rotSpeed = (Math.random() - 0.5) * 8;
                 } else {
-                    this.initBackgroundParticle();
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2 + 0.4;
+                    this.vx = (Math.random() - 0.5) * 0.15;
+                    this.vy = (Math.random() - 0.5) * 0.15 - 0.15;
+                    this.alpha = Math.random() * 0.3 + 0.1;
+                    this.pulse = Math.random() * 0.003 + 0.001;
+                    this.color = ['#00f2fe','#4facfe','#9b51e0'][Math.floor(Math.random()*3)];
                 }
-            }
-
-            initBackgroundParticle() {
-                this.x = Math.random() * particlesCanvas.width;
-                this.y = Math.random() * particlesCanvas.height;
-                this.size = Math.random() * 2 + 0.4;
-                this.speedX = (Math.random() - 0.5) * 0.15;
-                this.speedY = (Math.random() - 0.5) * 0.15 - 0.15; // Slow drift upward
-                this.color = this.getRandomBrandColor();
-                this.alpha = Math.random() * 0.3 + 0.1;
-                this.pulseFactor = Math.random() * 0.003 + 0.001;
-            }
-
-            initConfetti() {
-                this.x = particlesCanvas.width / 2;
-                this.y = particlesCanvas.height / 2;
-                this.size = Math.random() * 7 + 4;
-                
-                const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 8 + 4;
-                
-                this.speedX = Math.cos(angle) * speed;
-                this.speedY = Math.sin(angle) * speed - 2.5;
-                
-                this.color = this.getSuccessColors();
-                this.alpha = 1.0;
-                this.gravity = 0.16;
-                this.rotation = Math.random() * 360;
-                this.rotationSpeed = (Math.random() - 0.5) * 8;
-            }
-
-            getRandomBrandColor() {
-                const colors = [
-                    'rgba(0, 242, 254, ',  // Cyan
-                    'rgba(79, 172, 254, ',  // Soft Blue
-                    'rgba(155, 81, 224, '   // Purple
-                ];
-                return colors[Math.floor(Math.random() * colors.length)];
-            }
-
-            getSuccessColors() {
-                const colors = [
-                    'rgba(16, 185, 129, ',  // Emerald Green
-                    'rgba(0, 242, 254, ',   // Blue
-                    'rgba(155, 81, 224, ',  // Purple
-                    'rgba(245, 158, 11, '   // Gold
-                ];
-                return colors[Math.floor(Math.random() * colors.length)];
             }
 
             update() {
                 if (this.isConfetti) {
-                    this.x += this.speedX;
-                    this.y += this.speedY;
-                    this.speedY += this.gravity;
-                    this.rotation += this.rotationSpeed;
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.vy += this.gravity;
                     this.alpha -= 0.012;
+                    this.rotation += this.rotSpeed;
                 } else {
-                    this.x += this.speedX;
-                    this.y += this.speedY;
-
-                    // Standard bounding box bounce
-                    if (this.x < 0 || this.x > particlesCanvas.width) this.speedX *= -1;
-                    if (this.y < -10) {
-                        this.y = particlesCanvas.height + 10;
-                        this.x = Math.random() * particlesCanvas.width;
-                    }
-
-                    // Breathing alpha cycles
-                    this.alpha += this.pulseFactor;
-                    if (this.alpha > 0.6 || this.alpha < 0.1) {
-                        this.pulseFactor *= -1;
-                    }
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                    if (this.y < -10) { this.y = canvas.height + 10; this.x = Math.random() * canvas.width; }
+                    this.alpha += this.pulse;
+                    if (this.alpha > 0.6 || this.alpha < 0.1) this.pulse *= -1;
                 }
             }
 
             draw() {
-                ctx2d.save();
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.alpha);
                 if (this.isConfetti) {
-                    ctx2d.translate(this.x, this.y);
-                    ctx2d.rotate(this.rotation * Math.PI / 180);
-                    ctx2d.beginPath();
-                    ctx2d.rect(-this.size/2, -this.size/2, this.size, this.size);
-                    ctx2d.fillStyle = this.color + this.alpha + ')';
-                    ctx2d.fill();
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(this.rotation * Math.PI / 180);
+                    ctx.fillStyle = this.color;
+                    ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size);
                 } else {
-                    ctx2d.beginPath();
-                    ctx2d.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx2d.fillStyle = this.color + this.alpha + ')';
-                    ctx2d.fill();
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
                 }
-                ctx2d.restore();
+                ctx.restore();
             }
         }
 
         function triggerConfettiExplosion() {
             for (let i = 0; i < 90; i++) {
-                elementsRegistry.push(new SystemCoordinate(true));
+                particles.push(new Particle(true));
             }
         }
 
-        function initializeParticlesSystem() {
-            elementsRegistry = [];
-            for (let i = 0; i < configLimit; i++) {
-                elementsRegistry.push(new SystemCoordinate(false));
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < COUNT; i++) {
+                particles.push(new Particle(false));
             }
         }
 
-        function executionAnimationLoop() {
-            ctx2d.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
-            for (let i = 0; i < elementsRegistry.length; i++) {
-                elementsRegistry[i].update();
-                elementsRegistry[i].draw();
-
-                if (elementsRegistry[i].isConfetti && elementsRegistry[i].alpha <= 0) {
-                    elementsRegistry.splice(i, 1);
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                if (particles[i].isConfetti && particles[i].alpha <= 0) {
+                    particles.splice(i, 1);
                     i--;
                 }
             }
-            requestAnimationFrame(executionAnimationLoop);
+            requestAnimationFrame(animate);
         }
 
-        initializeParticlesSystem();
-        executionAnimationLoop();
+        initParticles();
+        animate();
     </script>
 </body>
 </html>
