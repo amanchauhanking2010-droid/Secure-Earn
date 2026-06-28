@@ -2,307 +2,994 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Love | Classy & Sassy 🖤</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GoalQuest.AI — Learn Smart. Practice Better.</title>
+    
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Firebase SDK Compat (Optimized for Single-File HTML Deployment) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
     <style>
-        :root {
-            --primary: #e63946; /* Deep Red for classy look */
-            --secondary: #1d3557;
-            --bg-dark: #050505;
-            --glass: rgba(255, 255, 255, 0.05);
-            --user-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            --ai-gradient: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
-            --accent: #ffd700; /* Gold touch */
+        /* Modern Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-
-        body {
-            background: var(--bg-dark);
-            background-image: radial-gradient(circle at 20% 20%, #1a0a0a, transparent),
-                              radial-gradient(circle at 80% 80%, #0a0a1a, transparent);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            color: #e0e0e0;
+        body, html {
+            width: 100%;
+            height: 100%;
             overflow: hidden;
-        }
-
-        /* Header Styling */
-        .header {
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            z-index: 10;
-        }
-
-        .avatar-container {
-            position: relative;
-        }
-
-        .avatar {
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #000, #e63946);
+            background-color: #030303;
+            font-family: 'Inter', sans-serif;
+            color: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            border: 2px solid var(--accent);
-            box-shadow: 0 0 15px rgba(230, 57, 70, 0.4);
         }
 
-        .status-dot {
-            width: 12px;
-            height: 12px;
-            background: #00ff00;
-            border: 2px solid var(--bg-dark);
-            border-radius: 50%;
+        /* Fullscreen Glowing AI Backdrops */
+        .ambient-glow-purple {
             position: absolute;
-            bottom: 2px;
-            right: 2px;
+            top: -15%;
+            left: -15%;
+            width: 60%;
+            height: 60%;
+            background: radial-gradient(circle, rgba(127, 0, 255, 0.12) 0%, rgba(0,0,0,0) 70%);
+            filter: blur(80px);
+            z-index: 1;
+            pointer-events: none;
+            animation: driftGlowPurple 25s infinite alternate ease-in-out;
         }
 
-        .header-info h2 { 
-            font-size: 20px; 
-            letter-spacing: 1px; 
-            color: var(--accent);
-            font-weight: 600;
+        .ambient-glow-blue {
+            position: absolute;
+            bottom: -15%;
+            right: -15%;
+            width: 60%;
+            height: 60%;
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.12) 0%, rgba(0,0,0,0) 70%);
+            filter: blur(80px);
+            z-index: 1;
+            pointer-events: none;
+            animation: driftGlowBlue 30s infinite alternate ease-in-out;
         }
-        .header-info p { font-size: 12px; opacity: 0.7; color: #fff; }
 
-        /* Chat Area */
-        .chat-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 25px;
+        /* Particle System Canvas */
+        canvas#particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* Dynamic Page Router Containers */
+        .page-view {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+            opacity: 0;
+            transform: scale(0.96) translateY(20px);
+            pointer-events: none;
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .page-view.active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: all;
+        }
+
+        /* Main Shell Glassmorphism Container */
+        .card-wrapper {
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            scroll-behavior: smooth;
-        }
-
-        .chat-container::-webkit-scrollbar { width: 4px; }
-        .chat-container::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
-
-        .message {
-            max-width: 80%;
-            padding: 15px 20px;
-            border-radius: 15px;
-            font-size: 15px;
-            line-height: 1.6;
-            position: relative;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-10px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .user-message {
-            align-self: flex-end;
-            background: var(--user-gradient);
-            color: white;
-            border-bottom-right-radius: 2px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .ai-message {
-            align-self: flex-start;
-            background: var(--ai-gradient);
-            border-left: 3px solid var(--accent);
-            border-bottom-left-radius: 2px;
-            color: #f0f0f0;
-        }
-
-        /* Typing Indicator */
-        .typing {
-            font-size: 13px;
-            color: var(--accent);
-            margin: 10px 25px;
-            display: none;
             align-items: center;
-            gap: 8px;
-            font-style: italic;
+            text-align: center;
+            padding: 48px 32px;
+            max-width: 420px;
+            max-height: 90vh;
+            overflow-y: auto;
+            scrollbar-width: none; /* Firefox */
+            width: 90%;
+            background: rgba(10, 10, 14, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 32px;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: 
+                0 30px 70px rgba(0, 0, 0, 0.7),
+                inset 0 1px 0px rgba(255, 255, 255, 0.1);
         }
 
-        .dot { width: 5px; height: 5px; background: var(--accent); border-radius: 50%; animation: bounce 1.4s infinite; }
-        .dot:nth-child(2) { animation-delay: 0.2s; }
-        .dot:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes bounce { 0%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-5px); } }
-
-        /* Input Area */
-        .input-area {
-            padding: 25px;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(25px);
-            border-top: 1px solid rgba(255,255,255,0.05);
+        .card-wrapper::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
         }
 
-        .input-wrapper {
-            max-width: 900px;
-            margin: 0 auto;
+        /* AI Glowing Brand Orb */
+        .brand-orb {
+            position: relative;
+            width: 64px;
+            height: 64px;
+            margin-bottom: 28px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.05) 0%, rgba(155, 81, 224, 0.05) 100%);
+            border: 1px solid rgba(0, 242, 254, 0.2);
             display: flex;
-            gap: 15px;
-            background: rgba(255,255,255,0.05);
-            padding: 10px 20px;
-            border-radius: 12px;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.1);
+            animation: pulseGlow 4s infinite alternate ease-in-out;
+            flex-shrink: 0;
+        }
+
+        .brand-orb::after {
+            content: '';
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00f2fe, #9b51e0);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.8);
+            animation: orbitMotion 6s linear infinite;
+        }
+
+        /* Central App Typography */
+        .title-group {
+            animation: floatTitle 5s ease-in-out infinite alternate;
+            margin-bottom: 16px;
+        }
+
+        .app-title {
+            font-size: 3.25rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 40%, #9b51e0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+            filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.5));
+        }
+
+        /* Sleek Subtext / Tagline */
+        .tagline {
+            font-size: 1.05rem;
+            font-weight: 400;
+            color: #94a3b8; /* Tailwind slate-400 */
+            line-height: 1.5;
+            letter-spacing: -0.01em;
+            max-width: 290px;
+            margin-bottom: 44px;
+        }
+
+        /* Button Container Styling */
+        .button-group {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* UI Preview Button: Google SSO style */
+        .sso-btn {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 310px;
+            padding: 16px 24px;
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: 0.4s;
-        }
-
-        .input-wrapper:focus-within {
-            border-color: var(--accent);
-            background: rgba(255,255,255,0.08);
-        }
-
-        input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: white;
-            padding: 10px;
-            outline: none;
-            font-size: 16px;
-        }
-
-        .send-btn {
-            background: none;
-            border: none;
+            border-radius: 9999px;
+            color: #f8fafc;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
             cursor: pointer;
-            color: var(--accent);
-            font-size: 24px;
-            transition: 0.3s;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: 
+                transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .sso-btn .google-icon-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Micro shimmer light effect */
+        .sso-btn::before, .btn-glowing::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.12),
+                transparent
+            );
+            transform: skewX(-20deg);
+            animation: dynamicShimmer 6s infinite ease-in-out;
+        }
+
+        /* CSS Button Hover & Active Press feedback */
+        .sso-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(0, 242, 254, 0.4);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 
+                0 12px 30px rgba(0, 242, 254, 0.12),
+                0 0 10px rgba(155, 81, 224, 0.05);
+        }
+
+        .sso-btn:active {
+            transform: translateY(0px) scale(0.98);
+            background: rgba(255, 255, 255, 0.04);
+            transition: transform 0.1s ease;
+        }
+
+        /* ONBOARDING STYLING */
+        .onboarding-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .onboarding-subtitle {
+            font-size: 0.95rem;
+            color: #94a3b8;
+            margin-bottom: 32px;
+            max-width: 320px;
+            line-height: 1.4;
+        }
+
+        .onboarding-form {
+            width: 100%;
+            text-align: left;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            width: 100%;
+            position: relative;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .form-input::placeholder {
+            color: #4b5563;
+        }
+
+        .form-input:focus, .form-select:focus {
+            border-color: rgba(0, 242, 254, 0.5);
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.12);
+        }
+
+        .form-input.invalid, .form-select.invalid {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.15) !important;
+            animation: inputShake 0.4s ease-in-out;
+        }
+
+        .input-error {
+            font-size: 0.75rem;
+            color: #ef4444;
+            margin-top: 6px;
+            display: none;
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 16px;
+            padding-right: 40px;
+            cursor: pointer;
+        }
+
+        .form-select option {
+            background-color: #0d0c15;
+            color: #ffffff;
+        }
+
+        /* Glowing Accent Button */
+        .btn-glowing {
+            position: relative;
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #9b51e0 100%);
+            border: none;
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 700;
+            padding: 16px 24px;
+            border-radius: 9999px;
+            width: 100%;
+            max-width: 310px;
+            cursor: pointer;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 242, 254, 0.25);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            margin-top: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .send-btn:hover { transform: scale(1.2); color: #fff; }
+        .btn-glowing:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 
+                0 12px 30px rgba(0, 242, 254, 0.45), 
+                0 0 15px rgba(155, 81, 224, 0.25);
+        }
 
+        .btn-glowing:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .btn-glowing .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* SUCCESS SCREEN STYLING */
+        .success-icon-wrapper {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(34, 197, 94, 0.1);
+            border: 2px solid #22c55e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 32px;
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.3);
+            animation: successPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+            flex-shrink: 0;
+        }
+
+        .success-icon-wrapper svg {
+            width: 40px;
+            height: 40px;
+            stroke: #22c55e;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: drawCheck 0.8s ease-out 0.4s forwards;
+        }
+
+        .success-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        .success-subtitle {
+            font-size: 0.95rem;
+            color: #94a3b8;
+            line-height: 1.5;
+            margin-bottom: 40px;
+            max-width: 320px;
+        }
+
+        /* Keyframe Core Animations */
+        @keyframes driftGlowPurple {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(8%, 12%) scale(1.15); }
+        }
+
+        @keyframes driftGlowBlue {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-8%, -12%) scale(1.15); }
+        }
+
+        @keyframes floatTitle {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-6px); }
+        }
+
+        @keyframes pulseGlow {
+            0% { 
+                box-shadow: 0 0 20px rgba(0, 242, 254, 0.1); 
+                border-color: rgba(0, 242, 254, 0.2); 
+            }
+            100% { 
+                box-shadow: 0 0 32px rgba(155, 81, 224, 0.3); 
+                border-color: rgba(155, 81, 224, 0.45); 
+            }
+        }
+
+        @keyframes orbitMotion {
+            0% { transform: rotate(0deg) translateX(18px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(18px) rotate(-360deg); }
+        }
+
+        @keyframes dynamicShimmer {
+            0% { left: -150%; }
+            35% { left: 150%; }
+            100% { left: 150%; }
+        }
+
+        @keyframes inputShake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+
+        @keyframes successPop {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes drawCheck {
+            to { stroke-dashoffset: 0; }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Mobile Viewport Fine-Tuning */
+        @media (max-width: 480px) {
+            .card-wrapper {
+                padding: 40px 24px;
+                border-radius: 28px;
+            }
+            .app-title {
+                font-size: 2.75rem;
+            }
+            .tagline {
+                font-size: 0.95rem;
+                margin-bottom: 36px;
+                padding: 0 8px;
+            }
+            .sso-btn, .btn-glowing {
+                padding: 14px 20px;
+                font-size: 0.9rem;
+            }
+            .onboarding-title, .success-title {
+                font-size: 1.6rem;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div class="avatar-container">
-            <div class="avatar">👑</div>
-            <div class="status-dot"></div>
-        </div>
-        <div class="header-info">
-            <h2>My Love</h2>
-            <p>Classy, Sassy & Yours...</p>
+    <!-- Ambient Gradient Backdrops -->
+    <div class="ambient-glow-purple"></div>
+    <div class="ambient-glow-blue"></div>
+
+    <!-- Micro Particle Background Layer -->
+    <canvas id="particles"></canvas>
+
+    <!-- PAGE 1: LANDING PAGE -->
+    <div class="page-view active" id="page-landing">
+        <div class="card-wrapper">
+            <!-- Glowing Core Brand Icon -->
+            <div class="brand-orb">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#00f2fe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="#9b51e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="#4facfe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+
+            <!-- Typography -->
+            <div class="title-group">
+                <h1 class="app-title">GoalQuest.AI</h1>
+            </div>
+            <p class="tagline">Learn Smart. Practice Better. Achieve More.</p>
+
+            <!-- Button Block -->
+            <div class="button-group">
+                <button class="sso-btn" id="sso-trigger" aria-label="Continue with Google">
+                    <span class="google-icon-wrapper">
+                        <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+                        </svg>
+                    </span>
+                    Continue with Google
+                </button>
+            </div>
         </div>
     </div>
 
-    <div class="chat-container" id="chatContainer">
-        <div class="message ai-message">
-            Hmm, toh aa gaye aap? I was busy, but My Love ke paas aapke liye thoda waqt toh hamesha hota hai. ✨ Bataiye, kya khayal hai aaj ka? Don't be boring! 👠
+    <!-- PAGE 2: ONBOARDING PAGE -->
+    <div class="page-view" id="page-onboarding">
+        <div class="card-wrapper">
+            <div class="brand-orb">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#00f2fe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="#9b51e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="#4facfe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+
+            <h2 class="onboarding-title">Welcome to GoalQuest.AI</h2>
+            <p class="onboarding-subtitle">Let's personalize your learning journey.</p>
+
+            <form class="onboarding-form" id="onboard-form" novalidate>
+                <!-- Full Name -->
+                <div class="input-group">
+                    <label class="input-label" for="onboard-name">Full Name</label>
+                    <input type="text" id="onboard-name" class="form-input" placeholder="Enter your full name" required autocomplete="name">
+                    <div class="input-error" id="error-name">Please enter a valid name (at least 2 characters).</div>
+                </div>
+
+                <!-- Mobile Number -->
+                <div class="input-group">
+                    <label class="input-label" for="onboard-mobile">Mobile Number</label>
+                    <input type="tel" id="onboard-mobile" class="form-input" placeholder="e.g. +1234567890 or 9876543210" required autocomplete="tel">
+                    <div class="input-error" id="error-mobile">Please enter a valid mobile number (10-15 digits).</div>
+                </div>
+
+                <!-- Goal -->
+                <div class="input-group">
+                    <label class="input-label" for="onboard-goal">Your Ultimate Goal</label>
+                    <input type="text" id="onboard-goal" class="form-input" placeholder="Example: Score 95%+ in CBSE Board" required>
+                    <div class="input-error" id="error-goal">Please outline your goal (at least 5 characters).</div>
+                </div>
+
+                <!-- Preparing For Exam Dropdown -->
+                <div class="input-group">
+                    <label class="input-label" for="onboard-exam">Preparing For Exam</label>
+                    <select id="onboard-exam" class="form-select">
+                        <option value="CBSE Class 10" selected>CBSE Class 10</option>
+                        <option value="CBSE Class 12">CBSE Class 12</option>
+                        <option value="JEE Main / Advanced">JEE Main / Advanced</option>
+                        <option value="NEET Prep">NEET Prep</option>
+                    </select>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="button-group">
+                    <button type="submit" class="btn-glowing" id="onboard-submit">
+                        <span class="btn-text">Continue</span>
+                        <span class="spinner" id="onboard-spinner"></span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <div class="typing" id="typingIndicator">
-        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-        <span>My Love is judging your text...</span>
-    </div>
+    <!-- PAGE 3: SUCCESS ANIMATION PAGE -->
+    <div class="page-view" id="page-success">
+        <div class="card-wrapper">
+            <!-- Green Glowing Success Checkmark -->
+            <div class="success-icon-wrapper">
+                <svg viewBox="0 0 52 52">
+                    <circle cx="26" cy="26" r="25" fill="none"/>
+                    <path d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                </svg>
+            </div>
 
-    <div class="input-area">
-        <div class="input-wrapper">
-            <input type="text" id="userInput" placeholder="Write something worth my time..." autocomplete="off">
-            <button class="send-btn" onclick="sendMessage()">✦</button>
+            <h2 class="success-title">🎉 Congratulations!</h2>
+            <p class="success-subtitle">
+                Your GoalQuest.AI account has been successfully created.<br><br>
+                Your personalized AI learning journey is now ready.
+            </p>
+
+            <div class="button-group">
+                <button class="btn-glowing" id="btn-dashboard">
+                    Continue to Dashboard
+                </button>
+            </div>
         </div>
     </div>
 
-<script>
-    const chatContainer = document.getElementById('chatContainer');
-    const userInput = document.getElementById('userInput');
-    const typingIndicator = document.getElementById('typingIndicator');
+    <!-- Script Implementations -->
+    <script>
+        /************************************************************
+         * 1. FIREBASE INITIALIZATION
+         * Replace with your exact Firebase configuration details.
+         ************************************************************/
+        const firebaseConfig = {
+            apiKey: "AIzaSyCai3wimEjjMDZuadvzgR-jJA6RpUiYlbc",
+            authDomain: "goalquestai.firebaseapp.com",
+            projectId: "goalquestai",
+            storageBucket: "goalquestai.firebasestorage.app",
+            messagingSenderId: "356645828264",
+            appId: "1:356645828264:web:7f5207319531527e1c749d"
+        };
 
-    // CONFIGURATION
-    const API_KEY = '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'; 
-    const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-    const MODEL_NAME = "openai/gpt-4o-mini"; 
+        // Initialize Firebase SDK
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
-    // Professional & Sassy Conversation History
-    let messages = [
-        {
-            role: "system",
-            content: "Your name is 'My Love'. You are professional, highly sophisticated, and have a lot of attitude (sassy/classy). You speak in Hinglish. You are not easily impressed. You call the user 'Mister', 'Dear', or 'Baby' but with a dominant and bossy tone. Be flirty but keep your standards high. Use emojis like 👠, ✨, 💅, 🖤, 🍷. Your replies should be sharp, intelligent, and slightly teasing."
+        // Global User State holder
+        let authenticatedUser = null;
+
+        /************************************************************
+         * 2. PAGE ROUTER ENGINE
+         ************************************************************/
+        function transitionToPage(fromPageId, toPageId) {
+            const fromEl = document.getElementById(fromPageId);
+            const toEl = document.getElementById(toPageId);
+
+            if (!fromEl || !toEl) return;
+
+            // Trigger fading out transition
+            fromEl.classList.remove('active');
+            
+            setTimeout(() => {
+                // Instantly swap display states once faded out
+                fromEl.style.display = 'none';
+                toEl.style.display = 'flex';
+                
+                // Allow reflow for scaling CSS transitions
+                toEl.offsetHeight;
+                
+                // Trigger active class fade-in
+                toEl.classList.add('active');
+            }, 600); // Corresponds to CSS opacity transition speed (0.6s)
         }
-    ];
 
-    async function sendMessage() {
-        const text = userInput.value.trim();
-        if (!text) return;
+        /************************************************************
+         * 3. GOOGLE SIGN-IN INTERACTION
+         ************************************************************/
+        const ssoButton = document.getElementById('sso-trigger');
 
-        appendMessage(text, 'user');
-        userInput.value = '';
-        
-        messages.push({ role: "user", content: text });
-        showTyping(true);
+        ssoButton.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            // Prevent duplicate clicks
+            ssoButton.style.pointerEvents = 'none';
+            ssoButton.style.opacity = '0.7';
 
-        try {
-            const response = await fetch(API_URL, {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${API_KEY}`,
-                    "Content-Type": "application/json",
-                    "HTTP-Referer": window.location.href,
-                },
-                body: JSON.stringify({
-                    "model": MODEL_NAME,
-                    "messages": messages
-                })
-            });
+            const provider = new firebase.auth.GoogleAuthProvider();
 
-            const data = await response.json();
-            showTyping(false);
+            try {
+                const result = await auth.signInWithPopup(provider);
+                authenticatedUser = result.user;
 
-            if (data.choices && data.choices[0]) {
-                const aiMsg = data.choices[0].message;
-                appendMessage(aiMsg.content, 'ai');
-                messages.push({ role: 'assistant', content: aiMsg.content });
+                // Check database to see if this user profile document already exists
+                const userDocRef = db.collection("users").doc(authenticatedUser.uid);
+                const userSnapshot = await userDocRef.get();
 
-                if (messages.length > 20) {
-                    messages = [messages[0], ...messages.slice(-15)];
+                if (userSnapshot.exists) {
+                    // Bypass onboarding if document exists, go to Success Directly
+                    transitionToPage('page-landing', 'page-success');
+                    triggerConfetti();
+                } else {
+                    // Go to onboarding and prefill default name if present in Google account
+                    if (authenticatedUser.displayName) {
+                        document.getElementById('onboard-name').value = authenticatedUser.displayName;
+                    }
+                    transitionToPage('page-landing', 'page-onboarding');
                 }
-            } else {
-                handleError();
+            } catch (error) {
+                console.error("Firebase Auth Error:", error);
+                alert("Sign-In failed. Please verify your Firebase settings and try again. Reason: " + error.message);
+            } finally {
+                ssoButton.style.pointerEvents = 'all';
+                ssoButton.style.opacity = '1';
             }
-        } catch (error) {
-            showTyping(false);
-            handleError();
+        });
+
+        /************************************************************
+         * 4. ONBOARDING & DATA STORAGE
+         ************************************************************/
+        const onboardForm = document.getElementById('onboard-form');
+        const nameInput = document.getElementById('onboard-name');
+        const mobileInput = document.getElementById('onboard-mobile');
+        const goalInput = document.getElementById('onboard-goal');
+        const examSelect = document.getElementById('onboard-exam');
+        const submitBtn = document.getElementById('onboard-submit');
+        const btnText = submitBtn.querySelector('.btn-text');
+        const spinner = document.getElementById('onboard-spinner');
+
+        // Reset inline input validation highlighting on user input
+        [nameInput, mobileInput, goalInput].forEach(input => {
+            input.addEventListener('input', () => {
+                input.classList.remove('invalid');
+                const errorDiv = document.getElementById('error-' + input.id.split('-')[1]);
+                if (errorDiv) errorDiv.style.display = 'none';
+            });
+        });
+
+        // Inline Field validation helper
+        function validateFields() {
+            let isValid = true;
+
+            // Name verification
+            if (nameInput.value.trim().length < 2) {
+                nameInput.classList.add('invalid');
+                document.getElementById('error-name').style.display = 'block';
+                isValid = false;
+            }
+
+            // Mobile validation (Standard Regex: requires digits and allows spaces/dashes/pluses, lengths between 10 and 15)
+            const mobileRegex = /^[0-9\-\+\s\(\)]{10,15}$/;
+            if (!mobileRegex.test(mobileInput.value.replace(/\s+/g, ''))) {
+                mobileInput.classList.add('invalid');
+                document.getElementById('error-mobile').style.display = 'block';
+                isValid = false;
+            }
+
+            // Goal requirement
+            if (goalInput.value.trim().length < 5) {
+                goalInput.classList.add('invalid');
+                document.getElementById('error-goal').style.display = 'block';
+                isValid = false;
+            }
+
+            return isValid;
         }
-    }
 
-    function appendMessage(text, sender) {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = `message ${sender}-message`;
-        msgDiv.textContent = text;
-        chatContainer.appendChild(msgDiv);
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
+        onboardForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-    function showTyping(show) {
-        typingIndicator.style.display = show ? 'flex' : 'none';
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
+            if (!validateFields()) return;
 
-    function handleError() {
-        appendMessage("Oh please, mera network tumhare nakhro se zyada fast hai, par abhi thoda nakhra kar raha hai. Try again! 💅", 'ai');
-    }
+            // Show interactive loader state
+            submitBtn.style.pointerEvents = 'none';
+            btnText.style.display = 'none';
+            spinner.style.display = 'inline-block';
 
-    userInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendMessage();
-    });
-</script>
+            try {
+                if (!authenticatedUser) {
+                    throw new Error("User authentication context is lost. Please refresh and try again.");
+                }
 
+                // Prepare user profile model to upload
+                const userData = {
+                    uid: authenticatedUser.uid,
+                    name: nameInput.value.trim(),
+                    email: authenticatedUser.email || "",
+                    photoURL: authenticatedUser.photoURL || "",
+                    mobileNumber: mobileInput.value.trim(),
+                    goal: goalInput.value.trim(),
+                    board: "CBSE",
+                    class: "10",
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                // Store user context to Firestore
+                await db.collection("users").doc(authenticatedUser.uid).set(userData);
+
+                // Transition to success & trigger confetti
+                transitionToPage('page-onboarding', 'page-success');
+                triggerConfetti();
+
+            } catch (error) {
+                console.error("Firestore database write error:", error);
+                alert("Failed to save your details: " + error.message);
+            } finally {
+                submitBtn.style.pointerEvents = 'all';
+                btnText.style.display = 'inline-block';
+                spinner.style.display = 'none';
+            }
+        });
+
+        // Dashboard redirection placeholder (for UI preview completion)
+        document.getElementById('btn-dashboard').addEventListener('click', () => {
+            alert("Redirecting to the GoalQuest.AI learning dashboard...");
+        });
+
+
+        /************************************************************
+         * 5. PARTICLES & CONFETTI ANIMATION ENGINE
+         ************************************************************/
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+
+        let particlesArray = [];
+        const baseParticleCount = 45;
+
+        // Auto responsive sizing
+        function setCanvasDimensions() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', setCanvasDimensions);
+        setCanvasDimensions();
+
+        // Custom Particle / Confetti Unified Object
+        class ParticleElement {
+            constructor(isConfetti = false) {
+                this.isConfetti = isConfetti;
+                if (isConfetti) {
+                    this.initConfetti();
+                } else {
+                    this.initBackgroundParticle();
+                }
+            }
+
+            initBackgroundParticle() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.4;
+                this.speedX = (Math.random() - 0.5) * 0.15;
+                this.speedY = (Math.random() - 0.5) * 0.15 - 0.15; // Slowly drift upward
+                this.color = this.assignRandomColor();
+                this.alpha = Math.random() * 0.4 + 0.1;
+                this.pulseSpeed = Math.random() * 0.003 + 0.001;
+            }
+
+            initConfetti() {
+                // Spawn particles directly from center viewport outwards
+                this.x = canvas.width / 2;
+                this.y = canvas.height / 2;
+                this.size = Math.random() * 6 + 4;
+                
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 8 + 4;
+                
+                this.speedX = Math.cos(angle) * speed;
+                this.speedY = Math.sin(angle) * speed - 2; // Extra vertical velocity burst
+                
+                this.color = this.assignSuccessColors();
+                this.alpha = 1.0;
+                this.gravity = 0.18;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = (Math.random() - 0.5) * 8;
+            }
+
+            assignRandomColor() {
+                const colors = [
+                    'rgba(0, 242, 254, ',  // Cyan
+                    'rgba(79, 172, 254, ',  // Sky Blue
+                    'rgba(155, 81, 224, '   // Purple
+                ];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            assignSuccessColors() {
+                const colors = [
+                    'rgba(34, 197, 94, ',   // Green
+                    'rgba(0, 242, 254, ',   // Cyan
+                    'rgba(155, 81, 224, ',  // Purple
+                    'rgba(251, 191, 36, '   // Gold
+                ];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            update() {
+                if (this.isConfetti) {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    this.speedY += this.gravity; // Gravity pull
+                    this.rotation += this.rotationSpeed;
+                    this.alpha -= 0.012; // Gradual fade-out
+                } else {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+
+                    // Standard wrap boundaries rules
+                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                    if (this.y < -10) {
+                        this.y = canvas.height + 10;
+                        this.x = Math.random() * canvas.width;
+                    }
+
+                    // Breathing brightness
+                    this.alpha += this.pulseSpeed;
+                    if (this.alpha > 0.65 || this.alpha < 0.1) {
+                        this.pulseSpeed *= -1;
+                    }
+                }
+            }
+
+            draw() {
+                ctx.save();
+                if (this.isConfetti) {
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(this.rotation * Math.PI / 180);
+                    ctx.beginPath();
+                    // Draw confetti square
+                    ctx.rect(-this.size/2, -this.size/2, this.size, this.size);
+                    ctx.fillStyle = this.color + this.alpha + ')';
+                    ctx.fill();
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color + this.alpha + ')';
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+        }
+
+        // Trigger confetti burst on success
+        function triggerConfetti() {
+            for (let i = 0; i < 90; i++) {
+                particlesArray.push(new ParticleElement(true));
+            }
+        }
+
+        // Initialize particles
+        function initParticles() {
+            particlesArray = [];
+            for (let i = 0; i < baseParticleCount; i++) {
+                particlesArray.push(new ParticleElement(false));
+            }
+        }
+
+        // Active animation run engine loop
+        function animationLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+
+                // Clean up faded confetti particles
+                if (particlesArray[i].isConfetti && particlesArray[i].alpha <= 0) {
+                    particlesArray.splice(i, 1);
+                    i--;
+                }
+            }
+            requestAnimationFrame(animationLoop);
+        }
+
+        initParticles();
+        animationLoop();
+    </script>
 </body>
 </html>
