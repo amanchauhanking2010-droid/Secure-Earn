@@ -4,19 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>GoalQuest.AI — Premium Educational Hub</title>
-    
-    <!-- Premium Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Firebase SDK Compat Core & Services -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <style>
-        /* Modern CSS Variables & Visual Design Tokens */
         :root {
             --bg-darkest: #030303;
             --bg-card: rgba(10, 10, 16, 0.7);
@@ -33,1303 +28,170 @@
             --transition-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
             --transition-smooth: cubic-bezier(0.16, 1, 0.3, 1);
         }
-
-        /* Modern Reset */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: transparent;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-
-        body, html {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: var(--bg-darkest);
-            color: var(--text-primary);
-            position: relative;
-            transition: opacity 0.25s ease-in-out;
-        }
-
-        /* Ambient Fluid Lighting Layer */
-        .ambient-glow {
-            position: absolute;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 1;
-            filter: blur(120px);
-            opacity: 0.6;
-        }
-
-        .glow-1 {
-            top: -10%;
-            left: -10%;
-            width: 45vw;
-            height: 45vw;
-            background: radial-gradient(circle, var(--neon-purple) 0%, transparent 70%);
-            animation: floatGlow 18s infinite alternate ease-in-out;
-        }
-
-        .glow-2 {
-            bottom: -10%;
-            right: -10%;
-            width: 45vw;
-            height: 45vw;
-            background: radial-gradient(circle, var(--neon-blue) 0%, transparent 70%);
-            animation: floatGlow 22s infinite alternate-reverse ease-in-out;
-        }
-
-        @keyframes floatGlow {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(8%, 8%) scale(1.15); }
-        }
-
-        canvas#particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        /* App Router Container Layout */
-        .page-view {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 3;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(20px) scale(0.98);
-            transition: opacity 0.5s var(--transition-smooth), 
-                        transform 0.5s var(--transition-smooth), 
-                        visibility 0.5s var(--transition-smooth);
-        }
-
-        .page-view.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0) scale(1);
-        }
-
-        /* Glassmorphic Shell Wrapper */
-        .card-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            padding: 44px 32px;
-            max-width: 420px;
-            max-height: 90vh;
-            overflow-y: auto;
-            scrollbar-width: none;
-            width: 92%;
-            background: var(--bg-card);
-            border: 1px solid var(--border-glass);
-            border-radius: 32px;
-            backdrop-filter: blur(28px);
-            -webkit-backdrop-filter: blur(28px);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8),
-                        inset 0 1px 1px rgba(255, 255, 255, 0.1);
-        }
-
-        .card-wrapper::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* Glowing Accent Brand Orb */
-        .brand-orb {
-            position: relative;
-            width: 68px;
-            height: 68px;
-            margin-bottom: 24px;
-            border-radius: 22px;
-            background: linear-gradient(135deg, rgba(0, 242, 254, 0.05) 0%, rgba(155, 81, 224, 0.05) 100%);
-            border: 1px solid rgba(0, 242, 254, 0.25);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 25px rgba(0, 242, 254, 0.12);
-            animation: orbPulse 4s infinite alternate ease-in-out;
-            flex-shrink: 0;
-        }
-
-        @keyframes orbPulse {
-            0% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 242, 254, 0.1); }
-            100% { transform: scale(1.04); box-shadow: 0 0 35px rgba(155, 81, 224, 0.2); }
-        }
-
-        .app-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 2.8rem;
-            font-weight: 700;
-            letter-spacing: -0.04em;
-            background: linear-gradient(135deg, var(--neon-blue) 0%, #4facfe 40%, var(--neon-purple) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 12px;
-        }
-
-        .tagline {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            line-height: 1.5;
-            margin-bottom: 36px;
-            max-width: 290px;
-        }
-
-        /* Ripple Action click design */
-        .ripple {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            transform: scale(0);
-            animation: ripple-effect 0.6s ease-out;
-            pointer-events: none;
-        }
-
-        @keyframes ripple-effect {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-
-        /* Custom Buttons */
-        .btn-premium {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            width: 100%;
-            max-width: 320px;
-            padding: 18px 28px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            color: var(--text-primary);
-            font-size: 0.95rem;
-            font-weight: 700;
-            cursor: pointer;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            transition: all 0.4s var(--transition-smooth);
-        }
-
-        .btn-premium:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(0, 242, 254, 0.4);
-            transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(0, 242, 254, 0.15);
-        }
-
-        .btn-premium:active {
-            transform: translateY(1px);
-        }
-
-        .btn-glowing {
-            background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-purple) 100%);
-            border: none;
-            color: #ffffff;
-            font-size: 1rem;
-            font-weight: 700;
-            box-shadow: 0 8px 24px rgba(0, 242, 254, 0.3);
-        }
-
-        .btn-glowing:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 35px rgba(0, 242, 254, 0.5), 0 0 15px rgba(155, 81, 224, 0.3);
-        }
-
-        .btn-glowing .spinner {
-            display: none;
-            width: 20px;
-            height: 20px;
-            border: 2.5px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #ffffff;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Form Controls */
-        .onboarding-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .onboarding-subtitle {
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-            margin-bottom: 28px;
-        }
-
-        .onboarding-form {
-            width: 100%;
-            text-align: left;
-        }
-
-        .input-group {
-            margin-bottom: 18px;
-            width: 100%;
-        }
-
-        .input-label {
-            display: block;
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin-bottom: 6px;
-        }
-
-        .form-input, .form-select {
-            width: 100%;
-            padding: 15px 18px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            color: #ffffff;
-            font-size: 0.95rem;
-            outline: none;
-            transition: all 0.3s var(--transition-smooth);
-        }
-
-        .form-input:focus, .form-select:focus {
-            border-color: rgba(0, 242, 254, 0.5);
-            background: rgba(255, 255, 255, 0.06);
-            box-shadow: 0 0 15px rgba(0, 242, 254, 0.1);
-        }
-
-        .form-input.invalid {
-            border-color: var(--neon-red) !important;
-            box-shadow: 0 0 15px rgba(239, 68, 68, 0.15) !important;
-        }
-
-        .input-error {
-            font-size: 0.75rem;
-            color: var(--neon-red);
-            margin-top: 6px;
-            display: none;
-        }
-
-        .form-select {
-            appearance: none;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
-            background-repeat: no-repeat;
-            background-position: right 18px center;
-            background-size: 16px;
-            padding-right: 44px;
-            cursor: pointer;
-        }
-
-        .form-select option {
-            background-color: #0c0b12;
-            color: #ffffff;
-        }
-
-        /* Success screen check animation */
-        .success-icon-wrapper {
-            position: relative;
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: rgba(16, 185, 129, 0.1);
-            border: 2px solid var(--neon-emerald);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 24px;
-            box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
-            animation: successPop 0.6s var(--transition-bounce) both;
-        }
-
-        @keyframes successPop {
-            0% { transform: scale(0.6); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .success-icon-wrapper svg {
-            width: 40px;
-            height: 40px;
-            stroke: var(--neon-emerald);
-            stroke-width: 3;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            fill: none;
-        }
-
-        /* ====================================================
-         * DASHBOARD SYSTEM INTERFACE LAYOUTS
-         * ==================================================== */
-        .dash-viewport {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            z-index: 5;
-            background: radial-gradient(circle at top, rgba(155, 81, 224, 0.03), transparent 60%);
-        }
-
-        /* FIXED HEADER SECTION */
-        .premium-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 76px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 24px;
-            background: rgba(3, 3, 3, 0.6);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border-glass);
-            z-index: 100;
-        }
-
-        /* Streak pill configuration */
-        .streak-pill {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(245, 158, 11, 0.08);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            padding: 8px 16px;
-            border-radius: 9999px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--neon-gold);
-            box-shadow: 0 0 15px rgba(245, 158, 11, 0.05);
-            animation: pulseGold 2s infinite alternate ease-in-out;
-        }
-
-        @keyframes pulseGold {
-            0% { box-shadow: 0 0 10px rgba(245, 158, 11, 0.02); }
-            100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.15); }
-        }
-
-        .streak-fire {
-            font-size: 1.1rem;
-            animation: flare 1s infinite alternate ease-in-out;
-        }
-
-        @keyframes flare {
-            0% { transform: scale(0.9) rotate(-3deg); }
-            100% { transform: scale(1.1) rotate(3deg); }
-        }
-
-        .header-title-center {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.15rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            background: linear-gradient(135deg, #ffffff 0%, var(--text-secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .profile-container-btn {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            padding: 2px;
-            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
-            cursor: pointer;
-            box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
-            transition: transform 0.3s var(--transition-bounce);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .profile-container-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .profile-inner-avatar {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: #0d0c15;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ffffff;
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        .profile-inner-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* SCROLLABLE MAIN CONTENT AREA */
-        .dash-scrollable-body {
-            position: absolute;
-            top: 76px;
-            bottom: 72px; /* Bottom space matches restructured menu bar heights */
-            left: 0;
-            width: 100%;
-            overflow-y: auto;
-            scrollbar-width: none;
-            padding: 24px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .dash-scrollable-body::-webkit-scrollbar {
-            display: none;
-        }
-
-        .section-wrapper {
-            width: 100%;
-            max-width: 460px;
-            display: none;
-            flex-direction: column;
-            gap: 16px;
-            animation: contentFadeUp 0.6s var(--transition-smooth) both;
-        }
-
-        .section-wrapper.active {
-            display: flex;
-        }
-
-        @keyframes contentFadeUp {
-            0% { opacity: 0; transform: translateY(15px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        /* PREMIUM DYNAMIC HUD MENU CARDS */
-        .premium-menu-card {
-            position: relative;
-            width: 100%;
-            border-radius: 24px;
-            padding: 24px;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
-            border: 1px solid var(--border-glass);
-            cursor: pointer;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: all 0.4s var(--transition-smooth);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Individual gradient borders using CSS absolute pseudo overlays */
-        .premium-menu-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 24px;
-            padding: 1px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.01) 50%, rgba(255,255,255,0.04) 100%);
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            pointer-events: none;
-            transition: background 0.4s ease;
-        }
-
-        .premium-menu-card-inner {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            z-index: 2;
-            flex: 1;
-            min-width: 0;
-        }
-
-        .card-emoji-box {
-            width: 56px;
-            height: 56px;
-            border-radius: 18px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.6rem;
-            transition: all 0.4s var(--transition-smooth);
-            flex-shrink: 0;
-        }
-
-        .card-meta-text {
-            text-align: left;
-            flex: 1;
-            min-width: 0;
-        }
-
-        .card-meta-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 4px;
-            transition: color 0.3s;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .card-meta-desc {
-            font-size: 0.82rem;
-            color: var(--text-secondary);
-            line-height: 1.4;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .card-arrow-icon {
-            font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.15);
-            transition: all 0.4s var(--transition-smooth);
-            z-index: 2;
-            margin-left: 12px;
-            flex-shrink: 0;
-        }
-
-        /* Hover & focus micro-interactions */
-        .premium-menu-card:hover {
-            transform: translateY(-4px) scale(1.02);
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .premium-menu-card:hover::before {
-            background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-purple) 100%);
-        }
-
-        .premium-menu-card:hover .card-emoji-box {
-            background: rgba(0, 242, 254, 0.1);
-            border-color: rgba(0, 242, 254, 0.2);
-            box-shadow: 0 0 15px rgba(0, 242, 254, 0.15);
-        }
-
-        .premium-menu-card:hover .card-arrow-icon {
-            color: var(--neon-blue);
-            transform: translateX(5px);
-        }
-
-        .premium-menu-card:active {
-            transform: translateY(-1px) scale(0.99);
-        }
-
-        /* Dynamic chip shadows */
-        .glow-shimmer-wrap {
-            position: relative;
-            width: 100%;
-        }
-        .glow-shimmer-wrap::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: 24px;
-            box-shadow: 0 0 25px rgba(0, 242, 254, 0.1);
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.4s;
-        }
-        .glow-shimmer-wrap:hover::after {
-            opacity: 1;
-        }
-
-        /* ====================================================
-         * SECONDARY CORES (LEARN, AI, STATS, PROFILE)
-         * ==================================================== */
-         
-        /* SUBJECT MODULES (LEARN TAB) */
-        .subject-group-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            width: 100%;
-        }
-
-        .subject-metric-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-glass);
-            border-radius: 20px;
-            padding: 18px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: all 0.3s;
-            width: 100%;
-        }
-
-        .subject-metric-card:hover {
-            border-color: rgba(0, 242, 254, 0.3);
-            background: rgba(255, 255, 255, 0.04);
-        }
-
-        .subject-left-set {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex: 1;
-            min-width: 0;
-        }
-
-        .subject-glyph {
-            width: 46px;
-            height: 46px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            background: rgba(155, 81, 224, 0.1);
-            border: 1px solid rgba(155, 81, 224, 0.25);
-            flex-shrink: 0;
-        }
-
-        .subject-text-stack {
-            text-align: left;
-            flex: 1;
-            min-width: 0;
-        }
-
-        .subject-name-lbl {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .subject-subcompletion {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        /* Circular progress indicators */
-        .progress-circle-wrap {
-            position: relative;
-            width: 38px;
-            height: 38px;
-            flex-shrink: 0;
-        }
-
-        .circle-progress-ring {
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
-        }
-
-        /* CHAT BOT INTERACTION DESIGNS (AI TUTOR TAB) */
-        .teacher-chat-interface {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            height: calc(100vh - 240px);
-            background: rgba(10, 10, 16, 0.4);
-            border: 1px solid var(--border-glass);
-            border-radius: 24px;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-        }
-
-        .chat-screen-logs {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            scrollbar-width: none;
-        }
-
-        .chat-screen-logs::-webkit-scrollbar {
-            display: none;
-        }
-
-        .chat-bubble {
-            max-width: 85%;
-            padding: 14px 18px;
-            border-radius: 18px;
-            font-size: 0.9rem;
-            line-height: 1.45;
-            text-align: left;
-            animation: bubbleIntro 0.4s var(--transition-smooth) both;
-        }
-
-        @keyframes bubbleIntro {
-            0% { opacity: 0; transform: translateY(10px) scale(0.95); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .chat-bubble-system {
-            align-self: flex-start;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            color: var(--text-primary);
-            border-top-left-radius: 4px;
-        }
-
-        .chat-bubble-user {
-            align-self: flex-end;
-            background: linear-gradient(135deg, rgba(0, 242, 254, 0.15), rgba(155, 81, 224, 0.15));
-            border: 1px solid rgba(0, 242, 254, 0.25);
-            color: #ffffff;
-            border-top-right-radius: 4px;
-        }
-
-        /* Suggestions Pills Scroll */
-        .chat-suggested-chips {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding: 12px;
-            border-top: 1px solid rgba(255, 255, 255, 0.03);
-            scrollbar-width: none;
-            flex-shrink: 0;
-        }
-
-        .chat-suggested-chips::-webkit-scrollbar {
-            display: none;
-        }
-
-        .suggested-pill {
-            white-space: nowrap;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--border-glass);
-            padding: 8px 14px;
-            border-radius: 9999px;
-            font-size: 0.78rem;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .suggested-pill:hover {
-            background: rgba(0, 242, 254, 0.08);
-            border-color: rgba(0, 242, 254, 0.3);
-            color: #ffffff;
-        }
-
-        /* Text Input controls */
-        .chat-input-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 12px;
-            background: rgba(3, 3, 3, 0.5);
-            border-top: 1px solid var(--border-glass);
-            flex-shrink: 0;
-        }
-
-        .chat-text-area {
-            flex-grow: 1;
-            background: transparent;
-            border: none;
-            outline: none;
-            color: #ffffff;
-            font-size: 0.9rem;
-            padding: 10px 8px;
-        }
-
-        .chat-submit-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: none;
-            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
-            color: #ffffff;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.3s var(--transition-bounce);
-        }
-
-        .chat-submit-btn:hover {
-            transform: scale(1.1);
-        }
-
-        /* Typing Dots Animation styling */
-        .typing-loader {
-            display: flex;
-            gap: 4px;
-            padding: 6px 10px;
-        }
-
-        .typing-dot {
-            width: 6px;
-            height: 6px;
-            background: var(--text-secondary);
-            border-radius: 50%;
-            animation: typingWave 1.2s infinite ease-in-out;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body, html { width: 100%; height: 100%; overflow: hidden; background-color: var(--bg-darkest); color: var(--text-primary); position: relative; transition: opacity 0.25s ease-in-out; }
+        .ambient-glow { position: absolute; border-radius: 50%; pointer-events: none; z-index: 1; filter: blur(120px); opacity: 0.6; }
+        .glow-1 { top: -10%; left: -10%; width: 45vw; height: 45vw; background: radial-gradient(circle, var(--neon-purple) 0%, transparent 70%); animation: floatGlow 18s infinite alternate ease-in-out; }
+        .glow-2 { bottom: -10%; right: -10%; width: 45vw; height: 45vw; background: radial-gradient(circle, var(--neon-blue) 0%, transparent 70%); animation: floatGlow 22s infinite alternate-reverse ease-in-out; }
+        @keyframes floatGlow { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(8%, 8%) scale(1.15); } }
+        canvas#particles { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+        .page-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; z-index: 3; opacity: 0; visibility: hidden; transform: translateY(20px) scale(0.98); transition: opacity 0.5s var(--transition-smooth), transform 0.5s var(--transition-smooth), visibility 0.5s var(--transition-smooth); }
+        .page-view.active { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+        .card-wrapper { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 44px 32px; max-width: 420px; max-height: 90vh; overflow-y: auto; scrollbar-width: none; width: 92%; background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 32px; backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.1); }
+        .card-wrapper::-webkit-scrollbar { display: none; }
+        .brand-orb { position: relative; width: 68px; height: 68px; margin-bottom: 24px; border-radius: 22px; background: linear-gradient(135deg, rgba(0, 242, 254, 0.05) 0%, rgba(155, 81, 224, 0.05) 100%); border: 1px solid rgba(0, 242, 254, 0.25); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(0, 242, 254, 0.12); animation: orbPulse 4s infinite alternate ease-in-out; flex-shrink: 0; }
+        @keyframes orbPulse { 0% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 242, 254, 0.1); } 100% { transform: scale(1.04); box-shadow: 0 0 35px rgba(155, 81, 224, 0.2); } }
+        .app-title { font-family: 'Space Grotesk', sans-serif; font-size: 2.8rem; font-weight: 700; letter-spacing: -0.04em; background: linear-gradient(135deg, var(--neon-blue) 0%, #4facfe 40%, var(--neon-purple) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 12px; }
+        .tagline { font-size: 1rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 36px; max-width: 290px; }
+        .ripple { position: absolute; background: rgba(255, 255, 255, 0.2); border-radius: 50%; transform: scale(0); animation: ripple-effect 0.6s ease-out; pointer-events: none; }
+        @keyframes ripple-effect { to { transform: scale(4); opacity: 0; } }
+        .btn-premium { position: relative; display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; max-width: 320px; padding: 18px 28px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; color: var(--text-primary); font-size: 0.95rem; font-weight: 700; cursor: pointer; overflow: hidden; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: all 0.4s var(--transition-smooth); }
+        .btn-premium:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(0, 242, 254, 0.4); transform: translateY(-2px); box-shadow: 0 12px 30px rgba(0, 242, 254, 0.15); }
+        .btn-premium:active { transform: translateY(1px); }
+        .btn-glowing { background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-purple) 100%); border: none; color: #ffffff; font-size: 1rem; font-weight: 700; box-shadow: 0 8px 24px rgba(0, 242, 254, 0.3); }
+        .btn-glowing:hover { transform: translateY(-2px); box-shadow: 0 12px 35px rgba(0, 242, 254, 0.5), 0 0 15px rgba(155, 81, 224, 0.3); }
+        .btn-glowing .spinner { display: none; width: 20px; height: 20px; border: 2.5px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top-color: #ffffff; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .onboarding-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; }
+        .onboarding-subtitle { font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 28px; }
+        .onboarding-form { width: 100%; text-align: left; }
+        .input-group { margin-bottom: 18px; width: 100%; }
+        .input-label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+        .form-input, .form-select { width: 100%; padding: 15px 18px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; color: #ffffff; font-size: 0.95rem; outline: none; transition: all 0.3s var(--transition-smooth); }
+        .form-input:focus, .form-select:focus { border-color: rgba(0, 242, 254, 0.5); background: rgba(255, 255, 255, 0.06); box-shadow: 0 0 15px rgba(0, 242, 254, 0.1); }
+        .form-input.invalid { border-color: var(--neon-red) !important; box-shadow: 0 0 15px rgba(239, 68, 68, 0.15) !important; }
+        .input-error { font-size: 0.75rem; color: var(--neon-red); margin-top: 6px; display: none; }
+        .form-select { appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>"); background-repeat: no-repeat; background-position: right 18px center; background-size: 16px; padding-right: 44px; cursor: pointer; }
+        .form-select option { background-color: #0c0b12; color: #ffffff; }
+        .success-icon-wrapper { position: relative; width: 80px; height: 80px; border-radius: 50%; background: rgba(16, 185, 129, 0.1); border: 2px solid var(--neon-emerald); display: flex; align-items: center; justify-content: center; margin-bottom: 24px; box-shadow: 0 0 30px rgba(16, 185, 129, 0.3); animation: successPop 0.6s var(--transition-bounce) both; }
+        @keyframes successPop { 0% { transform: scale(0.6); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .success-icon-wrapper svg { width: 40px; height: 40px; stroke: var(--neon-emerald); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+        .dash-viewport { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; position: relative; z-index: 5; background: radial-gradient(circle at top, rgba(155, 81, 224, 0.03), transparent 60%); }
+        .premium-header { position: fixed; top: 0; left: 0; width: 100%; height: 76px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; background: rgba(3, 3, 3, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-glass); z-index: 100; }
+        .streak-pill { display: flex; align-items: center; gap: 8px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.3); padding: 8px 16px; border-radius: 9999px; font-size: 0.85rem; font-weight: 700; color: var(--neon-gold); box-shadow: 0 0 15px rgba(245, 158, 11, 0.05); animation: pulseGold 2s infinite alternate ease-in-out; }
+        @keyframes pulseGold { 0% { box-shadow: 0 0 10px rgba(245, 158, 11, 0.02); } 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.15); } }
+        .streak-fire { font-size: 1.1rem; animation: flare 1s infinite alternate ease-in-out; }
+        @keyframes flare { 0% { transform: scale(0.9) rotate(-3deg); } 100% { transform: scale(1.1) rotate(3deg); } }
+        .header-title-center { font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 700; letter-spacing: -0.02em; background: linear-gradient(135deg, #ffffff 0%, var(--text-secondary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .profile-container-btn { width: 44px; height: 44px; border-radius: 50%; padding: 2px; background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple)); cursor: pointer; box-shadow: 0 0 15px rgba(0, 242, 254, 0.2); transition: transform 0.3s var(--transition-bounce); display: flex; align-items: center; justify-content: center; }
+        .profile-container-btn:hover { transform: scale(1.1); }
+        .profile-inner-avatar { width: 100%; height: 100%; border-radius: 50%; background: #0d0c15; overflow: hidden; display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 700; font-size: 1.1rem; }
+        .profile-inner-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .dash-scrollable-body { position: absolute; top: 76px; bottom: 72px; left: 0; width: 100%; overflow-y: auto; scrollbar-width: none; padding: 24px 20px; display: flex; flex-direction: column; align-items: center; }
+        .dash-scrollable-body::-webkit-scrollbar { display: none; }
+        .section-wrapper { width: 100%; max-width: 460px; display: none; flex-direction: column; gap: 16px; animation: contentFadeUp 0.6s var(--transition-smooth) both; }
+        .section-wrapper.active { display: flex; }
+        @keyframes contentFadeUp { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
+        .premium-menu-card { position: relative; width: 100%; border-radius: 24px; padding: 24px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)); border: 1px solid var(--border-glass); cursor: pointer; overflow: hidden; display: flex; align-items: center; justify-content: space-between; transition: all 0.4s var(--transition-smooth); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
+        .premium-menu-card::before { content: ''; position: absolute; inset: 0; border-radius: 24px; padding: 1px; background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.01) 50%, rgba(255,255,255,0.04) 100%); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; transition: background 0.4s ease; }
+        .premium-menu-card-inner { display: flex; align-items: center; gap: 16px; z-index: 2; flex: 1; min-width: 0; }
+        .card-emoji-box { width: 56px; height: 56px; border-radius: 18px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; transition: all 0.4s var(--transition-smooth); flex-shrink: 0; }
+        .card-meta-text { text-align: left; flex: 1; min-width: 0; }
+        .card-meta-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; color: #ffffff; margin-bottom: 4px; transition: color 0.3s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-meta-desc { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .card-arrow-icon { font-size: 1.1rem; color: rgba(255, 255, 255, 0.15); transition: all 0.4s var(--transition-smooth); z-index: 2; margin-left: 12px; flex-shrink: 0; }
+        .premium-menu-card:hover { transform: translateY(-4px) scale(1.02); background: rgba(255, 255, 255, 0.05); }
+        .premium-menu-card:hover::before { background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-purple) 100%); }
+        .premium-menu-card:hover .card-emoji-box { background: rgba(0, 242, 254, 0.1); border-color: rgba(0, 242, 254, 0.2); box-shadow: 0 0 15px rgba(0, 242, 254, 0.15); }
+        .premium-menu-card:hover .card-arrow-icon { color: var(--neon-blue); transform: translateX(5px); }
+        .premium-menu-card:active { transform: translateY(-1px) scale(0.99); }
+        .glow-shimmer-wrap { position: relative; width: 100%; }
+        .glow-shimmer-wrap::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 24px; box-shadow: 0 0 25px rgba(0, 242, 254, 0.1); pointer-events: none; opacity: 0; transition: opacity 0.4s; }
+        .glow-shimmer-wrap:hover::after { opacity: 1; }
+        .subject-group-grid { display: flex; flex-direction: column; gap: 14px; width: 100%; }
+        .subject-metric-card { background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-glass); border-radius: 20px; padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; transition: all 0.3s; width: 100%; }
+        .subject-metric-card:hover { border-color: rgba(0, 242, 254, 0.3); background: rgba(255, 255, 255, 0.04); }
+        .subject-left-set { display: flex; align-items: center; gap: 16px; flex: 1; min-width: 0; }
+        .subject-glyph { width: 46px; height: 46px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; background: rgba(155, 81, 224, 0.1); border: 1px solid rgba(155, 81, 224, 0.25); flex-shrink: 0; }
+        .subject-text-stack { text-align: left; flex: 1; min-width: 0; }
+        .subject-name-lbl { font-size: 0.95rem; font-weight: 700; color: #ffffff; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .subject-subcompletion { font-size: 0.75rem; color: var(--text-secondary); }
+        .progress-circle-wrap { position: relative; width: 38px; height: 38px; flex-shrink: 0; }
+        .circle-progress-ring { transform: rotate(-90deg); transform-origin: 50% 50%; }
+
+        /* ── AI CHAT INTERFACE ── */
+        .teacher-chat-interface { display: flex; flex-direction: column; width: 100%; height: calc(100vh - 240px); background: rgba(10, 10, 16, 0.4); border: 1px solid var(--border-glass); border-radius: 24px; overflow: hidden; backdrop-filter: blur(10px); }
+        .chat-screen-logs { flex-grow: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; scrollbar-width: none; }
+        .chat-screen-logs::-webkit-scrollbar { display: none; }
+        .chat-bubble { max-width: 85%; padding: 14px 18px; border-radius: 18px; font-size: 0.9rem; line-height: 1.45; text-align: left; animation: bubbleIntro 0.4s var(--transition-smooth) both; }
+        @keyframes bubbleIntro { 0% { opacity: 0; transform: translateY(10px) scale(0.95); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+        .chat-bubble-system { align-self: flex-start; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); color: var(--text-primary); border-top-left-radius: 4px; }
+        .chat-bubble-user { align-self: flex-end; background: linear-gradient(135deg, rgba(0, 242, 254, 0.15), rgba(155, 81, 224, 0.15)); border: 1px solid rgba(0, 242, 254, 0.25); color: #ffffff; border-top-right-radius: 4px; }
+
+        /* Groq provider badge */
+        .groq-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(255, 107, 0, 0.08); border: 1px solid rgba(255, 107, 0, 0.3); padding: 4px 10px; border-radius: 9999px; font-size: 0.7rem; font-weight: 700; color: #ff6b00; letter-spacing: 0.04em; margin-bottom: 12px; align-self: flex-start; }
+
+        .chat-suggested-chips { display: flex; gap: 8px; overflow-x: auto; padding: 12px; border-top: 1px solid rgba(255, 255, 255, 0.03); scrollbar-width: none; flex-shrink: 0; }
+        .chat-suggested-chips::-webkit-scrollbar { display: none; }
+        .suggested-pill { white-space: nowrap; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-glass); padding: 8px 14px; border-radius: 9999px; font-size: 0.78rem; color: var(--text-secondary); cursor: pointer; transition: all 0.3s; }
+        .suggested-pill:hover { background: rgba(0, 242, 254, 0.08); border-color: rgba(0, 242, 254, 0.3); color: #ffffff; }
+        .chat-input-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: rgba(3, 3, 3, 0.5); border-top: 1px solid var(--border-glass); flex-shrink: 0; }
+        .chat-text-area { flex-grow: 1; background: transparent; border: none; outline: none; color: #ffffff; font-size: 0.9rem; padding: 10px 8px; }
+        .chat-submit-btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple)); color: #ffffff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.3s var(--transition-bounce); }
+        .chat-submit-btn:hover { transform: scale(1.1); }
+        .typing-loader { display: flex; gap: 4px; padding: 6px 10px; }
+        .typing-dot { width: 6px; height: 6px; background: var(--text-secondary); border-radius: 50%; animation: typingWave 1.2s infinite ease-in-out; }
         .typing-dot:nth-child(2) { animation-delay: 0.2s; }
         .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes typingWave {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-
-        /* HIGHLIGHT PERFORMANCE METRICS & CERTIFICATES */
-        .metrics-grid-summary {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            width: 100%;
-        }
-
-        .summary-mini-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-glass);
-            border-radius: 18px;
-            padding: 16px;
-            text-align: left;
-        }
-
-        .mini-card-value {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: #ffffff;
-            margin-bottom: 4px;
-        }
-
-        .mini-card-label {
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        /* Micro progress graph chart */
-        .progress-analytics-graph {
-            background: rgba(255, 255, 255, 0.01);
-            border: 1px solid var(--border-glass);
-            border-radius: 24px;
-            padding: 20px;
-            width: 100%;
-            text-align: left;
-        }
-
-        .graph-header-lbl {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 16px;
-        }
-
-        .analytic-graph-bar-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            height: 110px;
-            padding-top: 10px;
-        }
-
-        .analytics-col {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            flex-grow: 1;
-        }
-
-        .analytics-col-fill {
-            width: 12px;
-            background: linear-gradient(to top, var(--neon-purple), var(--neon-blue));
-            border-radius: 4px;
-            height: 0%;
-            transition: height 1s var(--transition-smooth);
-            box-shadow: 0 0 10px rgba(0, 242, 254, 0.15);
-        }
-
-        .analytics-col-day {
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            font-weight: 600;
-        }
-
-        /* FIXED BOTTOM NAVIGATION BAR WITH PERFECT CENTERING */
-        .premium-bottom-navigation {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 72px; /* Slimmer, cleaner production profile height */
-            background: rgba(3, 3, 3, 0.8);
-            border-top: 1px solid var(--border-glass);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: space-evenly; /* Three menu tabs evenly distributed */
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-
-        .nav-tab-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-            width: 76px;
-            color: var(--text-secondary);
-            transition: color 0.3s var(--transition-smooth);
-            position: relative;
-        }
-
-        .nav-tab-icon {
-            font-size: 1.4rem;
-            transition: transform 0.3s var(--transition-bounce), color 0.3s;
-        }
-
-        .nav-tab-text {
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-
-        /* Hover indicator configurations */
-        .nav-tab-item:hover {
-            color: #ffffff;
-        }
-
-        .nav-tab-item:hover .nav-tab-icon {
-            transform: translateY(-2px);
-        }
-
-        .nav-tab-item.active {
-            color: var(--neon-blue);
-        }
-
-        .nav-tab-item.active .nav-tab-icon {
-            transform: scale(1.1) translateY(-2px);
-            filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.6));
-        }
-
-        /* Active highlight dot glow indicator */
-        .nav-tab-item::after {
-            content: '';
-            position: absolute;
-            bottom: -6px;
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            background: var(--neon-blue);
-            box-shadow: 0 0 8px var(--neon-blue);
-            opacity: 0;
-            transform: scale(0);
-            transition: all 0.3s var(--transition-bounce);
-        }
-
-        .nav-tab-item.active::after {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        /* ====================================================
-         * FLOATING OVERLAYS (PROFILE & SEGMENTED LANGS)
-         * ==================================================== */
-        .fullscreen-overlay-glass {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.4s var(--transition-smooth), visibility 0.4s;
-        }
-
-        .fullscreen-overlay-glass.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .popup-card-glass {
-            background: var(--bg-card);
-            border: 1px solid var(--border-glass);
-            box-shadow: 0 24px 50px rgba(0, 0, 0, 0.7);
-            width: 90%;
-            max-width: 400px;
-            border-radius: 28px;
-            padding: 32px 24px;
-            text-align: center;
-            transform: scale(0.9) translateY(20px);
-            transition: transform 0.4s var(--transition-bounce);
-            max-height: 90vh;
-            overflow-y: auto;
-            scrollbar-width: none;
-        }
-
-        .popup-card-glass::-webkit-scrollbar {
-            display: none;
-        }
-
-        .fullscreen-overlay-glass.show .popup-card-glass {
-            transform: scale(1) translateY(0);
-        }
-
-        /* PROFILE SCREEN CONTAINER & CONTROL ITEMS */
-        .profile-workspace-view {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .profile-avatar-giant {
-            position: relative;
-            width: 84px;
-            height: 84px;
-            border-radius: 50%;
-            padding: 3px;
-            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
-            box-shadow: 0 0 30px rgba(0, 242, 254, 0.3);
-            margin-bottom: 16px;
-            flex-shrink: 0;
-        }
-
-        .profile-avatar-giant img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            background: #0d0c15;
-        }
-
-        .profile-identity-name {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 4px;
-        }
-
-        .profile-identity-email {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-bottom: 20px;
-        }
-
-        .profile-meta-rows {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        .meta-data-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 18px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-glass);
-            border-radius: 16px;
-            width: 100%;
-        }
-
-        .meta-row-label {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            font-weight: 700;
-            text-align: left;
-        }
-
-        .meta-row-value {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #ffffff;
-            text-align: right;
-            max-width: 60%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .flex-column {
-            flex-direction: column !important;
-        }
-
-        /* PREMIUM SEGMENTED RADIO TRACK SELECTOR */
-        .lang-selector-segment {
-            display: flex;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-glass);
-            border-radius: 12px;
-            padding: 4px;
-            width: 100%;
-            justify-content: space-between;
-            margin-top: 6px;
-        }
-
-        .lang-option {
-            flex: 1;
-            text-align: center;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .lang-option input {
-            position: absolute;
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .lang-option span {
-            display: block;
-            padding: 8px 4px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: var(--text-secondary);
-            transition: all 0.3s var(--transition-smooth);
-        }
-
-        .lang-option input:checked + span {
-            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
-            color: #ffffff;
-            box-shadow: 0 0 10px rgba(0, 242, 254, 0.25);
-        }
-
-        /* Firebase Auth synchronization loading block */
-        #app-loading-gate {
-            background-color: var(--bg-darkest);
-            z-index: 2000;
-            display: flex;
-        }
-
-        /* Micro Shimmer Light Layer */
-        .btn-premium::before, .btn-glowing::before, .premium-menu-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -150%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.1),
-                transparent
-            );
-            transform: skewX(-20deg);
-            animation: dynamicShimmer 6s infinite ease-in-out;
-            pointer-events: none;
-        }
-
-        @keyframes dynamicShimmer {
-            0% { left: -150%; }
-            50% { left: 150%; }
-            100% { left: 150%; }
-        }
-
-        /* RESPONSIVE LAYOUT CALIBRATIONS */
-        @media (max-width: 480px) {
-            .card-wrapper {
-                padding: 32px 20px;
-                border-radius: 24px;
-            }
-            .app-title {
-                font-size: 2.3rem;
-            }
-            .premium-header {
-                padding: 0 16px;
-            }
-            .header-title-center {
-                font-size: 1rem;
-            }
-        }
-
-        @media (max-width: 360px) {
-            .app-title {
-                font-size: 1.9rem;
-            }
-            .premium-menu-card {
-                padding: 16px;
-            }
-            .card-emoji-box {
-                width: 46px;
-                height: 46px;
-                font-size: 1.3rem;
-            }
-            .card-meta-title {
-                font-size: 1rem;
-            }
-            .card-meta-desc {
-                font-size: 0.75rem;
-            }
-            .premium-bottom-navigation {
-                height: 68px;
-            }
-            .nav-tab-icon {
-                font-size: 1.2rem;
-            }
-            .nav-tab-text {
-                font-size: 0.65rem;
-            }
-        }
+        @keyframes typingWave { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        .metrics-grid-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
+        .summary-mini-card { background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-glass); border-radius: 18px; padding: 16px; text-align: left; }
+        .mini-card-value { font-size: 1.5rem; font-weight: 800; color: #ffffff; margin-bottom: 4px; }
+        .mini-card-label { font-size: 0.7rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+        .progress-analytics-graph { background: rgba(255, 255, 255, 0.01); border: 1px solid var(--border-glass); border-radius: 24px; padding: 20px; width: 100%; text-align: left; }
+        .graph-header-lbl { font-size: 0.95rem; font-weight: 700; color: #ffffff; margin-bottom: 16px; }
+        .analytic-graph-bar-row { display: flex; justify-content: space-between; align-items: flex-end; height: 110px; padding-top: 10px; }
+        .analytics-col { display: flex; flex-direction: column; align-items: center; gap: 8px; flex-grow: 1; }
+        .analytics-col-fill { width: 12px; background: linear-gradient(to top, var(--neon-purple), var(--neon-blue)); border-radius: 4px; height: 0%; transition: height 1s var(--transition-smooth); box-shadow: 0 0 10px rgba(0, 242, 254, 0.15); }
+        .analytics-col-day { font-size: 0.7rem; color: var(--text-secondary); font-weight: 600; }
+        .premium-bottom-navigation { position: fixed; bottom: 0; left: 0; width: 100%; height: 72px; background: rgba(3, 3, 3, 0.8); border-top: 1px solid var(--border-glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); z-index: 100; display: flex; align-items: center; justify-content: space-evenly; padding-bottom: env(safe-area-inset-bottom); }
+        .nav-tab-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; width: 76px; color: var(--text-secondary); transition: color 0.3s var(--transition-smooth); position: relative; }
+        .nav-tab-icon { font-size: 1.4rem; transition: transform 0.3s var(--transition-bounce), color 0.3s; }
+        .nav-tab-text { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+        .nav-tab-item:hover { color: #ffffff; }
+        .nav-tab-item:hover .nav-tab-icon { transform: translateY(-2px); }
+        .nav-tab-item.active { color: var(--neon-blue); }
+        .nav-tab-item.active .nav-tab-icon { transform: scale(1.1) translateY(-2px); filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.6)); }
+        .nav-tab-item::after { content: ''; position: absolute; bottom: -6px; width: 5px; height: 5px; border-radius: 50%; background: var(--neon-blue); box-shadow: 0 0 8px var(--neon-blue); opacity: 0; transform: scale(0); transition: all 0.3s var(--transition-bounce); }
+        .nav-tab-item.active::after { opacity: 1; transform: scale(1); }
+        .fullscreen-overlay-glass { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.4s var(--transition-smooth), visibility 0.4s; }
+        .fullscreen-overlay-glass.show { opacity: 1; visibility: visible; }
+        .popup-card-glass { background: var(--bg-card); border: 1px solid var(--border-glass); box-shadow: 0 24px 50px rgba(0, 0, 0, 0.7); width: 90%; max-width: 400px; border-radius: 28px; padding: 32px 24px; text-align: center; transform: scale(0.9) translateY(20px); transition: transform 0.4s var(--transition-bounce); max-height: 90vh; overflow-y: auto; scrollbar-width: none; }
+        .popup-card-glass::-webkit-scrollbar { display: none; }
+        .fullscreen-overlay-glass.show .popup-card-glass { transform: scale(1) translateY(0); }
+        .profile-workspace-view { width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .profile-avatar-giant { position: relative; width: 84px; height: 84px; border-radius: 50%; padding: 3px; background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple)); box-shadow: 0 0 30px rgba(0, 242, 254, 0.3); margin-bottom: 16px; flex-shrink: 0; }
+        .profile-avatar-giant img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #0d0c15; }
+        .profile-identity-name { font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; font-weight: 700; color: #ffffff; margin-bottom: 4px; }
+        .profile-identity-email { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px; }
+        .profile-meta-rows { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-bottom: 20px; }
+        .meta-data-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-glass); border-radius: 16px; width: 100%; }
+        .meta-row-label { font-size: 0.8rem; color: var(--text-secondary); font-weight: 700; text-align: left; }
+        .meta-row-value { font-size: 0.85rem; font-weight: 700; color: #ffffff; text-align: right; max-width: 60%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .flex-column { flex-direction: column !important; }
+        .lang-selector-segment { display: flex; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-glass); border-radius: 12px; padding: 4px; width: 100%; justify-content: space-between; margin-top: 6px; }
+        .lang-option { flex: 1; text-align: center; cursor: pointer; position: relative; }
+        .lang-option input { position: absolute; opacity: 0; width: 0; height: 0; }
+        .lang-option span { display: block; padding: 8px 4px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); transition: all 0.3s var(--transition-smooth); }
+        .lang-option input:checked + span { background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple)); color: #ffffff; box-shadow: 0 0 10px rgba(0, 242, 254, 0.25); }
+        #app-loading-gate { background-color: var(--bg-darkest); z-index: 2000; display: flex; }
+        .btn-premium::before, .btn-glowing::before { content: ''; position: absolute; top: 0; left: -150%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent); transform: skewX(-20deg); animation: dynamicShimmer 6s infinite ease-in-out; pointer-events: none; }
+        @keyframes dynamicShimmer { 0% { left: -150%; } 50% { left: 150%; } 100% { left: 150%; } }
+        @media (max-width: 480px) { .card-wrapper { padding: 32px 20px; border-radius: 24px; } .app-title { font-size: 2.3rem; } .premium-header { padding: 0 16px; } .header-title-center { font-size: 1rem; } }
+        @media (max-width: 360px) { .app-title { font-size: 1.9rem; } .premium-menu-card { padding: 16px; } .card-emoji-box { width: 46px; height: 46px; font-size: 1.3rem; } .card-meta-title { font-size: 1rem; } .card-meta-desc { font-size: 0.75rem; } .premium-bottom-navigation { height: 68px; } .nav-tab-icon { font-size: 1.2rem; } .nav-tab-text { font-size: 0.65rem; } }
     </style>
 </head>
 <body>
 
-    <!-- Ambient Glow Drops -->
     <div class="ambient-glow glow-1"></div>
     <div class="ambient-glow glow-2"></div>
-
-    <!-- Interactive Particle Backdrop Layer -->
     <canvas id="particles"></canvas>
 
-    <!-- 0. GATE SYSTEM: AUTHENTICATION SYNC OVERLAY -->
+    <!-- 0. LOADING GATE -->
     <div class="page-view active" id="app-loading-gate">
         <div class="card-wrapper" style="box-shadow: none; border: none; background: transparent;">
             <div class="brand-orb" style="width: 80px; height: 80px;">
-                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
                     <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#00f2fe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M2 17L12 22L22 17" stroke="#9b51e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M2 12L12 17L22 12" stroke="#4facfe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1339,23 +201,21 @@
         </div>
     </div>
 
-    <!-- PAGE 1: USER SIGN-IN & GOOGLE SSO GATE -->
+    <!-- PAGE 1: LANDING -->
     <div class="page-view" id="page-landing" style="display: none;">
         <div class="card-wrapper">
             <div class="brand-orb">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
                     <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#00f2fe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M2 17L12 22L22 17" stroke="#9b51e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M2 12L12 17L22 12" stroke="#4facfe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
-
             <h1 class="app-title" data-i18n="app_title">GoalQuest.AI</h1>
             <p class="tagline" data-i18n="landing_tagline">Learn Smart. Practice Better. Achieve More.</p>
-
             <button class="btn-premium ripple-trigger" id="sso-trigger" aria-label="Continue with Google">
                 <span style="display: flex; align-items: center; justify-content: center; width: 22px; height: 22px;">
-                    <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                    <svg viewBox="0 0 24 24" width="20" height="20">
                         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                         <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                         <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
@@ -1367,43 +227,34 @@
         </div>
     </div>
 
-    <!-- PAGE 2: PERSONALIZED ONBOARDING PROFILE SETUP -->
+    <!-- PAGE 2: ONBOARDING -->
     <div class="page-view" id="page-onboarding" style="display: none;">
         <div class="card-wrapper">
             <div class="brand-orb">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#00f2fe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M2 17L12 22L22 17" stroke="#9b51e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M2 12L12 17L22 12" stroke="#4facfe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
-
             <h2 class="onboarding-title" data-i18n="onboard_title">Welcome to GoalQuest</h2>
             <p class="onboarding-subtitle" data-i18n="onboard_subtitle">Personalize your high-performance schedule.</p>
-
             <form class="onboarding-form" id="onboard-form" novalidate>
-                <!-- Full Name -->
                 <div class="input-group">
                     <label class="input-label" for="onboard-name" data-i18n="lbl_name">Full Name</label>
                     <input type="text" id="onboard-name" class="form-input" placeholder="Your full name" required autocomplete="name">
                     <div class="input-error" id="error-name">Name must be at least 2 characters.</div>
                 </div>
-
-                <!-- Mobile Phone Number -->
                 <div class="input-group">
                     <label class="input-label" for="onboard-mobile" data-i18n="lbl_mobile">Mobile Number</label>
                     <input type="tel" id="onboard-mobile" class="form-input" placeholder="e.g., +91 98765 43210" required autocomplete="tel">
                     <div class="input-error" id="error-mobile">Enter a valid 10-15 digit mobile number.</div>
                 </div>
-
-                <!-- Educational Aim -->
                 <div class="input-group">
                     <label class="input-label" for="onboard-goal" data-i18n="lbl_goal">Target Learning Goal</label>
                     <input type="text" id="onboard-goal" class="form-input" placeholder="Example: Secure 95%+ in Boards" required>
                     <div class="input-error" id="error-goal">Outline your academic target (min 5 chars).</div>
                 </div>
-
-                <!-- Syllabus Stream Selection -->
                 <div class="input-group">
                     <label class="input-label" for="onboard-exam" data-i18n="lbl_exam">Exam Target</label>
                     <select id="onboard-exam" class="form-select">
@@ -1413,7 +264,6 @@
                         <option value="NEET Prep Suite">NEET Prep Suite</option>
                     </select>
                 </div>
-
                 <button type="submit" class="btn-premium btn-glowing ripple-trigger" id="onboard-submit" style="margin-top: 14px;">
                     <span class="btn-text" data-i18n="btn_initialize">Initialize Profile</span>
                     <span class="spinner" id="onboard-spinner"></span>
@@ -1422,51 +272,36 @@
         </div>
     </div>
 
-    <!-- PAGE 3: INTERACTIVE REGISTRATION SUCCESS -->
+    <!-- PAGE 3: SUCCESS -->
     <div class="page-view" id="page-success" style="display: none;">
         <div class="card-wrapper">
             <div class="success-icon-wrapper">
-                <svg viewBox="0 0 24 24">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
             </div>
-
             <h2 class="app-title" style="font-size: 2.2rem; margin-bottom: 8px;" data-i18n="congrats_title">Synchronized!</h2>
             <p class="tagline" style="margin-bottom: 32px;" data-i18n="congrats_subtitle">Your custom academic workspace is compiled and ready to deploy.</p>
-
-            <button class="btn-premium btn-glowing ripple-trigger" id="btn-dashboard" data-i18n="btn_enter_hub">
-                Enter Dashboard Hub
-            </button>
+            <button class="btn-premium btn-glowing ripple-trigger" id="btn-dashboard" data-i18n="btn_enter_hub">Enter Dashboard Hub</button>
         </div>
     </div>
 
-    <!-- PAGE 4: UPGRADED DASHBOARD CONSOLE (MAIN WORKSPACE) -->
+    <!-- PAGE 4: DASHBOARD -->
     <div class="page-view" id="page-dashboard" style="display: none;">
         <div class="dash-viewport">
-            
-            <!-- FIXED TOP NAVIGATION HEADER -->
             <div class="premium-header">
-                <!-- Streak tracker -->
                 <div class="streak-pill" id="dashboard-streak-trigger">
                     <span class="streak-fire">🔥</span>
                     <span id="streak-count-txt">0 Days</span>
                 </div>
-                
                 <div class="header-title-center" data-i18n="dash_header_title">GoalQuest.AI Dashboard</div>
-                
-                <!-- Avatar triggers custom details overlay -->
                 <div class="profile-container-btn" id="header-profile-btn">
                     <div class="profile-inner-avatar" id="header-avatar-slot">G</div>
                 </div>
             </div>
 
-            <!-- SCROLLABLE DASHBOARD VIEWPORT -->
             <div class="dash-scrollable-body" id="dash-scroll-container">
-                
-                <!-- TAB 1: DASHBOARD HOME HUB -->
+
+                <!-- HOME TAB -->
                 <div class="section-wrapper active" id="tab-section-home">
-                    
-                    <!-- MENU CARD 1: Start Now -->
                     <div class="glow-shimmer-wrap">
                         <div class="premium-menu-card ripple-trigger" onclick="switchMainTab('learn')">
                             <div class="premium-menu-card-inner">
@@ -1479,8 +314,6 @@
                             <span class="card-arrow-icon">➔</span>
                         </div>
                     </div>
-
-                    <!-- MENU CARD 2: Check Your Knowledge -->
                     <div class="glow-shimmer-wrap">
                         <div class="premium-menu-card ripple-trigger" onclick="triggerMockAlert('PYQs & Dynamic Quizzes engine initializing...')">
                             <div class="premium-menu-card-inner">
@@ -1493,8 +326,6 @@
                             <span class="card-arrow-icon">➔</span>
                         </div>
                     </div>
-
-                    <!-- MENU CARD 3: AI Teacher -->
                     <div class="glow-shimmer-wrap">
                         <div class="premium-menu-card ripple-trigger" onclick="switchMainTab('ai')">
                             <div class="premium-menu-card-inner">
@@ -1507,8 +338,6 @@
                             <span class="card-arrow-icon">➔</span>
                         </div>
                     </div>
-
-                    <!-- MENU CARD 4: Performance Analytics -->
                     <div class="glow-shimmer-wrap">
                         <div class="premium-menu-card ripple-trigger" onclick="switchMainTab('learn')">
                             <div class="premium-menu-card-inner">
@@ -1523,12 +352,10 @@
                     </div>
                 </div>
 
-                <!-- TAB 2: ACTIVE LEARNING ROOM (LEARN TAB) -->
+                <!-- LEARN TAB -->
                 <div class="section-wrapper" id="tab-section-learn">
                     <h2 class="onboarding-title" style="text-align: left; font-size: 1.4rem;" data-i18n="subject_header">Select Active Subject</h2>
-                    
                     <div class="subject-group-grid">
-                        <!-- Math Course Card -->
                         <div class="subject-metric-card ripple-trigger" onclick="triggerMockAlert('Launching CBSE 10 Math Module...')">
                             <div class="subject-left-set">
                                 <div class="subject-glyph" style="background: rgba(0, 242, 254, 0.1); border-color: rgba(0, 242, 254, 0.25);">📐</div>
@@ -1544,8 +371,6 @@
                                 </svg>
                             </div>
                         </div>
-
-                        <!-- General Science Suite -->
                         <div class="subject-metric-card ripple-trigger" onclick="triggerMockAlert('Launching Science & Chemistry Workspace...')">
                             <div class="subject-left-set">
                                 <div class="subject-glyph" style="background: rgba(155, 81, 224, 0.1); border-color: rgba(155, 81, 224, 0.25);">🧬</div>
@@ -1562,61 +387,34 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- PROGRESS SUMMARY GRAPH -->
                     <div class="progress-analytics-graph" style="margin-top: 14px;">
                         <h4 class="graph-header-lbl" data-i18n="weekly_activity">Weekly Learning Activity (XP)</h4>
                         <div class="analytic-graph-bar-row" id="anal-bar-row">
-                            <div class="analytics-col">
-                                <div class="analytics-col-fill" style="height: 0%;" data-percentage="20%"></div>
-                                <span class="analytics-col-day">Mon</span>
-                            </div>
-                            <div class="analytics-col">
-                                <div class="analytics-col-fill" style="height: 0%;" data-percentage="45%"></div>
-                                <span class="analytics-col-day">Tue</span>
-                            </div>
-                            <div class="analytics-col">
-                                <div class="analytics-col-fill" style="height: 0%;" data-percentage="35%"></div>
-                                <span class="analytics-col-day">Wed</span>
-                            </div>
-                            <div class="analytics-col">
-                                <div class="analytics-col-fill" style="height: 0%;" data-percentage="70%"></div>
-                                <span class="analytics-col-day">Thu</span>
-                            </div>
-                            <div class="analytics-col">
-                                <div class="analytics-col-fill" style="height: 0%;" data-percentage="50%"></div>
-                                <span class="analytics-col-day">Fri</span>
-                            </div>
-                            <div class="analytics-col">
-                                <div class="analytics-col-fill" style="height: 0%;" data-percentage="85%"></div>
-                                <span class="analytics-col-day">Sat</span>
-                            </div>
-                            <div class="analytics-col">
-                                <div class="analytics-col-fill" style="height: 0%;" data-percentage="90%"></div>
-                                <span class="analytics-col-day">Sun</span>
-                            </div>
+                            <div class="analytics-col"><div class="analytics-col-fill" style="height: 0%;" data-percentage="20%"></div><span class="analytics-col-day">Mon</span></div>
+                            <div class="analytics-col"><div class="analytics-col-fill" style="height: 0%;" data-percentage="45%"></div><span class="analytics-col-day">Tue</span></div>
+                            <div class="analytics-col"><div class="analytics-col-fill" style="height: 0%;" data-percentage="35%"></div><span class="analytics-col-day">Wed</span></div>
+                            <div class="analytics-col"><div class="analytics-col-fill" style="height: 0%;" data-percentage="70%"></div><span class="analytics-col-day">Thu</span></div>
+                            <div class="analytics-col"><div class="analytics-col-fill" style="height: 0%;" data-percentage="50%"></div><span class="analytics-col-day">Fri</span></div>
+                            <div class="analytics-col"><div class="analytics-col-fill" style="height: 0%;" data-percentage="85%"></div><span class="analytics-col-day">Sat</span></div>
+                            <div class="analytics-col"><div class="analytics-col-fill" style="height: 0%;" data-percentage="90%"></div><span class="analytics-col-day">Sun</span></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- TAB 3: AI TUTOR WORKSPACE (AI TAB) -->
+                <!-- AI TUTOR TAB -->
                 <div class="section-wrapper" id="tab-section-ai">
                     <div class="teacher-chat-interface">
-                        <!-- Message viewport logs -->
                         <div class="chat-screen-logs" id="chat-scroller">
+                            <div class="groq-badge">⚡ Powered by Groq AI</div>
                             <div class="chat-bubble chat-bubble-system" data-i18n="chat_welcome">
                                 Hello! I am your <strong>GoalQuest AI Tutor</strong>. Ask me any CBSE Class 10 academic query, or select a dynamic suggestion chip below!
                             </div>
                         </div>
-
-                        <!-- Chip suggestions -->
                         <div class="chat-suggested-chips">
                             <div class="suggested-pill" onclick="sendSuggestionChat('Explain Photosynthesis formula step-by-step')" data-i18n="chat_photosynthesis">Photosynthesis</div>
                             <div class="suggested-pill" onclick="sendSuggestionChat('What is the formula of Quadratic roots?')" data-i18n="chat_roots">Quadratic Roots</div>
                             <div class="suggested-pill" onclick="sendSuggestionChat('Explain Ohm Law in electric circuits')" data-i18n="chat_ohms">Ohm's Law</div>
                         </div>
-
-                        <!-- Typing user command triggers -->
                         <div class="chat-input-row">
                             <input type="text" class="chat-text-area" id="chat-input-el" placeholder="Type your doubt here...">
                             <button class="chat-submit-btn ripple-trigger" id="chat-btn-submit">
@@ -1629,29 +427,15 @@
                     </div>
                 </div>
 
-                <!-- TAB 4: SYSTEM METRIC SUMMARIES (INTEGRATED STATS) -->
+                <!-- STATS TAB -->
                 <div class="section-wrapper" id="tab-section-stats">
                     <h2 class="onboarding-title" style="text-align: left; font-size: 1.4rem;" data-i18n="metrics_header">Performance Metrics</h2>
-                    
                     <div class="metrics-grid-summary">
-                        <div class="summary-mini-card">
-                            <div class="mini-card-value" id="stats-xp-val">120</div>
-                            <div class="mini-card-label" data-i18n="metric_xp">Total XP</div>
-                        </div>
-                        <div class="summary-mini-card">
-                            <div class="mini-card-value" id="stats-level-val">Level 1</div>
-                            <div class="mini-card-label" data-i18n="metric_lvl">Current Level</div>
-                        </div>
-                        <div class="summary-mini-card">
-                            <div class="mini-card-value" id="stats-solved-val">0</div>
-                            <div class="mini-card-label" data-i18n="metric_solved">Solved Quizzes</div>
-                        </div>
-                        <div class="summary-mini-card">
-                            <div class="mini-card-value" id="stats-accuracy-val">0%</div>
-                            <div class="mini-card-label" data-i18n="metric_accuracy">Overall Accuracy</div>
-                        </div>
+                        <div class="summary-mini-card"><div class="mini-card-value" id="stats-xp-val">120</div><div class="mini-card-label" data-i18n="metric_xp">Total XP</div></div>
+                        <div class="summary-mini-card"><div class="mini-card-value" id="stats-level-val">Level 1</div><div class="mini-card-label" data-i18n="metric_lvl">Current Level</div></div>
+                        <div class="summary-mini-card"><div class="mini-card-value" id="stats-solved-val">0</div><div class="mini-card-label" data-i18n="metric_solved">Solved Quizzes</div></div>
+                        <div class="summary-mini-card"><div class="mini-card-value" id="stats-accuracy-val">0%</div><div class="mini-card-label" data-i18n="metric_accuracy">Overall Accuracy</div></div>
                     </div>
-
                     <div class="subject-metric-card" style="margin-top: 10px;">
                         <div class="subject-left-set">
                             <div class="subject-glyph" style="background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.25);">👑</div>
@@ -1666,7 +450,7 @@
 
             </div>
 
-            <!-- FIXED BOTTOM TAB CONTROL MATRIX WITH PERFECT THREE-ICON SYMMETRY -->
+            <!-- BOTTOM NAV -->
             <div class="premium-bottom-navigation">
                 <div class="nav-tab-item active" id="nav-item-home" onclick="switchMainTab('home')">
                     <span class="nav-tab-icon">🏠</span>
@@ -1681,71 +465,40 @@
                     <span class="nav-tab-text" data-i18n="nav_ai">AI</span>
                 </div>
             </div>
-
         </div>
     </div>
 
-    <!-- FLOATING GLASS POPUP: USER PROFILE DETAILS & LANG OPTIONS -->
+    <!-- PROFILE OVERLAY -->
     <div class="fullscreen-overlay-glass" id="profile-popup-overlay">
         <div class="popup-card-glass">
             <div class="profile-workspace-view">
                 <div class="profile-avatar-giant">
                     <div class="profile-inner-avatar" id="pop-avatar-slot" style="font-size: 2.2rem;">G</div>
                 </div>
-
                 <h3 class="profile-identity-name" id="pop-name-lbl">Student</h3>
                 <p class="profile-identity-email" id="pop-email-lbl">student@example.com</p>
-
-                <!-- Detailed Rows -->
                 <div class="profile-meta-rows">
-                    <div class="meta-data-row">
-                        <span class="meta-row-label" data-i18n="lbl_mobile">Mobile Number</span>
-                        <span class="meta-row-value" id="pop-mobile-lbl">+91 00000 00000</span>
-                    </div>
-                    <div class="meta-data-row">
-                        <span class="meta-row-label" data-i18n="pop_goal">Educational Aim</span>
-                        <span class="meta-row-value" id="pop-goal-lbl">High Performance</span>
-                    </div>
-                    <div class="meta-data-row">
-                        <span class="meta-row-label" data-i18n="pop_exam">Curriculum Exam</span>
-                        <span class="meta-row-value" id="pop-exam-lbl">CBSE Class 10</span>
-                    </div>
-
-                    <!-- Language Selector Section -->
+                    <div class="meta-data-row"><span class="meta-row-label" data-i18n="lbl_mobile">Mobile Number</span><span class="meta-row-value" id="pop-mobile-lbl">+91 00000 00000</span></div>
+                    <div class="meta-data-row"><span class="meta-row-label" data-i18n="pop_goal">Educational Aim</span><span class="meta-row-value" id="pop-goal-lbl">High Performance</span></div>
+                    <div class="meta-data-row"><span class="meta-row-label" data-i18n="pop_exam">Curriculum Exam</span><span class="meta-row-value" id="pop-exam-lbl">CBSE Class 10</span></div>
                     <div class="meta-data-row flex-column" style="align-items: flex-start; gap: 8px;">
                         <span class="meta-row-label" data-i18n="pop_language">Language / भाषा</span>
                         <div class="lang-selector-segment">
-                            <label class="lang-option">
-                                <input type="radio" name="gq-lang" value="en" checked>
-                                <span>English</span>
-                            </label>
-                            <label class="lang-option">
-                                <input type="radio" name="gq-lang" value="hi">
-                                <span>हिन्दी</span>
-                            </label>
-                            <label class="lang-option">
-                                <input type="radio" name="gq-lang" value="hn">
-                                <span>Hinglish</span>
-                            </label>
+                            <label class="lang-option"><input type="radio" name="gq-lang" value="en" checked><span>English</span></label>
+                            <label class="lang-option"><input type="radio" name="gq-lang" value="hi"><span>हिन्दी</span></label>
+                            <label class="lang-option"><input type="radio" name="gq-lang" value="hn"><span>Hinglish</span></label>
                         </div>
                     </div>
                 </div>
-
-                <!-- Signout interaction -->
-                <button class="btn-premium ripple-trigger" id="pop-logout-btn" style="border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.05); color: var(--neon-red); margin-top: 10px;" data-i18n="pop_logout">
-                    Sign Out Account
-                </button>
-                <button class="btn-premium ripple-trigger" id="pop-close-btn" style="margin-top: 12px; background: transparent; border-color: transparent;" data-i18n="pop_back">
-                    Back to Console
-                </button>
+                <button class="btn-premium ripple-trigger" id="pop-logout-btn" style="border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.05); color: var(--neon-red); margin-top: 10px;" data-i18n="pop_logout">Sign Out Account</button>
+                <button class="btn-premium ripple-trigger" id="pop-close-btn" style="margin-top: 12px; background: transparent; border-color: transparent;" data-i18n="pop_back">Back to Console</button>
             </div>
         </div>
     </div>
 
-    <!-- Script Implementations -->
     <script>
         /************************************************************
-         * 1. FIREBASE CONFIGURATION & INITIALIZATION
+         * 1. FIREBASE CONFIGURATION
          ************************************************************/
         const firebaseConfig = {
           apiKey: "AIzaSyCHvYW3gkq_wKn0gZ-ao7GgDHbR7lcx65c",
@@ -1762,971 +515,191 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // System Core App State Holder
         let appUserContext = null;
         let appProfileContext = null;
 
-        // Groq API Key – insert your own key here
-        const GROQ_API_KEY = "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";
+        /************************************************************
+         * 2. GROQ API CONFIGURATION
+         * ⚠️  Apni Groq API Key yahan paste karein:
+         *     https://console.groq.com/keys  se key milegi
+         ************************************************************/
+        const GROQ_API_KEY = "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";   // 🔑 Apni key yahan daalo
+        const GROQ_BASE_URL = "https://api.groq.com/openai/v1/chat/completions";
+        const GROQ_MODEL = "llama3-70b-8192";              // Fast + powerful model
 
         /************************************************************
-         * 2. TRANSLATION ENGINE (ENGLISH, हिन्दी, HINGLISH)
+         * 3. GROQ API CALLER (OpenAI-compatible REST via fetch)
          ************************************************************/
-        const translations = {
-            en: {
-                app_title: "GoalQuest.AI",
-                landing_tagline: "Learn Smart. Practice Better. Achieve More.",
-                continue_google: "Continue with Google",
-                onboard_title: "Welcome to GoalQuest",
-                onboard_subtitle: "Personalize your high-performance schedule.",
-                lbl_name: "Full Name",
-                lbl_mobile: "Mobile Number",
-                lbl_goal: "Target Learning Goal",
-                lbl_exam: "Exam Target",
-                btn_initialize: "Initialize Profile",
-                congrats_title: "Synchronized!",
-                congrats_subtitle: "Your custom academic workspace is compiled and ready to deploy.",
-                btn_enter_hub: "Enter Dashboard Hub",
-                dash_header_title: "GoalQuest.AI Dashboard",
-                card_start_title: "Start Now",
-                card_start_desc: "Continue today's learning journey.",
-                card_knowledge_title: "Check Your Knowledge",
-                card_knowledge_desc: "Practice previous year questions and quizzes.",
-                card_ai_title: "AI Teacher",
-                card_ai_desc: "Ask doubt or explain any Class 10 topic.",
-                card_stats_title: "Performance & Progress",
-                card_stats_desc: "Review metric records, XP logs and ranks.",
-                subject_header: "Select Active Subject",
-                math_title: "Advanced Mathematics",
-                math_sub: "Syllabus • 45% Complete",
-                science_title: "Physics & Biology",
-                science_sub: "Syllabus • 75% Complete",
-                weekly_activity: "Weekly Learning Activity (XP)",
-                chat_welcome: "Hello! I am your <strong>GoalQuest AI Tutor</strong>. Ask me any CBSE Class 10 academic query, or select a dynamic suggestion chip below!",
-                chat_photosynthesis: "Photosynthesis",
-                chat_roots: "Quadratic Roots",
-                chat_ohms: "Ohm's Law",
-                chat_placeholder: "Type your doubt here...",
-                metrics_header: "Performance Metrics",
-                metric_xp: "Total XP",
-                metric_lvl: "Current Level",
-                metric_solved: "Solved Quizzes",
-                metric_accuracy: "Overall Accuracy",
-                lbl_rank: "Dynamic Academic Rank",
-                rank_value: "Scholar",
-                active_status: "ACTIVE",
-                pop_goal: "Educational Aim",
-                pop_exam: "Curriculum Exam",
-                pop_language: "Language / भाषा",
-                pop_logout: "Sign Out Account",
-                pop_back: "Back to Console",
-                nav_home: "Home",
-                nav_learn: "Learn",
-                nav_ai: "AI"
-            },
-            hi: {
-                app_title: "गोलक्वेस्ट.AI",
-                landing_tagline: "स्मार्ट सीखें। बेहतर अभ्यास करें। अधिक हासिल करें।",
-                continue_google: "गूगल के साथ जारी रखें",
-                onboard_title: "गोलक्वेस्ट में आपका स्वागत है",
-                onboard_subtitle: "अपनी उच्च-प्रदर्शन समय सारिणी को व्यक्तिगत बनाएं।",
-                lbl_name: "पूरा नाम",
-                lbl_mobile: "मोबाइल नंबर",
-                lbl_goal: "लक्ष्य सीखने का उद्देश्य",
-                lbl_exam: "परीक्षा लक्ष्य",
-                btn_initialize: "प्रोफ़ाइल शुरू करें",
-                congrats_title: "सिंक्रनाइज़ किया गया!",
-                congrats_subtitle: "आपका कस्टम शैक्षणिक कार्यक्षेत्र संकलित है और तैनात होने के लिए तैयार है।",
-                btn_enter_hub: "डैशबोर्ड हब में प्रवेश करें",
-                dash_header_title: "गोलक्वेस्ट.AI डैशबोर्ड",
-                card_start_title: "शुरू करें",
-                card_start_desc: "आज की अपनी सीखने की यात्रा जारी रखें।",
-                card_knowledge_title: "अपना ज्ञान जांचें",
-                card_knowledge_desc: "पिछले वर्षों के प्रश्नपत्रों और क्विज़ का अभ्यास करें।",
-                card_ai_title: "एआई शिक्षक",
-                card_ai_desc: "संदेह पूछें या कक्षा 10 के किसी भी विषय को समझें।",
-                card_stats_title: "प्रदर्शन और प्रगति",
-                card_stats_desc: "मीट्रिक रिकॉर्ड, एक्सपी लॉग और रैंक की समीक्षा करें।",
-                subject_header: "सक्रिय विषय चुनें",
-                math_title: "उच्च गणित",
-                math_sub: "पाठ्यक्रम • 45% पूर्ण",
-                science_title: "भौतिकी और जीव विज्ञान",
-                science_sub: "पाठ्यक्रम • 75% पूर्ण",
-                weekly_activity: "साारीरिक गतिविधि (XP)",
-                chat_welcome: "नमस्ते! मैं आपका <strong>गोलक्वेस्ट एआई ट्यूटर</strong> हूं। मुझसे कोई भी सीबीएसई कक्षा 10 का शैक्षणिक प्रश्न पूछें, या नीचे दिए गए सुझाव चिप को चुनें!",
-                chat_photosynthesis: "प्रकाश संश्लेषण",
-                chat_roots: "द्विघात समीकरण",
-                chat_ohms: "ओम का नियम",
-                chat_placeholder: "अपना प्रश्न यहाँ लिखें...",
-                metrics_header: "प्रदर्शन मेट्रिक्स",
-                metric_xp: "कुल एक्सपी",
-                metric_lvl: "वर्तमान स्तर",
-                metric_solved: "हल किए गए क्विज़",
-                metric_accuracy: "कुल सटीकता",
-                lbl_rank: "गतिशील शैक्षणिक रैंक",
-                rank_value: "विद्वान",
-                active_status: "सक्रिय",
-                pop_goal: "शैक्षणिक उद्देश्य",
-                pop_exam: "पाठ्यक्रम परीक्षा",
-                pop_language: "Language / भाषा",
-                pop_logout: "साइन आउट करें",
-                pop_back: "वापस जाएं",
-                nav_home: "होम",
-                nav_learn: "सीखें",
-                nav_ai: "एआई"
-            },
-            hn: {
-                app_title: "GoalQuest.AI",
-                landing_tagline: "Smart Seekho. Better Practice Karo. Zyada Achieve Karo.",
-                continue_google: "Google ke sath Continue Karo",
-                onboard_title: "GoalQuest mein Welcome",
-                onboard_subtitle: "Apna high-performance schedule personalize karo.",
-                lbl_name: "Full Name",
-                lbl_mobile: "Mobile Number",
-                lbl_goal: "Target Learning Goal",
-                lbl_exam: "Exam Target",
-                btn_initialize: "Profile Banayein",
-                congrats_title: "Synchronized!",
-                congrats_subtitle: "Aapka custom academic workspace compile ho gaya hai aur ready hai.",
-                btn_enter_hub: "Dashboard Hub mein Enter Karo",
-                dash_header_title: "GoalQuest.AI Dashboard",
-                card_start_title: "Start Karo",
-                card_start_desc: "Apna today's learning journey continue karo.",
-                card_knowledge_title: "Knowledge Check Karo",
-                card_knowledge_desc: "Practice karo previous year questions aur quizzes.",
-                card_ai_title: "AI Teacher",
-                card_ai_desc: "Doubt pucho ya Class 10 ka topic samjho.",
-                card_stats_title: "Performance & Progress",
-                card_stats_desc: "XP, Level aur ranking records check karo.",
-                subject_header: "Active Subject Select Karo",
-                math_title: "Advanced Mathematics",
-                math_sub: "Syllabus • 45% Complete",
-                science_title: "Physics & Biology",
-                science_sub: "Syllabus • 75% Complete",
-                weekly_activity: "Weekly Learning Activity (XP)",
-                chat_welcome: "Hello! Main aapka <strong>GoalQuest AI Tutor</strong> hoon. Mujhse koi bhi CBSE Class 10 academic query pucho, ya neeche suggestions select karo!",
-                chat_photosynthesis: "Photosynthesis",
-                chat_roots: "Quadratic Roots",
-                chat_ohms: "Ohm's Law",
-                chat_placeholder: "Apna doubt yahan type karo...",
-                metrics_header: "Performance Metrics",
-                metric_xp: "Total XP",
-                metric_lvl: "Current Level",
-                metric_solved: "Solved Quizzes",
-                metric_accuracy: "Overall Accuracy",
-                lbl_rank: "Dynamic Academic Rank",
-                rank_value: "Scholar",
-                active_status: "ACTIVE",
-                pop_goal: "Educational Aim",
-                pop_exam: "Curriculum Exam",
-                pop_language: "Language / भाषा",
-                pop_logout: "Sign Out Karo",
-                pop_back: "Back to Console",
-                nav_home: "Home",
-                nav_learn: "Learn",
-                nav_ai: "AI"
-            }
-        };
-
-        function applyLanguage(langCode) {
-            if (!translations[langCode]) langCode = 'en';
-            
-            // Premium smooth shifting transition
-            document.body.style.opacity = '0';
-            setTimeout(() => {
-                const dictionary = translations[langCode];
-                
-                document.querySelectorAll('[data-i18n]').forEach(element => {
-                    const translationKey = element.getAttribute('data-i18n');
-                    if (dictionary[translationKey]) {
-                        if (element.tagName === 'INPUT' && element.hasAttribute('placeholder')) {
-                            element.setAttribute('placeholder', dictionary[translationKey]);
-                        } else {
-                            element.innerHTML = dictionary[translationKey];
-                        }
-                    }
-                });
-
-                // Update specific dynamic placeholders
-                const chatInput = document.getElementById('chat-input-el');
-                if (chatInput) {
-                    chatInput.placeholder = dictionary['chat_placeholder'];
-                }
-
-                // Check correct radio selector button inside modal
-                const targetRadio = document.querySelector(`.lang-option input[value="${langCode}"]`);
-                if (targetRadio) {
-                    targetRadio.checked = true;
-                }
-
-                // Update dynamic translated streak count unit
-                if (appProfileContext) {
-                    const currentStreak = appProfileContext.streak || 1;
-                    let calculatedUnit = currentStreak === 1 ? 'Day' : 'Days';
-                    
-                    if (langCode === 'hi') {
-                        calculatedUnit = currentStreak === 1 ? 'दिन' : 'दिनों';
-                    } else if (langCode === 'hn') {
-                        calculatedUnit = currentStreak === 1 ? 'Din' : 'Dino';
-                    }
-                    document.getElementById('streak-count-txt').textContent = `${currentStreak} ${calculatedUnit}`;
-                }
-
-                document.body.style.opacity = '1';
-            }, 200);
-        }
-
-        // Initialize segmented change events inside Profile view
-        document.querySelectorAll('.lang-option input').forEach(radioButton => {
-            radioButton.addEventListener('change', async (e) => {
-                const selectedLang = e.target.value;
-                applyLanguage(selectedLang);
-
-                // Set local cache immediately
-                localStorage.setItem('gq_language', selectedLang);
-
-                // Sync back to profile collection in cloud
-                if (appUserContext) {
-                    try {
-                        await db.collection("users").doc(appUserContext.uid).update({
-                            language: selectedLang
-                        });
-                    } catch (err) {
-                        console.error("Failed to update language setting in Firestore:", err);
-                    }
-                }
-            });
-        });
-
-        /************************************************************
-         * 3. PAGE TRANSITIONS ROUTER MATRIX
-         ************************************************************/
-        function transitionToPage(fromPageId, toPageId) {
-            const fromPage = document.getElementById(fromPageId);
-            const toPage = document.getElementById(toPageId);
-
-            if (!fromPage || !toPage) return;
-
-            // Trigger active state change with transitions
-            fromPage.classList.remove('active');
-            
-            setTimeout(() => {
-                fromPage.style.display = 'none';
-                toPage.style.display = 'flex';
-                
-                toPage.offsetHeight; // force rendering engine tick
-                toPage.classList.add('active');
-
-                // If navigating to dashboard workspace, synchronize components
-                if (toPageId === 'page-dashboard') {
-                    animateDashboardProgressBars();
-                }
-            }, 500);
-        }
-
-        /************************************************************
-         * 4. SIGN-IN & AUTH STATE CHANGE WORKERS
-         ************************************************************/
-        auth.onAuthStateChanged(async (user) => {
-            const loadingGate = document.getElementById('app-loading-gate');
-
-            // Fallback language extraction
-            const currentCacheLang = localStorage.getItem('gq_language') || 'en';
-            applyLanguage(currentCacheLang);
-
-            if (user) {
-                appUserContext = user;
-                try {
-                    const profileReference = db.collection("users").doc(user.uid);
-                    const userDoc = await profileReference.get();
-
-                    if (userDoc.exists) {
-                        appProfileContext = userDoc.data();
-                        
-                        // Set persistent language setting if present in db
-                        if (appProfileContext.language) {
-                            applyLanguage(appProfileContext.language);
-                            localStorage.setItem('gq_language', appProfileContext.language);
-                        }
-
-                        // Handle streak compilation
-                        await verifyAndSynchronizeStreak(user.uid);
-                        
-                        // Synchronize UI layouts
-                        synchronizeDashboardHUD();
-
-                        // Route to dashboard
-                        loadingGate.classList.remove('active');
-                        setTimeout(() => {
-                            loadingGate.style.display = 'none';
-                            document.getElementById('page-landing').style.display = 'none';
-                            document.getElementById('page-onboarding').style.display = 'none';
-                            document.getElementById('page-success').style.display = 'none';
-
-                            document.getElementById('page-dashboard').style.display = 'flex';
-                            document.getElementById('page-dashboard').offsetHeight;
-                            document.getElementById('page-dashboard').classList.add('active');
-                            animateDashboardProgressBars();
-                        }, 500);
-
-                    } else {
-                        // Forward to personalization wizard
-                        if (user.displayName) {
-                            document.getElementById('onboard-name').value = user.displayName;
-                        }
-                        loadingGate.classList.remove('active');
-                        setTimeout(() => {
-                            loadingGate.style.display = 'none';
-                            document.getElementById('page-landing').style.display = 'none';
-                            
-                            document.getElementById('page-onboarding').style.display = 'flex';
-                            document.getElementById('page-onboarding').offsetHeight;
-                            document.getElementById('page-onboarding').classList.add('active');
-                        }, 500);
-                    }
-
-                } catch (error) {
-                    console.error("Secure initial fetch failure:", error);
-                    loadingGate.style.display = 'none';
-                    document.getElementById('page-landing').style.display = 'flex';
-                    document.getElementById('page-landing').classList.add('active');
-                }
-            } else {
-                // Clear user contexts and route back to landing
-                appUserContext = null;
-                appProfileContext = null;
-                loadingGate.classList.remove('active');
-                setTimeout(() => {
-                    loadingGate.style.display = 'none';
-                    document.getElementById('page-dashboard').style.display = 'none';
-                    document.getElementById('page-dashboard').classList.remove('active');
-
-                    document.getElementById('page-landing').style.display = 'flex';
-                    document.getElementById('page-landing').offsetHeight;
-                    document.getElementById('page-landing').classList.add('active');
-                }, 500);
-            }
-        });
-
-        /************************************************************
-         * 5. AUTH & GOOGLE POPUP TRIGGERS
-         ************************************************************/
-        const ssoButton = document.getElementById('sso-trigger');
-        ssoButton.addEventListener('click', async (e) => {
-            e.preventDefault();
-            ssoButton.style.pointerEvents = 'none';
-            ssoButton.style.opacity = '0.7';
-
-            const authProvider = new firebase.auth.GoogleAuthProvider();
-
-            try {
-                const response = await auth.signInWithPopup(authProvider);
-                appUserContext = response.user;
-
-                const profileReference = db.collection("users").doc(appUserContext.uid);
-                const snapshotDoc = await profileReference.get();
-
-                if (snapshotDoc.exists) {
-                    appProfileContext = snapshotDoc.data();
-                    
-                    if (appProfileContext.language) {
-                        applyLanguage(appProfileContext.language);
-                        localStorage.setItem('gq_language', appProfileContext.language);
-                    }
-
-                    await verifyAndSynchronizeStreak(appUserContext.uid);
-                    synchronizeDashboardHUD();
-                    transitionToPage('page-landing', 'page-success');
-                    triggerConfettiExplosion();
-                } else {
-                    if (appUserContext.displayName) {
-                        document.getElementById('onboard-name').value = appUserContext.displayName;
-                    }
-                    transitionToPage('page-landing', 'page-onboarding');
-                }
-            } catch (err) {
-                console.error("Single Sign On error logs:", err);
-                alert("Sign-in process cancelled or timed out.");
-            } finally {
-                ssoButton.style.pointerEvents = 'all';
-                ssoButton.style.opacity = '1';
-            }
-        });
-
-        /************************************************************
-         * 6. PERSONALIZATION ONBOARDING WORKERS
-         ************************************************************/
-        const onboardForm = document.getElementById('onboard-form');
-        const onboardingName = document.getElementById('onboard-name');
-        const onboardingMobile = document.getElementById('onboard-mobile');
-        const onboardingGoal = document.getElementById('onboard-goal');
-        const onboardingExam = document.getElementById('onboard-exam');
-        const submitOnboardBtn = document.getElementById('onboard-submit');
-        const onboardSpinner = document.getElementById('onboard-spinner');
-
-        // Reset validity on form edits
-        [onboardingName, onboardingMobile, onboardingGoal].forEach(inputEl => {
-            inputEl.addEventListener('input', () => {
-                inputEl.classList.remove('invalid');
-                const errDiv = document.getElementById('error-' + inputEl.id.split('-')[1]);
-                if (errDiv) errDiv.style.display = 'none';
-            });
-        });
-
-        function performFormValidations() {
-            let pass = true;
-
-            if (onboardingName.value.trim().length < 2) {
-                onboardingName.classList.add('invalid');
-                document.getElementById('error-name').style.display = 'block';
-                pass = false;
-            }
-
-            const cleanMobile = onboardingMobile.value.replace(/[\s\-\+\(\)]/g, '');
-            if (cleanMobile.length < 10 || cleanMobile.length > 15 || isNaN(cleanMobile)) {
-                onboardingMobile.classList.add('invalid');
-                document.getElementById('error-mobile').style.display = 'block';
-                pass = false;
-            }
-
-            if (onboardingGoal.value.trim().length < 5) {
-                onboardingGoal.classList.add('invalid');
-                document.getElementById('error-goal').style.display = 'block';
-                pass = false;
-            }
-
-            return pass;
-        }
-
-        onboardForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            if (!performFormValidations()) return;
-
-            submitOnboardBtn.style.pointerEvents = 'none';
-            submitOnboardBtn.querySelector('.btn-text').style.display = 'none';
-            onboardSpinner.style.display = 'inline-block';
-
-            try {
-                if (!appUserContext) throw new Error("Auth session frame dropped. Relog required.");
-
-                const currentCacheLang = localStorage.getItem('gq_language') || 'en';
-
-                const userPayload = {
-                    uid: appUserContext.uid,
-                    name: onboardingName.value.trim(),
-                    email: appUserContext.email || "",
-                    photoURL: appUserContext.photoURL || "",
-                    mobileNumber: onboardingMobile.value.trim(),
-                    goal: onboardingGoal.value.trim(),
-                    board: "CBSE",
-                    class: "10",
-                    exam: onboardingExam.value,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    language: currentCacheLang,
-                    
-                    // Gamified values
-                    streak: 1,
-                    lastActiveDate: new Date().toISOString().split('T')[0],
-                    xp: 120,
-                    coins: 50,
-                    level: 1,
-                    solved: 0,
-                    accuracy: 0,
-                    rank: "Scholar"
-                };
-
-                await db.collection("users").doc(appUserContext.uid).set(userPayload);
-                appProfileContext = userPayload;
-
-                synchronizeDashboardHUD();
-                transitionToPage('page-onboarding', 'page-success');
-                triggerConfettiExplosion();
-
-            } catch (err) {
-                console.error("Firestore serialization failure:", err);
-                alert("Failed to initialize remote database: " + err.message);
-            } finally {
-                submitOnboardBtn.style.pointerEvents = 'all';
-                submitOnboardBtn.querySelector('.btn-text').style.display = 'inline-block';
-                onboardSpinner.style.display = 'none';
-            }
-        });
-
-        document.getElementById('btn-dashboard').addEventListener('click', () => {
-            transitionToPage('page-success', 'page-dashboard');
-        });
-
-        /************************************************************
-         * 7. CALIBRATE STREAKS AND DAILY PROGRESS IN FIRESTORE
-         ************************************************************/
-        async function verifyAndSynchronizeStreak(uid) {
-            const todayDateStr = new Date().toISOString().split('T')[0];
-            let activeStreak = appProfileContext.streak || 1;
-            let lastRecordedActive = appProfileContext.lastActiveDate;
-
-            if (lastRecordedActive) {
-                const today = new Date(todayDateStr);
-                const lastActive = new Date(lastRecordedActive);
-                const elapsedDiff = Math.abs(today - lastActive);
-                const daysDiff = Math.ceil(elapsedDiff / (1000 * 60 * 60 * 24));
-
-                if (daysDiff === 1) {
-                    activeStreak += 1;
-                } else if (daysDiff > 1) {
-                    activeStreak = 1;
-                }
-            } else {
-                activeStreak = 1;
-            }
-
-            appProfileContext.streak = activeStreak;
-            appProfileContext.lastActiveDate = todayDateStr;
-
-            await db.collection("users").doc(uid).update({
-                streak: activeStreak,
-                lastActiveDate: todayDateStr
-            });
-        }
-
-        /************************************************************
-         * 8. FRONTEND MODEL DOM BINDER
-         ************************************************************/
-        function synchronizeDashboardHUD() {
-            if (!appProfileContext) return;
-
-            // Header profile settings
-            const avatarUrl = appProfileContext.photoURL;
-            const fallbackLetter = appProfileContext.name ? appProfileContext.name.charAt(0).toUpperCase() : 'G';
-            const avatarSlot = document.getElementById('header-avatar-slot');
-            const popAvatarSlot = document.getElementById('pop-avatar-slot');
-
-            if (avatarUrl) {
-                avatarSlot.innerHTML = `<img src="${avatarUrl}" alt="Avatar">`;
-                popAvatarSlot.innerHTML = `<img src="${avatarUrl}" alt="Avatar">`;
-            } else {
-                avatarSlot.textContent = fallbackLetter;
-                popAvatarSlot.textContent = fallbackLetter;
-            }
-
-            // Streak pills
-            const currentStreak = appProfileContext.streak || 1;
-            const activeLang = localStorage.getItem('gq_language') || 'en';
-            let calculatedUnit = currentStreak === 1 ? 'Day' : 'Days';
-            if (activeLang === 'hi') {
-                calculatedUnit = currentStreak === 1 ? 'दिन' : 'दिनों';
-            } else if (activeLang === 'hn') {
-                calculatedUnit = currentStreak === 1 ? 'Din' : 'Dino';
-            }
-            document.getElementById('streak-count-txt').textContent = `${currentStreak} ${calculatedUnit}`;
-
-            // Dashboard Metrics Panel Bindings
-            document.getElementById('stats-xp-val').textContent = appProfileContext.xp || 120;
-            document.getElementById('stats-level-val').textContent = `Level ${appProfileContext.level || 1}`;
-            document.getElementById('stats-solved-val').textContent = appProfileContext.solved || 0;
-            document.getElementById('stats-accuracy-val').textContent = `${appProfileContext.accuracy || 0}%`;
-
-            // Glass popup overlays bindings
-            document.getElementById('pop-name-lbl').textContent = appProfileContext.name || "Student";
-            document.getElementById('pop-email-lbl').textContent = appProfileContext.email || "student@example.com";
-            document.getElementById('pop-mobile-lbl').textContent = appProfileContext.mobileNumber || "N/A";
-            document.getElementById('pop-goal-lbl').textContent = appProfileContext.goal || "Not Specified";
-            document.getElementById('pop-exam-lbl').textContent = appProfileContext.exam || "CBSE Class 10";
-        }
-
-        function animateDashboardProgressBars() {
-            const graphs = document.querySelectorAll('.analytics-col-fill');
-            graphs.forEach(bar => {
-                bar.style.height = '0%';
-                setTimeout(() => {
-                    const targetHeight = bar.getAttribute('data-percentage');
-                    bar.style.height = targetHeight;
-                }, 150);
-            });
-        }
-
-        /************************************************************
-         * 9. DYNAMIC NAVIGATION CONTROLLER & MAIN ROUTERS
-         ************************************************************/
-        function switchMainTab(targetSection) {
-            // Scroll to top automatically
-            document.getElementById('dash-scroll-container').scrollTop = 0;
-
-            // Deactivate all sections first
-            document.querySelectorAll('.section-wrapper').forEach(wrap => {
-                wrap.classList.remove('active');
-            });
-
-            // Deactivate all navigation bar items
-            document.querySelectorAll('.nav-tab-item').forEach(item => {
-                item.classList.remove('active');
-            });
-
-            // Activate corresponding page structures
-            if (targetSection === 'home') {
-                document.getElementById('tab-section-home').classList.add('active');
-                document.getElementById('nav-item-home').classList.add('active');
-            } else if (targetSection === 'learn') {
-                document.getElementById('tab-section-learn').classList.add('active');
-                document.getElementById('nav-item-learn').classList.add('active');
-                animateDashboardProgressBars();
-            } else if (targetSection === 'ai') {
-                document.getElementById('tab-section-ai').classList.add('active');
-                document.getElementById('nav-item-ai').classList.add('active');
-            }
-        }
-
-        /************************************************************
-         * 10. DYNAMIC CHAT CONVERSATION WORKER (GROQ API)
-         ************************************************************/
-        const chatScroller = document.getElementById('chat-scroller');
-        const chatInputEl = document.getElementById('chat-input-el');
-        const chatBtnSubmit = document.getElementById('chat-btn-submit');
-
-        chatBtnSubmit.addEventListener('click', () => executeUserChatQuery());
-        chatInputEl.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') executeUserChatQuery();
-        });
-
-        function sendSuggestionChat(promptMsg) {
-            chatInputEl.value = promptMsg;
-            executeUserChatQuery();
-        }
-
-        // Groq API call using OpenAI‑compatible Responses endpoint
         async function callGroqAPI(userQuery) {
-            const modelName = "openai/gpt-oss-20b"; // as shown in the example
-            const endpoint = "https://api.groq.com/openai/v1/responses";
-
-            // Fetch personalization meta parameters
             const studentName = appProfileContext?.name || "Student";
-            const targetExam = appProfileContext?.exam || "CBSE Class 10";
-            const targetGoal = appProfileContext?.goal || "Academic Excellence";
+            const targetExam  = appProfileContext?.exam  || "CBSE Class 10";
+            const targetGoal  = appProfileContext?.goal  || "Academic Excellence";
 
-            // Customized system instruction
-            const systemInstructionText = `You are GoalQuest AI Tutor, a highly-competent and encouraging academic mentor specializing in ${targetExam} syllabus. The student's name is ${studentName}, and their target is "${targetGoal}". Answer their query step-by-step, explaining concepts beautifully and logically. Always keep responses neat, highly structured, and format math symbols or key codes using readable markdown blockquotes or code blocks. Keep it supportive.`;
+            const systemPrompt = `You are GoalQuest AI Tutor, a highly-competent and encouraging academic mentor specializing in ${targetExam} syllabus. The student's name is ${studentName}, and their target is "${targetGoal}". Answer their query step-by-step, explaining concepts beautifully and logically. Always keep responses neat, highly structured. Format math symbols or key formulas using readable inline notation. Keep it supportive and motivating.`;
 
-            const requestBody = {
-                model: modelName,
-                instructions: systemInstructionText,
-                input: userQuery
-            };
-
-            const response = await fetch(endpoint, {
+            const response = await fetch(GROQ_BASE_URL, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${GROQ_API_KEY}`
                 },
-                body: JSON.stringify(requestBody)
+                body: JSON.stringify({
+                    model: GROQ_MODEL,
+                    messages: [
+                        { role: "system", content: systemPrompt },
+                        { role: "user",   content: userQuery }
+                    ],
+                    max_tokens: 1024,
+                    temperature: 0.7
+                })
             });
 
             if (!response.ok) {
                 const errData = await response.json().catch(() => ({}));
-                const detailedMsg = errData?.error?.message || response.statusText;
-                throw new Error(detailedMsg);
+                const msg = errData?.error?.message || response.statusText;
+                throw new Error(`Groq API Error: ${msg}`);
             }
 
             const data = await response.json();
-            
-            // The Groq Responses API returns output_text directly
-            if (data.output_text) {
-                return data.output_text;
-            } else {
-                throw new Error("Unable to retrieve response from Groq API.");
-            }
-        }
-
-        async function executeUserChatQuery() {
-            const queryRaw = chatInputEl.value.trim();
-            if (!queryRaw) return;
-
-            // Render Bubble user
-            appendMessageBubble(queryRaw, 'user');
-            chatInputEl.value = '';
-
-            // Inject temporary typing loaders
-            const loaderKey = appendChatTypingLoader();
-            chatScroller.scrollTop = chatScroller.scrollHeight;
-
-            try {
-                if (!GROQ_API_KEY || GROQ_API_KEY === "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") {
-                    throw new Error("Groq API Key is missing. Please set your 'GROQ_API_KEY' in the script.");
-                }
-
-                const aiResponse = await callGroqAPI(queryRaw);
-                removeChatTypingLoader(loaderKey);
-                appendMessageBubble(aiResponse, 'system');
-            } catch (err) {
-                console.error("Groq Request Failure:", err);
-                removeChatTypingLoader(loaderKey);
-                appendMessageBubble(`**Error:** ${err.message || "Failed to reach Groq Server. Please verify network status and API Key configuration."}`, 'system');
-            } finally {
-                chatScroller.scrollTop = chatScroller.scrollHeight;
-            }
-        }
-
-        function appendMessageBubble(messageText, sender) {
-            const bubbleEl = document.createElement('div');
-            bubbleEl.className = `chat-bubble chat-bubble-${sender}`;
-            
-            if (sender === 'system') {
-                bubbleEl.innerHTML = formatMarkdown(messageText);
-            } else {
-                bubbleEl.textContent = messageText;
-            }
-            chatScroller.appendChild(bubbleEl);
-        }
-
-        function appendChatTypingLoader() {
-            const loaderDiv = document.createElement('div');
-            const rawId = 'tutor-loader-' + Date.now();
-            loaderDiv.id = rawId;
-            loaderDiv.className = 'chat-bubble chat-bubble-system';
-            loaderDiv.innerHTML = `
-                <div class="typing-loader">
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                </div>`;
-            chatScroller.appendChild(loaderDiv);
-            return rawId;
-        }
-
-        function removeChatTypingLoader(targetId) {
-            const loader = document.getElementById(targetId);
-            if (loader) loader.remove();
-        }
-
-        function formatMarkdown(rawText) {
-            return rawText
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/`(.*?)`/g, '<code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; font-family: monospace; color: var(--neon-blue)">$1</code>')
-                .replace(/\n/g, '<br>');
+            const content = data?.choices?.[0]?.message?.content;
+            if (!content) throw new Error("Groq se koi response nahi aaya. Dobara try karein.");
+            return content;
         }
 
         /************************************************************
-         * 11. SYSTEM MODALS OVERLAY CONTROLLERS (PROFILE VIEW)
+         * 4. TRANSLATION ENGINE
          ************************************************************/
-        const headerProfileBtn = document.getElementById('header-profile-btn');
-        const profilePopupOverlay = document.getElementById('profile-popup-overlay');
-        const popCloseBtn = document.getElementById('pop-close-btn');
-        const popLogoutBtn = document.getElementById('pop-logout-btn');
-
-        headerProfileBtn.addEventListener('click', () => {
-            profilePopupOverlay.classList.add('show');
-        });
-
-        popCloseBtn.addEventListener('click', () => {
-            profilePopupOverlay.classList.remove('show');
-        });
-
-        profilePopupOverlay.addEventListener('click', (e) => {
-            if (e.target === profilePopupOverlay) {
-                profilePopupOverlay.classList.remove('show');
+        const translations = {
+            en: {
+                app_title: "GoalQuest.AI", landing_tagline: "Learn Smart. Practice Better. Achieve More.",
+                continue_google: "Continue with Google", onboard_title: "Welcome to GoalQuest",
+                onboard_subtitle: "Personalize your high-performance schedule.", lbl_name: "Full Name",
+                lbl_mobile: "Mobile Number", lbl_goal: "Target Learning Goal", lbl_exam: "Exam Target",
+                btn_initialize: "Initialize Profile", congrats_title: "Synchronized!",
+                congrats_subtitle: "Your custom academic workspace is compiled and ready to deploy.",
+                btn_enter_hub: "Enter Dashboard Hub", dash_header_title: "GoalQuest.AI Dashboard",
+                card_start_title: "Start Now", card_start_desc: "Continue today's learning journey.",
+                card_knowledge_title: "Check Your Knowledge", card_knowledge_desc: "Practice previous year questions and quizzes.",
+                card_ai_title: "AI Teacher", card_ai_desc: "Ask doubt or explain any Class 10 topic.",
+                card_stats_title: "Performance & Progress", card_stats_desc: "Review metric records, XP logs and ranks.",
+                subject_header: "Select Active Subject", math_title: "Advanced Mathematics", math_sub: "Syllabus • 45% Complete",
+                science_title: "Physics & Biology", science_sub: "Syllabus • 75% Complete",
+                weekly_activity: "Weekly Learning Activity (XP)",
+                chat_welcome: "Hello! I am your <strong>GoalQuest AI Tutor</strong>. Ask me any CBSE Class 10 academic query, or select a dynamic suggestion chip below!",
+                chat_photosynthesis: "Photosynthesis", chat_roots: "Quadratic Roots", chat_ohms: "Ohm's Law",
+                chat_placeholder: "Type your doubt here...", metrics_header: "Performance Metrics",
+                metric_xp: "Total XP", metric_lvl: "Current Level", metric_solved: "Solved Quizzes",
+                metric_accuracy: "Overall Accuracy", lbl_rank: "Dynamic Academic Rank", rank_value: "Scholar",
+                active_status: "ACTIVE", pop_goal: "Educational Aim", pop_exam: "Curriculum Exam",
+                pop_language: "Language / भाषा", pop_logout: "Sign Out Account", pop_back: "Back to Console",
+                nav_home: "Home", nav_learn: "Learn", nav_ai: "AI"
+            },
+            hi: {
+                app_title: "गोलक्वेस्ट.AI", landing_tagline: "स्मार्ट सीखें। बेहतर अभ्यास करें। अधिक हासिल करें।",
+                continue_google: "गूगल के साथ जारी रखें", onboard_title: "गोलक्वेस्ट में आपका स्वागत है",
+                onboard_subtitle: "अपनी उच्च-प्रदर्शन समय सारिणी को व्यक्तिगत बनाएं।", lbl_name: "पूरा नाम",
+                lbl_mobile: "मोबाइल नंबर", lbl_goal: "लक्ष्य सीखने का उद्देश्य", lbl_exam: "परीक्षा लक्ष्य",
+                btn_initialize: "प्रोफ़ाइल शुरू करें", congrats_title: "सिंक्रनाइज़ किया गया!",
+                congrats_subtitle: "आपका कस्टम शैक्षणिक कार्यक्षेत्र संकलित है और तैनात होने के लिए तैयार है।",
+                btn_enter_hub: "डैशबोर्ड हब में प्रवेश करें", dash_header_title: "गोलक्वेस्ट.AI डैशबोर्ड",
+                card_start_title: "शुरू करें", card_start_desc: "आज की अपनी सीखने की यात्रा जारी रखें।",
+                card_knowledge_title: "अपना ज्ञान जांचें", card_knowledge_desc: "पिछले वर्षों के प्रश्नपत्रों और क्विज़ का अभ्यास करें।",
+                card_ai_title: "एआई शिक्षक", card_ai_desc: "संदेह पूछें या कक्षा 10 के किसी भी विषय को समझें।",
+                card_stats_title: "प्रदर्शन और प्रगति", card_stats_desc: "मीट्रिक रिकॉर्ड, एक्सपी लॉग और रैंक की समीक्षा करें।",
+                subject_header: "सक्रिय विषय चुनें", math_title: "उच्च गणित", math_sub: "पाठ्यक्रम • 45% पूर्ण",
+                science_title: "भौतिकी और जीव विज्ञान", science_sub: "पाठ्यक्रम • 75% पूर्ण",
+                weekly_activity: "साप्ताहिक गतिविधि (XP)",
+                chat_welcome: "नमस्ते! मैं आपका <strong>गोलक्वेस्ट एआई ट्यूटर</strong> हूं। मुझसे कोई भी सीबीएसई कक्षा 10 का शैक्षणिक प्रश्न पूछें!",
+                chat_photosynthesis: "प्रकाश संश्लेषण", chat_roots: "द्विघात समीकरण", chat_ohms: "ओम का नियम",
+                chat_placeholder: "अपना प्रश्न यहाँ लिखें...", metrics_header: "प्रदर्शन मेट्रिक्स",
+                metric_xp: "कुल एक्सपी", metric_lvl: "वर्तमान स्तर", metric_solved: "हल किए गए क्विज़",
+                metric_accuracy: "कुल सटीकता", lbl_rank: "गतिशील शैक्षणिक रैंक", rank_value: "विद्वान",
+                active_status: "सक्रिय", pop_goal: "शैक्षणिक उद्देश्य", pop_exam: "पाठ्यक्रम परीक्षा",
+                pop_language: "Language / भाषा", pop_logout: "साइन आउट करें", pop_back: "वापस जाएं",
+                nav_home: "होम", nav_learn: "सीखें", nav_ai: "एआई"
+            },
+            hn: {
+                app_title: "GoalQuest.AI", landing_tagline: "Smart Seekho. Better Practice Karo. Zyada Achieve Karo.",
+                continue_google: "Google ke sath Continue Karo", onboard_title: "GoalQuest mein Welcome",
+                onboard_subtitle: "Apna high-performance schedule personalize karo.", lbl_name: "Full Name",
+                lbl_mobile: "Mobile Number", lbl_goal: "Target Learning Goal", lbl_exam: "Exam Target",
+                btn_initialize: "Profile Banayein", congrats_title: "Synchronized!",
+                congrats_subtitle: "Aapka custom academic workspace compile ho gaya hai aur ready hai.",
+                btn_enter_hub: "Dashboard Hub mein Enter Karo", dash_header_title: "GoalQuest.AI Dashboard",
+                card_start_title: "Start Karo", card_start_desc: "Apna today's learning journey continue karo.",
+                card_knowledge_title: "Knowledge Check Karo", card_knowledge_desc: "Practice karo previous year questions aur quizzes.",
+                card_ai_title: "AI Teacher", card_ai_desc: "Doubt pucho ya Class 10 ka topic samjho.",
+                card_stats_title: "Performance & Progress", card_stats_desc: "XP, Level aur ranking records check karo.",
+                subject_header: "Active Subject Select Karo", math_title: "Advanced Mathematics", math_sub: "Syllabus • 45% Complete",
+                science_title: "Physics & Biology", science_sub: "Syllabus • 75% Complete",
+                weekly_activity: "Weekly Learning Activity (XP)",
+                chat_welcome: "Hello! Main aapka <strong>GoalQuest AI Tutor</strong> hoon. Mujhse koi bhi CBSE Class 10 academic query pucho!",
+                chat_photosynthesis: "Photosynthesis", chat_roots: "Quadratic Roots", chat_ohms: "Ohm's Law",
+                chat_placeholder: "Apna doubt yahan type karo...", metrics_header: "Performance Metrics",
+                metric_xp: "Total XP", metric_lvl: "Current Level", metric_solved: "Solved Quizzes",
+                metric_accuracy: "Overall Accuracy", lbl_rank: "Dynamic Academic Rank", rank_value: "Scholar",
+                active_status: "ACTIVE", pop_goal: "Educational Aim", pop_exam: "Curriculum Exam",
+                pop_language: "Language / भाषा", pop_logout: "Sign Out Karo", pop_back: "Back to Console",
+                nav_home: "Home", nav_learn: "Learn", nav_ai: "AI"
             }
-        });
+        };
 
-        popLogoutBtn.addEventListener('click', async () => {
-            if (confirm("Sign out of current active session?")) {
-                try {
-                    await auth.signOut();
-                    profilePopupOverlay.classList.remove('show');
-                    transitionToPage('page-dashboard', 'page-landing');
-                } catch (err) {
-                    alert("Auth termination error: " + err.message);
+        function applyLanguage(langCode) {
+            if (!translations[langCode]) langCode = 'en';
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                const dict = translations[langCode];
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (dict[key]) {
+                        if (el.tagName === 'INPUT' && el.hasAttribute('placeholder')) el.setAttribute('placeholder', dict[key]);
+                        else el.innerHTML = dict[key];
+                    }
+                });
+                const chatInput = document.getElementById('chat-input-el');
+                if (chatInput) chatInput.placeholder = dict['chat_placeholder'];
+                const targetRadio = document.querySelector(`.lang-option input[value="${langCode}"]`);
+                if (targetRadio) targetRadio.checked = true;
+                if (appProfileContext) {
+                    const streak = appProfileContext.streak || 1;
+                    let unit = streak === 1 ? 'Day' : 'Days';
+                    if (langCode === 'hi') unit = streak === 1 ? 'दिन' : 'दिनों';
+                    else if (langCode === 'hn') unit = streak === 1 ? 'Din' : 'Dino';
+                    document.getElementById('streak-count-txt').textContent = `${streak} ${unit}`;
                 }
-            }
-        });
-
-        // Debug alerts helper
-        function triggerMockAlert(msgText) {
-            alert(msgText);
+                document.body.style.opacity = '1';
+            }, 200);
         }
 
-        /************************************************************
-         * 12. CUSTOM SYSTEM CLICK FEEDBACKS (RIPPLES)
-         ************************************************************/
-        document.addEventListener('click', function (e) {
-            let targetEl = e.target;
-            while (targetEl && targetEl !== document.body) {
-                if (targetEl.classList.contains('ripple-trigger') || targetEl.classList.contains('premium-menu-card')) {
-                    createClickRipple(e, targetEl);
-                    break;
+        document.querySelectorAll('.lang-option input').forEach(radio => {
+            radio.addEventListener('change', async (e) => {
+                const lang = e.target.value;
+                applyLanguage(lang);
+                localStorage.setItem('gq_language', lang);
+                if (appUserContext) {
+                    try { await db.collection("users").doc(appUserContext.uid).update({ language: lang }); }
+                    catch (err) { console.error("Language sync failed:", err); }
                 }
-                targetEl = targetEl.parentNode;
-            }
-        });
-
-        function createClickRipple(event, element) {
-            const rippleSpan = document.createElement('span');
-            rippleSpan.className = 'ripple';
-            
-            const dimensions = Math.max(element.clientWidth, element.clientHeight);
-            rippleSpan.style.width = rippleSpan.style.height = `${dimensions}px`;
-            
-            const elementRect = element.getBoundingClientRect();
-            const rippleX = event.clientX - elementRect.left - (dimensions / 2);
-            const rippleY = event.clientY - elementRect.top - (dimensions / 2);
-            
-            rippleSpan.style.left = `${rippleX}px`;
-            rippleSpan.style.top = `${rippleY}px`;
-            
-            element.appendChild(rippleSpan);
-            
-            rippleSpan.addEventListener('animationend', () => {
-                rippleSpan.remove();
             });
+        });
+
+        /************************************************************
+         * 5. PAGE TRANSITION ROUTER
+         ************************************************************/
+        function transitionToPage(fromId, toId) {
+            const from = document.getElementById(fromId);
+            const to   = document.getElementById(toId);
+            if (!from || !to) return;
+            from.classList.remove('active');
+            setTimeout(() => {
+                from.style.display = 'none';
+                to.style.display = 'flex';
+                to.offsetHeight;
+                to.classList.add('active');
+                if (toId === 'page-dashboard') animateDashboardProgressBars();
+            }, 500);
         }
 
         /************************************************************
-         * 13. CANVAS PARTICLE RENDERING CONTROLLER (60FPS FLUID PHYSICS)
-         ************************************************************/
-        const particlesCanvas = document.getElementById('particles');
-        const ctx2d = particlesCanvas.getContext('2d');
-
-        let elementsRegistry = [];
-        const configLimit = 40;
-
-        function setViewportSpecs() {
-            particlesCanvas.width = window.innerWidth;
-            particlesCanvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', setViewportSpecs);
-        setViewportSpecs();
-
-        class SystemCoordinate {
-            constructor(spawnConfetti = false) {
-                this.isConfetti = spawnConfetti;
-                if (spawnConfetti) {
-                    this.initConfetti();
-                } else {
-                    this.initBackgroundParticle();
-                }
-            }
-
-            initBackgroundParticle() {
-                this.x = Math.random() * particlesCanvas.width;
-                this.y = Math.random() * particlesCanvas.height;
-                this.size = Math.random() * 2 + 0.4;
-                this.speedX = (Math.random() - 0.5) * 0.15;
-                this.speedY = (Math.random() - 0.5) * 0.15 - 0.15; // Slow drift upward
-                this.color = this.getRandomBrandColor();
-                this.alpha = Math.random() * 0.3 + 0.1;
-                this.pulseFactor = Math.random() * 0.003 + 0.001;
-            }
-
-            initConfetti() {
-                this.x = particlesCanvas.width / 2;
-                this.y = particlesCanvas.height / 2;
-                this.size = Math.random() * 7 + 4;
-                
-                const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 8 + 4;
-                
-                this.speedX = Math.cos(angle) * speed;
-                this.speedY = Math.sin(angle) * speed - 2.5;
-                
-                this.color = this.getSuccessColors();
-                this.alpha = 1.0;
-                this.gravity = 0.16;
-                this.rotation = Math.random() * 360;
-                this.rotationSpeed = (Math.random() - 0.5) * 8;
-            }
-
-            getRandomBrandColor() {
-                const colors = [
-                    'rgba(0, 242, 254, ',  // Cyan
-                    'rgba(79, 172, 254, ',  // Soft Blue
-                    'rgba(155, 81, 224, '   // Purple
-                ];
-                return colors[Math.floor(Math.random() * colors.length)];
-            }
-
-            getSuccessColors() {
-                const colors = [
-                    'rgba(16, 185, 129, ',  // Emerald Green
-                    'rgba(0, 242, 254, ',   // Blue
-                    'rgba(155, 81, 224, ',  // Purple
-                    'rgba(245, 158, 11, '   // Gold
-                ];
-                return colors[Math.floor(Math.random() * colors.length)];
-            }
-
-            update() {
-                if (this.isConfetti) {
-                    this.x += this.speedX;
-                    this.y += this.speedY;
-                    this.speedY += this.gravity;
-                    this.rotation += this.rotationSpeed;
-                    this.alpha -= 0.012;
-                } else {
-                    this.x += this.speedX;
-                    this.y += this.speedY;
-
-                    // Standard bounding box bounce
-                    if (this.x < 0 || this.x > particlesCanvas.width) this.speedX *= -1;
-                    if (this.y < -10) {
-                        this.y = particlesCanvas.height + 10;
-                        this.x = Math.random() * particlesCanvas.width;
-                    }
-
-                    // Breathing alpha cycles
-                    this.alpha += this.pulseFactor;
-                    if (this.alpha > 0.6 || this.alpha < 0.1) {
-                        this.pulseFactor *= -1;
-                    }
-                }
-            }
-
-            draw() {
-                ctx2d.save();
-                if (this.isConfetti) {
-                    ctx2d.translate(this.x, this.y);
-                    ctx2d.rotate(this.rotation * Math.PI / 180);
-                    ctx2d.beginPath();
-                    ctx2d.rect(-this.size/2, -this.size/2, this.size, this.size);
-                    ctx2d.fillStyle = this.color + this.alpha + ')';
-                    ctx2d.fill();
-                } else {
-                    ctx2d.beginPath();
-                    ctx2d.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx2d.fillStyle = this.color + this.alpha + ')';
-                    ctx2d.fill();
-                }
-                ctx2d.restore();
-            }
-        }
-
-        function triggerConfettiExplosion() {
-            for (let i = 0; i < 90; i++) {
-                elementsRegistry.push(new SystemCoordinate(true));
-            }
-        }
-
-        function initializeParticlesSystem() {
-            elementsRegistry = [];
-            for (let i = 0; i < configLimit; i++) {
-                elementsRegistry.push(new SystemCoordinate(false));
-            }
-        }
-
-        function executionAnimationLoop() {
-            ctx2d.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
-            for (let i = 0; i < elementsRegistry.length; i++) {
-                elementsRegistry[i].update();
-                elementsRegistry[i].draw();
-
-                if (elementsRegistry[i].isConfetti && elementsRegistry[i].alpha <= 0) {
-                    elementsRegistry.splice(i, 1);
-                    i--;
-                }
-            }
-            requestAnimationFrame(executionAnimationLoop);
-        }
-
-        initializeParticlesSystem();
-        executionAnimationLoop();
-    </script>
-</body>
-</html>
+         * 6. AUTH STATE LISTENER
+         ************************************
