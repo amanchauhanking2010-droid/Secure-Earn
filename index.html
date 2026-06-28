@@ -19,7 +19,7 @@
         /* Modern CSS Variables & Visual Design Tokens */
         :root {
             --bg-darkest: #030303;
-            --bg-card: rgba(10, 10, 16, 0.65);
+            --bg-card: rgba(10, 10, 16, 0.7);
             --border-glass: rgba(255, 255, 255, 0.08);
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
@@ -50,6 +50,7 @@
             background-color: var(--bg-darkest);
             color: var(--text-primary);
             position: relative;
+            transition: opacity 0.25s ease-in-out;
         }
 
         /* Ambient Fluid Lighting Layer */
@@ -128,7 +129,7 @@
             text-align: center;
             padding: 44px 32px;
             max-width: 420px;
-            max-height: 85vh;
+            max-height: 90vh;
             overflow-y: auto;
             scrollbar-width: none;
             width: 92%;
@@ -377,7 +378,7 @@
         }
 
         /* ====================================================
-         * UPGRADED PORT: PREMIUM DASHBOARD LAYOUT
+         * DASHBOARD SYSTEM INTERFACE LAYOUTS
          * ==================================================== */
         .dash-viewport {
             width: 100%;
@@ -491,7 +492,7 @@
         .dash-scrollable-body {
             position: absolute;
             top: 76px;
-            bottom: 84px;
+            bottom: 72px; /* Bottom space matches restructured menu bar heights */
             left: 0;
             width: 100%;
             overflow-y: auto;
@@ -560,8 +561,10 @@
         .premium-menu-card-inner {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 16px;
             z-index: 2;
+            flex: 1;
+            min-width: 0;
         }
 
         .card-emoji-box {
@@ -575,10 +578,13 @@
             justify-content: center;
             font-size: 1.6rem;
             transition: all 0.4s var(--transition-smooth);
+            flex-shrink: 0;
         }
 
         .card-meta-text {
             text-align: left;
+            flex: 1;
+            min-width: 0;
         }
 
         .card-meta-title {
@@ -588,12 +594,19 @@
             color: #ffffff;
             margin-bottom: 4px;
             transition: color 0.3s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .card-meta-desc {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: var(--text-secondary);
             line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .card-arrow-icon {
@@ -601,6 +614,8 @@
             color: rgba(255, 255, 255, 0.15);
             transition: all 0.4s var(--transition-smooth);
             z-index: 2;
+            margin-left: 12px;
+            flex-shrink: 0;
         }
 
         /* Hover & focus micro-interactions */
@@ -628,9 +643,10 @@
             transform: translateY(-1px) scale(0.99);
         }
 
-        /* DYNAMIC CHIP HIGHLIGHT */
+        /* Dynamic chip shadows */
         .glow-shimmer-wrap {
             position: relative;
+            width: 100%;
         }
         .glow-shimmer-wrap::after {
             content: '';
@@ -650,7 +666,7 @@
         }
 
         /* ====================================================
-         * SECONDARY SUBPAGE INTERFACES (LEARN, AI, STATS, PROFILE)
+         * SECONDARY CORES (LEARN, AI, STATS, PROFILE)
          * ==================================================== */
          
         /* SUBJECT MODULES (LEARN TAB) */
@@ -670,6 +686,7 @@
             align-items: center;
             justify-content: space-between;
             transition: all 0.3s;
+            width: 100%;
         }
 
         .subject-metric-card:hover {
@@ -681,6 +698,8 @@
             display: flex;
             align-items: center;
             gap: 16px;
+            flex: 1;
+            min-width: 0;
         }
 
         .subject-glyph {
@@ -692,11 +711,14 @@
             justify-content: center;
             font-size: 1.3rem;
             background: rgba(155, 81, 224, 0.1);
-            border: 1px solid rgba(155, 81, 224, 0.2);
+            border: 1px solid rgba(155, 81, 224, 0.25);
+            flex-shrink: 0;
         }
 
         .subject-text-stack {
             text-align: left;
+            flex: 1;
+            min-width: 0;
         }
 
         .subject-name-lbl {
@@ -704,6 +726,9 @@
             font-weight: 700;
             color: #ffffff;
             margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .subject-subcompletion {
@@ -716,6 +741,7 @@
             position: relative;
             width: 38px;
             height: 38px;
+            flex-shrink: 0;
         }
 
         .circle-progress-ring {
@@ -876,7 +902,7 @@
             50% { transform: translateY(-5px); }
         }
 
-        /* HIGHLIGHT PERFORMANCE METRICS & CERTIFICATES (DASHBOARD STATS) */
+        /* HIGHLIGHT PERFORMANCE METRICS & CERTIFICATES */
         .metrics-grid-summary {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -955,103 +981,31 @@
             font-weight: 600;
         }
 
-        /* PROFILE SCREEN CONTAINER & CONTROL ITEMS */
-        .profile-workspace-view {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .profile-avatar-giant {
-            position: relative;
-            width: 96px;
-            height: 96px;
-            border-radius: 50%;
-            padding: 3px;
-            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
-            box-shadow: 0 0 30px rgba(0, 242, 254, 0.3);
-            margin-bottom: 16px;
-        }
-
-        .profile-avatar-giant img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            background: #0d0c15;
-        }
-
-        .profile-identity-name {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 4px;
-        }
-
-        .profile-identity-email {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-bottom: 24px;
-        }
-
-        .profile-meta-rows {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 100%;
-            margin-bottom: 28px;
-        }
-
-        .meta-data-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 20px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-glass);
-            border-radius: 16px;
-        }
-
-        .meta-row-label {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            font-weight: 700;
-        }
-
-        .meta-row-value {
-            font-size: 0.88rem;
-            font-weight: 700;
-            color: #ffffff;
-        }
-
-        /* FIXED BOTTOM NAVIGATION BAR */
+        /* FIXED BOTTOM NAVIGATION BAR WITH PERFECT CENTERING */
         .premium-bottom-navigation {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 84px;
-            background: rgba(3, 3, 3, 0.7);
+            height: 72px; /* Slimmer, cleaner production profile height */
+            background: rgba(3, 3, 3, 0.8);
             border-top: 1px solid var(--border-glass);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             z-index: 100;
             display: flex;
             align-items: center;
-            justify-content: space-around;
-            padding: 0 16px 12px 16px;
+            justify-content: space-evenly; /* Three menu tabs evenly distributed */
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         .nav-tab-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
             cursor: pointer;
-            width: 64px;
+            width: 76px;
             color: var(--text-secondary);
             transition: color 0.3s var(--transition-smooth);
             position: relative;
@@ -1066,7 +1020,7 @@
             font-size: 0.7rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.03em;
+            letter-spacing: 0.04em;
         }
 
         /* Hover indicator configurations */
@@ -1083,7 +1037,7 @@
         }
 
         .nav-tab-item.active .nav-tab-icon {
-            transform: scale(1.15) translateY(-3px);
+            transform: scale(1.1) translateY(-2px);
             filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.6));
         }
 
@@ -1091,7 +1045,7 @@
         .nav-tab-item::after {
             content: '';
             position: absolute;
-            bottom: -8px;
+            bottom: -6px;
             width: 5px;
             height: 5px;
             border-radius: 50%;
@@ -1108,7 +1062,7 @@
         }
 
         /* ====================================================
-         * FLOATING PREMIUM DETAIL MODALS
+         * FLOATING OVERLAYS (PROFILE & SEGMENTED LANGS)
          * ==================================================== */
         .fullscreen-overlay-glass {
             position: fixed;
@@ -1116,9 +1070,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             z-index: 1000;
             display: flex;
             align-items: center;
@@ -1136,7 +1090,7 @@
         .popup-card-glass {
             background: var(--bg-card);
             border: 1px solid var(--border-glass);
-            box-shadow: 0 24px 50px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 24px 50px rgba(0, 0, 0, 0.7);
             width: 90%;
             max-width: 400px;
             border-radius: 28px;
@@ -1144,13 +1098,146 @@
             text-align: center;
             transform: scale(0.9) translateY(20px);
             transition: transform 0.4s var(--transition-bounce);
+            max-height: 90vh;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+
+        .popup-card-glass::-webkit-scrollbar {
+            display: none;
         }
 
         .fullscreen-overlay-glass.show .popup-card-glass {
             transform: scale(1) translateY(0);
         }
 
-        /* Firebase Auth synchronization sync load block */
+        /* PROFILE SCREEN CONTAINER & CONTROL ITEMS */
+        .profile-workspace-view {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .profile-avatar-giant {
+            position: relative;
+            width: 84px;
+            height: 84px;
+            border-radius: 50%;
+            padding: 3px;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.3);
+            margin-bottom: 16px;
+            flex-shrink: 0;
+        }
+
+        .profile-avatar-giant img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #0d0c15;
+        }
+
+        .profile-identity-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .profile-identity-email {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .profile-meta-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .meta-data-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            width: 100%;
+        }
+
+        .meta-row-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 700;
+            text-align: left;
+        }
+
+        .meta-row-value {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-align: right;
+            max-width: 60%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .flex-column {
+            flex-direction: column !important;
+        }
+
+        /* PREMIUM SEGMENTED RADIO TRACK SELECTOR */
+        .lang-selector-segment {
+            display: flex;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 4px;
+            width: 100%;
+            justify-content: space-between;
+            margin-top: 6px;
+        }
+
+        .lang-option {
+            flex: 1;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .lang-option input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .lang-option span {
+            display: block;
+            padding: 8px 4px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            transition: all 0.3s var(--transition-smooth);
+        }
+
+        .lang-option input:checked + span {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.25);
+        }
+
+        /* Firebase Auth synchronization loading block */
         #app-loading-gate {
             background-color: var(--bg-darkest);
             z-index: 2000;
@@ -1180,6 +1267,52 @@
             0% { left: -150%; }
             50% { left: 150%; }
             100% { left: 150%; }
+        }
+
+        /* RESPONSIVE LAYOUT CALIBRATIONS */
+        @media (max-width: 480px) {
+            .card-wrapper {
+                padding: 32px 20px;
+                border-radius: 24px;
+            }
+            .app-title {
+                font-size: 2.3rem;
+            }
+            .premium-header {
+                padding: 0 16px;
+            }
+            .header-title-center {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .app-title {
+                font-size: 1.9rem;
+            }
+            .premium-menu-card {
+                padding: 16px;
+            }
+            .card-emoji-box {
+                width: 46px;
+                height: 46px;
+                font-size: 1.3rem;
+            }
+            .card-meta-title {
+                font-size: 1rem;
+            }
+            .card-meta-desc {
+                font-size: 0.75rem;
+            }
+            .premium-bottom-navigation {
+                height: 68px;
+            }
+            .nav-tab-icon {
+                font-size: 1.2rem;
+            }
+            .nav-tab-text {
+                font-size: 0.65rem;
+            }
         }
     </style>
 </head>
@@ -1217,8 +1350,8 @@
                 </svg>
             </div>
 
-            <h1 class="app-title">GoalQuest.AI</h1>
-            <p class="tagline">Learn Smart. Practice Better. Achieve More.</p>
+            <h1 class="app-title" data-i18n="app_title">GoalQuest.AI</h1>
+            <p class="tagline" data-i18n="landing_tagline">Learn Smart. Practice Better. Achieve More.</p>
 
             <button class="btn-premium ripple-trigger" id="sso-trigger" aria-label="Continue with Google">
                 <span style="display: flex; align-items: center; justify-content: center; width: 22px; height: 22px;">
@@ -1229,7 +1362,7 @@
                         <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
                     </svg>
                 </span>
-                Continue with Google
+                <span data-i18n="continue_google">Continue with Google</span>
             </button>
         </div>
     </div>
@@ -1245,34 +1378,34 @@
                 </svg>
             </div>
 
-            <h2 class="onboarding-title">Welcome to GoalQuest</h2>
-            <p class="onboarding-subtitle">Personalize your high-performance schedule.</p>
+            <h2 class="onboarding-title" data-i18n="onboard_title">Welcome to GoalQuest</h2>
+            <p class="onboarding-subtitle" data-i18n="onboard_subtitle">Personalize your high-performance schedule.</p>
 
             <form class="onboarding-form" id="onboard-form" novalidate>
                 <!-- Full Name -->
                 <div class="input-group">
-                    <label class="input-label" for="onboard-name">Full Name</label>
+                    <label class="input-label" for="onboard-name" data-i18n="lbl_name">Full Name</label>
                     <input type="text" id="onboard-name" class="form-input" placeholder="Your full name" required autocomplete="name">
                     <div class="input-error" id="error-name">Name must be at least 2 characters.</div>
                 </div>
 
                 <!-- Mobile Phone Number -->
                 <div class="input-group">
-                    <label class="input-label" for="onboard-mobile">Mobile Number</label>
+                    <label class="input-label" for="onboard-mobile" data-i18n="lbl_mobile">Mobile Number</label>
                     <input type="tel" id="onboard-mobile" class="form-input" placeholder="e.g., +91 98765 43210" required autocomplete="tel">
                     <div class="input-error" id="error-mobile">Enter a valid 10-15 digit mobile number.</div>
                 </div>
 
                 <!-- Educational Aim -->
                 <div class="input-group">
-                    <label class="input-label" for="onboard-goal">Target Learning Goal</label>
+                    <label class="input-label" for="onboard-goal" data-i18n="lbl_goal">Target Learning Goal</label>
                     <input type="text" id="onboard-goal" class="form-input" placeholder="Example: Secure 95%+ in Boards" required>
                     <div class="input-error" id="error-goal">Outline your academic target (min 5 chars).</div>
                 </div>
 
                 <!-- Syllabus Stream Selection -->
                 <div class="input-group">
-                    <label class="input-label" for="onboard-exam">Exam Target</label>
+                    <label class="input-label" for="onboard-exam" data-i18n="lbl_exam">Exam Target</label>
                     <select id="onboard-exam" class="form-select">
                         <option value="CBSE Class 10" selected>CBSE Class 10</option>
                         <option value="CBSE Class 12">CBSE Class 12</option>
@@ -1282,7 +1415,7 @@
                 </div>
 
                 <button type="submit" class="btn-premium btn-glowing ripple-trigger" id="onboard-submit" style="margin-top: 14px;">
-                    <span class="btn-text">Initialize Profile</span>
+                    <span class="btn-text" data-i18n="btn_initialize">Initialize Profile</span>
                     <span class="spinner" id="onboard-spinner"></span>
                 </button>
             </form>
@@ -1298,16 +1431,16 @@
                 </svg>
             </div>
 
-            <h2 class="app-title" style="font-size: 2.2rem; margin-bottom: 8px;">Synchronized!</h2>
-            <p class="tagline" style="margin-bottom: 32px;">Your custom academic workspace is compiled and ready to deploy.</p>
+            <h2 class="app-title" style="font-size: 2.2rem; margin-bottom: 8px;" data-i18n="congrats_title">Synchronized!</h2>
+            <p class="tagline" style="margin-bottom: 32px;" data-i18n="congrats_subtitle">Your custom academic workspace is compiled and ready to deploy.</p>
 
-            <button class="btn-premium btn-glowing ripple-trigger" id="btn-dashboard">
+            <button class="btn-premium btn-glowing ripple-trigger" id="btn-dashboard" data-i18n="btn_enter_hub">
                 Enter Dashboard Hub
             </button>
         </div>
     </div>
 
-    <!-- PAGE 4: UPGRADED ULTIMATE DASHBOARD CONSOLE (MAIN WORKSPACE) -->
+    <!-- PAGE 4: UPGRADED DASHBOARD CONSOLE (MAIN WORKSPACE) -->
     <div class="page-view" id="page-dashboard" style="display: none;">
         <div class="dash-viewport">
             
@@ -1319,7 +1452,7 @@
                     <span id="streak-count-txt">0 Days</span>
                 </div>
                 
-                <div class="header-title-center">GoalQuest.AI Dashboard</div>
+                <div class="header-title-center" data-i18n="dash_header_title">GoalQuest.AI Dashboard</div>
                 
                 <!-- Avatar triggers custom details overlay -->
                 <div class="profile-container-btn" id="header-profile-btn">
@@ -1339,8 +1472,8 @@
                             <div class="premium-menu-card-inner">
                                 <div class="card-emoji-box">🚀</div>
                                 <div class="card-meta-text">
-                                    <h3 class="card-meta-title">Start Now</h3>
-                                    <p class="card-meta-desc">Continue your personalized learning path</p>
+                                    <h3 class="card-meta-title" data-i18n="card_start_title">Start Now</h3>
+                                    <p class="card-meta-desc" data-i18n="card_start_desc">Continue your personalized learning path.</p>
                                 </div>
                             </div>
                             <span class="card-arrow-icon">➔</span>
@@ -1353,8 +1486,8 @@
                             <div class="premium-menu-card-inner">
                                 <div class="card-emoji-box">📖</div>
                                 <div class="card-meta-text">
-                                    <h3 class="card-meta-title">Check Your Knowledge</h3>
-                                    <p class="card-meta-desc">Practice mock papers and interactive quizzes</p>
+                                    <h3 class="card-meta-title" data-i18n="card_knowledge_title">Check Your Knowledge</h3>
+                                    <p class="card-meta-desc" data-i18n="card_knowledge_desc">Practice mock papers and interactive quizzes.</p>
                                 </div>
                             </div>
                             <span class="card-arrow-icon">➔</span>
@@ -1367,8 +1500,8 @@
                             <div class="premium-menu-card-inner">
                                 <div class="card-emoji-box">🤖</div>
                                 <div class="card-meta-text">
-                                    <h3 class="card-meta-title">AI Teacher</h3>
-                                    <p class="card-meta-desc">Ask doubt or explain any Class 10 topic</p>
+                                    <h3 class="card-meta-title" data-i18n="card_ai_title">AI Teacher</h3>
+                                    <p class="card-meta-desc" data-i18n="card_ai_desc">Ask doubt or explain any Class 10 topic.</p>
                                 </div>
                             </div>
                             <span class="card-arrow-icon">➔</span>
@@ -1381,8 +1514,8 @@
                             <div class="premium-menu-card-inner">
                                 <div class="card-emoji-box">🏆</div>
                                 <div class="card-meta-text">
-                                    <h3 class="card-meta-title">Performance & Progress</h3>
-                                    <p class="card-meta-desc">Review metric records, XP logs and ranks</p>
+                                    <h3 class="card-meta-title" data-i18n="card_stats_title">Performance & Progress</h3>
+                                    <p class="card-meta-desc" data-i18n="card_stats_desc">Review metric records, XP logs and ranks.</p>
                                 </div>
                             </div>
                             <span class="card-arrow-icon">➔</span>
@@ -1392,7 +1525,7 @@
 
                 <!-- TAB 2: ACTIVE LEARNING ROOM (LEARN TAB) -->
                 <div class="section-wrapper" id="tab-section-learn">
-                    <h2 class="onboarding-title" style="text-align: left; font-size: 1.4rem;">Select Active Subject</h2>
+                    <h2 class="onboarding-title" style="text-align: left; font-size: 1.4rem;" data-i18n="subject_header">Select Active Subject</h2>
                     
                     <div class="subject-group-grid">
                         <!-- Math Course Card -->
@@ -1400,8 +1533,8 @@
                             <div class="subject-left-set">
                                 <div class="subject-glyph" style="background: rgba(0, 242, 254, 0.1); border-color: rgba(0, 242, 254, 0.25);">📐</div>
                                 <div class="subject-text-stack">
-                                    <h4 class="subject-name-lbl">Advanced Mathematics</h4>
-                                    <span class="subject-subcompletion">Syllabus • 45% Complete</span>
+                                    <h4 class="subject-name-lbl" data-i18n="math_title">Advanced Mathematics</h4>
+                                    <span class="subject-subcompletion" data-i18n="math_sub">Syllabus • 45% Complete</span>
                                 </div>
                             </div>
                             <div class="progress-circle-wrap">
@@ -1417,8 +1550,8 @@
                             <div class="subject-left-set">
                                 <div class="subject-glyph" style="background: rgba(155, 81, 224, 0.1); border-color: rgba(155, 81, 224, 0.25);">🧬</div>
                                 <div class="subject-text-stack">
-                                    <h4 class="subject-name-lbl">Physics & Biology</h4>
-                                    <span class="subject-subcompletion">Syllabus • 75% Complete</span>
+                                    <h4 class="subject-name-lbl" data-i18n="science_title">Physics & Biology</h4>
+                                    <span class="subject-subcompletion" data-i18n="science_sub">Syllabus • 75% Complete</span>
                                 </div>
                             </div>
                             <div class="progress-circle-wrap">
@@ -1432,7 +1565,7 @@
 
                     <!-- PROGRESS SUMMARY GRAPH -->
                     <div class="progress-analytics-graph" style="margin-top: 14px;">
-                        <h4 class="graph-header-lbl">Weekly Learning Activity (XP)</h4>
+                        <h4 class="graph-header-lbl" data-i18n="weekly_activity">Weekly Learning Activity (XP)</h4>
                         <div class="analytic-graph-bar-row" id="anal-bar-row">
                             <div class="analytics-col">
                                 <div class="analytics-col-fill" style="height: 0%;" data-percentage="20%"></div>
@@ -1466,21 +1599,21 @@
                     </div>
                 </div>
 
-                <!-- TAB 3: ARTIFICIAL INTELLECT TUTOR PLATFORM (AI TAB) -->
+                <!-- TAB 3: AI TUTOR WORKSPACE (AI TAB) -->
                 <div class="section-wrapper" id="tab-section-ai">
                     <div class="teacher-chat-interface">
                         <!-- Message viewport logs -->
                         <div class="chat-screen-logs" id="chat-scroller">
-                            <div class="chat-bubble chat-bubble-system">
+                            <div class="chat-bubble chat-bubble-system" data-i18n="chat_welcome">
                                 Hello! I am your <strong>GoalQuest AI Tutor</strong>. Ask me any CBSE Class 10 academic query, or select a dynamic suggestion chip below!
                             </div>
                         </div>
 
                         <!-- Chip suggestions -->
                         <div class="chat-suggested-chips">
-                            <div class="suggested-pill" onclick="sendSuggestionChat('Explain Photosynthesis formula step-by-step')">🌿 Photosynthesis</div>
-                            <div class="suggested-pill" onclick="sendSuggestionChat('What is the formula of Quadratic roots?')">📐 Quadratic Roots</div>
-                            <div class="suggested-pill" onclick="sendSuggestionChat('Explain Ohm Law in electric circuits')">⚡ Ohm's Law</div>
+                            <div class="suggested-pill" onclick="sendSuggestionChat('Explain Photosynthesis formula step-by-step')" data-i18n="chat_photosynthesis">Photosynthesis</div>
+                            <div class="suggested-pill" onclick="sendSuggestionChat('What is the formula of Quadratic roots?')" data-i18n="chat_roots">Quadratic Roots</div>
+                            <div class="suggested-pill" onclick="sendSuggestionChat('Explain Ohm Law in electric circuits')" data-i18n="chat_ohms">Ohm's Law</div>
                         </div>
 
                         <!-- Typing user command triggers -->
@@ -1496,26 +1629,26 @@
                     </div>
                 </div>
 
-                <!-- TAB 4: SYSTEM METRIC SUMMARIES & RANK (STATS/DASHBOARD TAB) -->
+                <!-- TAB 4: SYSTEM METRIC SUMMARIES (INTEGRATED STATS) -->
                 <div class="section-wrapper" id="tab-section-stats">
-                    <h2 class="onboarding-title" style="text-align: left; font-size: 1.4rem;">Performance Metrics</h2>
+                    <h2 class="onboarding-title" style="text-align: left; font-size: 1.4rem;" data-i18n="metrics_header">Performance Metrics</h2>
                     
                     <div class="metrics-grid-summary">
                         <div class="summary-mini-card">
                             <div class="mini-card-value" id="stats-xp-val">120</div>
-                            <div class="mini-card-label">Total XP</div>
+                            <div class="mini-card-label" data-i18n="metric_xp">Total XP</div>
                         </div>
                         <div class="summary-mini-card">
                             <div class="mini-card-value" id="stats-level-val">Level 1</div>
-                            <div class="mini-card-label">Current Level</div>
+                            <div class="mini-card-label" data-i18n="metric_lvl">Current Level</div>
                         </div>
                         <div class="summary-mini-card">
                             <div class="mini-card-value" id="stats-solved-val">0</div>
-                            <div class="mini-card-label">Solved Quizzes</div>
+                            <div class="mini-card-label" data-i18n="metric_solved">Solved Quizzes</div>
                         </div>
                         <div class="summary-mini-card">
                             <div class="mini-card-value" id="stats-accuracy-val">0%</div>
-                            <div class="mini-card-label">Overall Accuracy</div>
+                            <div class="mini-card-label" data-i18n="metric_accuracy">Overall Accuracy</div>
                         </div>
                     </div>
 
@@ -1523,40 +1656,36 @@
                         <div class="subject-left-set">
                             <div class="subject-glyph" style="background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.25);">👑</div>
                             <div class="subject-text-stack">
-                                <h4 class="subject-name-lbl" id="stats-rank-lbl">Scholar</h4>
-                                <span class="subject-subcompletion">Dynamic Academic Rank</span>
+                                <h4 class="subject-name-lbl" id="stats-rank-lbl" data-i18n="rank_value">Scholar</h4>
+                                <span class="subject-subcompletion" data-i18n="lbl_rank">Dynamic Academic Rank</span>
                             </div>
                         </div>
-                        <span style="font-weight: 800; font-size: 0.9rem; color: var(--neon-gold)">ACTIVE</span>
+                        <span style="font-weight: 800; font-size: 0.9rem; color: var(--neon-gold)" data-i18n="active_status">ACTIVE</span>
                     </div>
                 </div>
 
             </div>
 
-            <!-- FIXED BOTTOM TAB CONTROL MATRIX -->
+            <!-- FIXED BOTTOM TAB CONTROL MATRIX WITH PERFECT THREE-ICON SYMMETRY -->
             <div class="premium-bottom-navigation">
                 <div class="nav-tab-item active" id="nav-item-home" onclick="switchMainTab('home')">
                     <span class="nav-tab-icon">🏠</span>
-                    <span class="nav-tab-text">Home</span>
+                    <span class="nav-tab-text" data-i18n="nav_home">Home</span>
                 </div>
                 <div class="nav-tab-item" id="nav-item-learn" onclick="switchMainTab('learn')">
                     <span class="nav-tab-icon">📚</span>
-                    <span class="nav-tab-text">Learn</span>
+                    <span class="nav-tab-text" data-i18n="nav_learn">Learn</span>
                 </div>
                 <div class="nav-tab-item" id="nav-item-ai" onclick="switchMainTab('ai')">
                     <span class="nav-tab-icon">🤖</span>
-                    <span class="nav-tab-text">AI</span>
-                </div>
-                <div class="nav-tab-item" id="nav-item-stats" onclick="switchMainTab('stats')">
-                    <span class="nav-tab-icon">👤</span>
-                    <span class="nav-tab-text">Profile</span>
+                    <span class="nav-tab-text" data-i18n="nav_ai">AI</span>
                 </div>
             </div>
 
         </div>
     </div>
 
-    <!-- FLOATING INTERACTIVE GLASS OVERLAY: PROFILE META-CARD DETAILS -->
+    <!-- FLOATING GLASS POPUP: USER PROFILE DETAILS & LANG OPTIONS -->
     <div class="fullscreen-overlay-glass" id="profile-popup-overlay">
         <div class="popup-card-glass">
             <div class="profile-workspace-view">
@@ -1570,24 +1699,43 @@
                 <!-- Detailed Rows -->
                 <div class="profile-meta-rows">
                     <div class="meta-data-row">
-                        <span class="meta-row-label">Mobile Number</span>
+                        <span class="meta-row-label" data-i18n="lbl_mobile">Mobile Number</span>
                         <span class="meta-row-value" id="pop-mobile-lbl">+91 00000 00000</span>
                     </div>
                     <div class="meta-data-row">
-                        <span class="meta-row-label">Educational Aim</span>
+                        <span class="meta-row-label" data-i18n="pop_goal">Educational Aim</span>
                         <span class="meta-row-value" id="pop-goal-lbl">High Performance</span>
                     </div>
                     <div class="meta-data-row">
-                        <span class="meta-row-label">Curriculum Exam</span>
+                        <span class="meta-row-label" data-i18n="pop_exam">Curriculum Exam</span>
                         <span class="meta-row-value" id="pop-exam-lbl">CBSE Class 10</span>
+                    </div>
+
+                    <!-- Language Selector Section -->
+                    <div class="meta-data-row flex-column" style="align-items: flex-start; gap: 8px;">
+                        <span class="meta-row-label" data-i18n="pop_language">Language / भाषा</span>
+                        <div class="lang-selector-segment">
+                            <label class="lang-option">
+                                <input type="radio" name="gq-lang" value="en" checked>
+                                <span>English</span>
+                            </label>
+                            <label class="lang-option">
+                                <input type="radio" name="gq-lang" value="hi">
+                                <span>हिन्दी</span>
+                            </label>
+                            <label class="lang-option">
+                                <input type="radio" name="gq-lang" value="hn">
+                                <span>Hinglish</span>
+                            </label>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Signout interaction -->
-                <button class="btn-premium ripple-trigger" id="pop-logout-btn" style="border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.05); color: var(--neon-red); margin-top: 10px;">
+                <button class="btn-premium ripple-trigger" id="pop-logout-btn" style="border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.05); color: var(--neon-red); margin-top: 10px;" data-i18n="pop_logout">
                     Sign Out Account
                 </button>
-                <button class="btn-premium ripple-trigger" id="pop-close-btn" style="margin-top: 12px; background: transparent; border-color: transparent;">
+                <button class="btn-premium ripple-trigger" id="pop-close-btn" style="margin-top: 12px; background: transparent; border-color: transparent;" data-i18n="pop_back">
                     Back to Console
                 </button>
             </div>
@@ -1619,7 +1767,236 @@
         let appProfileContext = null;
 
         /************************************************************
-         * 2. PAGE TRANSITIONS ROUTER MATRIX
+         * 2. TRANSLATION ENGINE (ENGLISH, हिन्दी, HINGLISH)
+         ************************************************************/
+        const translations = {
+            en: {
+                app_title: "GoalQuest.AI",
+                landing_tagline: "Learn Smart. Practice Better. Achieve More.",
+                continue_google: "Continue with Google",
+                onboard_title: "Welcome to GoalQuest",
+                onboard_subtitle: "Personalize your high-performance schedule.",
+                lbl_name: "Full Name",
+                lbl_mobile: "Mobile Number",
+                lbl_goal: "Target Learning Goal",
+                lbl_exam: "Exam Target",
+                btn_initialize: "Initialize Profile",
+                congrats_title: "Synchronized!",
+                congrats_subtitle: "Your custom academic workspace is compiled and ready to deploy.",
+                btn_enter_hub: "Enter Dashboard Hub",
+                dash_header_title: "GoalQuest.AI Dashboard",
+                card_start_title: "Start Now",
+                card_start_desc: "Continue today's learning journey.",
+                card_knowledge_title: "Check Your Knowledge",
+                card_knowledge_desc: "Practice previous year questions and quizzes.",
+                card_ai_title: "AI Teacher",
+                card_ai_desc: "Ask doubt or explain any Class 10 topic.",
+                card_stats_title: "Performance & Progress",
+                card_stats_desc: "Review metric records, XP logs and ranks.",
+                subject_header: "Select Active Subject",
+                math_title: "Advanced Mathematics",
+                math_sub: "Syllabus • 45% Complete",
+                science_title: "Physics & Biology",
+                science_sub: "Syllabus • 75% Complete",
+                weekly_activity: "Weekly Learning Activity (XP)",
+                chat_welcome: "Hello! I am your <strong>GoalQuest AI Tutor</strong>. Ask me any CBSE Class 10 academic query, or select a dynamic suggestion chip below!",
+                chat_photosynthesis: "Photosynthesis",
+                chat_roots: "Quadratic Roots",
+                chat_ohms: "Ohm's Law",
+                chat_placeholder: "Type your doubt here...",
+                metrics_header: "Performance Metrics",
+                metric_xp: "Total XP",
+                metric_lvl: "Current Level",
+                metric_solved: "Solved Quizzes",
+                metric_accuracy: "Overall Accuracy",
+                lbl_rank: "Dynamic Academic Rank",
+                rank_value: "Scholar",
+                active_status: "ACTIVE",
+                pop_goal: "Educational Aim",
+                pop_exam: "Curriculum Exam",
+                pop_language: "Language / भाषा",
+                pop_logout: "Sign Out Account",
+                pop_back: "Back to Console",
+                nav_home: "Home",
+                nav_learn: "Learn",
+                nav_ai: "AI"
+            },
+            hi: {
+                app_title: "गोलक्वेस्ट.AI",
+                landing_tagline: "स्मार्ट सीखें। बेहतर अभ्यास करें। अधिक हासिल करें।",
+                continue_google: "गूगल के साथ जारी रखें",
+                onboard_title: "गोलक्वेस्ट में आपका स्वागत है",
+                onboard_subtitle: "अपनी उच्च-प्रदर्शन समय सारिणी को व्यक्तिगत बनाएं।",
+                lbl_name: "पूरा नाम",
+                lbl_mobile: "मोबाइल नंबर",
+                lbl_goal: "लक्ष्य सीखने का उद्देश्य",
+                lbl_exam: "परीक्षा लक्ष्य",
+                btn_initialize: "प्रोफ़ाइल शुरू करें",
+                congrats_title: "सिंक्रनाइज़ किया गया!",
+                congrats_subtitle: "आपका कस्टम शैक्षणिक कार्यक्षेत्र संकलित है और तैनात होने के लिए तैयार है।",
+                btn_enter_hub: "डैशबोर्ड हब में प्रवेश करें",
+                dash_header_title: "गोलक्वेस्ट.AI डैशबोर्ड",
+                card_start_title: "शुरू करें",
+                card_start_desc: "आज की अपनी सीखने की यात्रा जारी रखें।",
+                card_knowledge_title: "अपना ज्ञान जांचें",
+                card_knowledge_desc: "पिछले वर्षों के प्रश्नपत्रों और क्विज़ का अभ्यास करें।",
+                card_ai_title: "एआई शिक्षक",
+                card_ai_desc: "संदेह पूछें या कक्षा 10 के किसी भी विषय को समझें।",
+                card_stats_title: "प्रदर्शन और प्रगति",
+                card_stats_desc: "मीट्रिक रिकॉर्ड, एक्सपी लॉग और रैंक की समीक्षा करें।",
+                subject_header: "सक्रिय विषय चुनें",
+                math_title: "उच्च गणित",
+                math_sub: "पाठ्यक्रम • 45% पूर्ण",
+                science_title: "भौतिकी और जीव विज्ञान",
+                science_sub: "पाठ्यक्रम • 75% पूर्ण",
+                weekly_activity: "साप्ताहिक सीखने की गतिविधि (XP)",
+                chat_welcome: "नमस्ते! मैं आपका <strong>गोलक्वेस्ट एआई ट्यूटर</strong> हूं। मुझसे कोई भी सीबीएसई कक्षा 10 का शैक्षणिक प्रश्न पूछें, या नीचे दिए गए सुझाव चिप को चुनें!",
+                chat_photosynthesis: "प्रकाश संश्लेषण",
+                chat_roots: "द्विघात समीकरण",
+                chat_ohms: "ओम का नियम",
+                chat_placeholder: "अपना प्रश्न यहाँ लिखें...",
+                metrics_header: "प्रदर्शन मेट्रिक्स",
+                metric_xp: "कुल एक्सपी",
+                metric_lvl: "वर्तमान स्तर",
+                metric_solved: "हल किए गए क्विज़",
+                metric_accuracy: "कुल सटीकता",
+                lbl_rank: "गतिशील शैक्षणिक रैंक",
+                rank_value: "विद्वान",
+                active_status: "सक्रिय",
+                pop_goal: "शैक्षणिक उद्देश्य",
+                pop_exam: "पाठ्यक्रम परीक्षा",
+                pop_language: "Language / भाषा",
+                pop_logout: "साइन आउट करें",
+                pop_back: "वापस जाएं",
+                nav_home: "होम",
+                nav_learn: "सीखें",
+                nav_ai: "एआई"
+            },
+            hn: {
+                app_title: "GoalQuest.AI",
+                landing_tagline: "Smart Seekho. Better Practice Karo. Zyada Achieve Karo.",
+                continue_google: "Google ke sath Continue Karo",
+                onboard_title: "GoalQuest mein Welcome",
+                onboard_subtitle: "Apna high-performance schedule personalize karo.",
+                lbl_name: "Full Name",
+                lbl_mobile: "Mobile Number",
+                lbl_goal: "Target Learning Goal",
+                lbl_exam: "Exam Target",
+                btn_initialize: "Profile Banayein",
+                congrats_title: "Synchronized!",
+                congrats_subtitle: "Aapka custom academic workspace compile ho gaya hai aur ready hai.",
+                btn_enter_hub: "Dashboard Hub mein Enter Karo",
+                dash_header_title: "GoalQuest.AI Dashboard",
+                card_start_title: "Start Karo",
+                card_start_desc: "Apna today's learning journey continue karo.",
+                card_knowledge_title: "Knowledge Check Karo",
+                card_knowledge_desc: "Practice karo previous year questions aur quizzes.",
+                card_ai_title: "AI Teacher",
+                card_ai_desc: "Doubt pucho ya Class 10 ka topic samjho.",
+                card_stats_title: "Performance & Progress",
+                card_stats_desc: "XP, Level aur ranking records check karo.",
+                subject_header: "Active Subject Select Karo",
+                math_title: "Advanced Mathematics",
+                math_sub: "Syllabus • 45% Complete",
+                science_title: "Physics & Biology",
+                science_sub: "Syllabus • 75% Complete",
+                weekly_activity: "Weekly Learning Activity (XP)",
+                chat_welcome: "Hello! Main aapka <strong>GoalQuest AI Tutor</strong> hoon. Mujhse koi bhi CBSE Class 10 academic query pucho, ya neeche suggestions select karo!",
+                chat_photosynthesis: "Photosynthesis",
+                chat_roots: "Quadratic Roots",
+                chat_ohms: "Ohm's Law",
+                chat_placeholder: "Apna doubt yahan type karo...",
+                metrics_header: "Performance Metrics",
+                metric_xp: "Total XP",
+                metric_lvl: "Current Level",
+                metric_solved: "Solved Quizzes",
+                metric_accuracy: "Overall Accuracy",
+                lbl_rank: "Dynamic Academic Rank",
+                rank_value: "Scholar",
+                active_status: "ACTIVE",
+                pop_goal: "Educational Aim",
+                pop_exam: "Curriculum Exam",
+                pop_language: "Language / भाषा",
+                pop_logout: "Sign Out Karo",
+                pop_back: "Back to Console",
+                nav_home: "Home",
+                nav_learn: "Learn",
+                nav_ai: "AI"
+            }
+        };
+
+        function applyLanguage(langCode) {
+            if (!translations[langCode]) langCode = 'en';
+            
+            // Premium smooth shifting transition
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                const dictionary = translations[langCode];
+                
+                document.querySelectorAll('[data-i18n]').forEach(element => {
+                    const translationKey = element.getAttribute('data-i18n');
+                    if (dictionary[translationKey]) {
+                        if (element.tagName === 'INPUT' && element.hasAttribute('placeholder')) {
+                            element.setAttribute('placeholder', dictionary[translationKey]);
+                        } else {
+                            element.innerHTML = dictionary[translationKey];
+                        }
+                    }
+                });
+
+                // Update specific dynamic placeholders
+                const chatInput = document.getElementById('chat-input-el');
+                if (chatInput) {
+                    chatInput.placeholder = dictionary['chat_placeholder'];
+                }
+
+                // Check correct radio selector button inside modal
+                const targetRadio = document.querySelector(`.lang-option input[value="${langCode}"]`);
+                if (targetRadio) {
+                    targetRadio.checked = true;
+                }
+
+                // Update dynamic translated streak count unit
+                if (appProfileContext) {
+                    const currentStreak = appProfileContext.streak || 1;
+                    let calculatedUnit = currentStreak === 1 ? 'Day' : 'Days';
+                    
+                    if (langCode === 'hi') {
+                        calculatedUnit = currentStreak === 1 ? 'दिन' : 'दिनों';
+                    } else if (langCode === 'hn') {
+                        calculatedUnit = currentStreak === 1 ? 'Din' : 'Dino';
+                    }
+                    document.getElementById('streak-count-txt').textContent = `${currentStreak} ${calculatedUnit}`;
+                }
+
+                document.body.style.opacity = '1';
+            }, 200);
+        }
+
+        // Initialize segmented change events inside Profile view
+        document.querySelectorAll('.lang-option input').forEach(radioButton => {
+            radioButton.addEventListener('change', async (e) => {
+                const selectedLang = e.target.value;
+                applyLanguage(selectedLang);
+
+                // Set local cache immediately
+                localStorage.setItem('gq_language', selectedLang);
+
+                // Sync back to profile collection in cloud
+                if (appUserContext) {
+                    try {
+                        await db.collection("users").doc(appUserContext.uid).update({
+                            language: selectedLang
+                        });
+                    } catch (err) {
+                        console.error("Failed to update language setting in Firestore:", err);
+                    }
+                }
+            });
+        });
+
+        /************************************************************
+         * 3. PAGE TRANSITIONS ROUTER MATRIX
          ************************************************************/
         function transitionToPage(fromPageId, toPageId) {
             const fromPage = document.getElementById(fromPageId);
@@ -1645,10 +2022,14 @@
         }
 
         /************************************************************
-         * 3. SIGN-IN & AUTH STATE CHANGE WORKERS
+         * 4. SIGN-IN & AUTH STATE CHANGE WORKERS
          ************************************************************/
         auth.onAuthStateChanged(async (user) => {
             const loadingGate = document.getElementById('app-loading-gate');
+
+            // Fallback language extraction
+            const currentCacheLang = localStorage.getItem('gq_language') || 'en';
+            applyLanguage(currentCacheLang);
 
             if (user) {
                 appUserContext = user;
@@ -1659,6 +2040,12 @@
                     if (userDoc.exists) {
                         appProfileContext = userDoc.data();
                         
+                        // Set persistent language setting if present in db
+                        if (appProfileContext.language) {
+                            applyLanguage(appProfileContext.language);
+                            localStorage.setItem('gq_language', appProfileContext.language);
+                        }
+
                         // Handle streak compilation
                         await verifyAndSynchronizeStreak(user.uid);
                         
@@ -1669,6 +2056,10 @@
                         loadingGate.classList.remove('active');
                         setTimeout(() => {
                             loadingGate.style.display = 'none';
+                            document.getElementById('page-landing').style.display = 'none';
+                            document.getElementById('page-onboarding').style.display = 'none';
+                            document.getElementById('page-success').style.display = 'none';
+
                             document.getElementById('page-dashboard').style.display = 'flex';
                             document.getElementById('page-dashboard').offsetHeight;
                             document.getElementById('page-dashboard').classList.add('active');
@@ -1683,6 +2074,8 @@
                         loadingGate.classList.remove('active');
                         setTimeout(() => {
                             loadingGate.style.display = 'none';
+                            document.getElementById('page-landing').style.display = 'none';
+                            
                             document.getElementById('page-onboarding').style.display = 'flex';
                             document.getElementById('page-onboarding').offsetHeight;
                             document.getElementById('page-onboarding').classList.add('active');
@@ -1691,7 +2084,6 @@
 
                 } catch (error) {
                     console.error("Secure initial fetch failure:", error);
-                    alert("Initialization error. Returning to landing module.");
                     loadingGate.style.display = 'none';
                     document.getElementById('page-landing').style.display = 'flex';
                     document.getElementById('page-landing').classList.add('active');
@@ -1703,6 +2095,9 @@
                 loadingGate.classList.remove('active');
                 setTimeout(() => {
                     loadingGate.style.display = 'none';
+                    document.getElementById('page-dashboard').style.display = 'none';
+                    document.getElementById('page-dashboard').classList.remove('active');
+
                     document.getElementById('page-landing').style.display = 'flex';
                     document.getElementById('page-landing').offsetHeight;
                     document.getElementById('page-landing').classList.add('active');
@@ -1711,7 +2106,7 @@
         });
 
         /************************************************************
-         * 4. AUTH & GOOGLE POPUP TRIGGERS
+         * 5. AUTH & GOOGLE POPUP TRIGGERS
          ************************************************************/
         const ssoButton = document.getElementById('sso-trigger');
         ssoButton.addEventListener('click', async (e) => {
@@ -1730,6 +2125,12 @@
 
                 if (snapshotDoc.exists) {
                     appProfileContext = snapshotDoc.data();
+                    
+                    if (appProfileContext.language) {
+                        applyLanguage(appProfileContext.language);
+                        localStorage.setItem('gq_language', appProfileContext.language);
+                    }
+
                     await verifyAndSynchronizeStreak(appUserContext.uid);
                     synchronizeDashboardHUD();
                     transitionToPage('page-landing', 'page-success');
@@ -1750,7 +2151,7 @@
         });
 
         /************************************************************
-         * 5. PERSONALIZATION ONBOARDING WORKERS
+         * 6. PERSONALIZATION ONBOARDING WORKERS
          ************************************************************/
         const onboardForm = document.getElementById('onboard-form');
         const onboardingName = document.getElementById('onboard-name');
@@ -1806,6 +2207,8 @@
             try {
                 if (!appUserContext) throw new Error("Auth session frame dropped. Relog required.");
 
+                const currentCacheLang = localStorage.getItem('gq_language') || 'en';
+
                 const userPayload = {
                     uid: appUserContext.uid,
                     name: onboardingName.value.trim(),
@@ -1817,6 +2220,7 @@
                     class: "10",
                     exam: onboardingExam.value,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    language: currentCacheLang,
                     
                     // Gamified values
                     streak: 1,
@@ -1851,7 +2255,7 @@
         });
 
         /************************************************************
-         * 6. CALIBRATE STREAKS AND DAILY PROGRESS IN FIRESTORE
+         * 7. CALIBRATE STREAKS AND DAILY PROGRESS IN FIRESTORE
          ************************************************************/
         async function verifyAndSynchronizeStreak(uid) {
             const todayDateStr = new Date().toISOString().split('T')[0];
@@ -1883,7 +2287,7 @@
         }
 
         /************************************************************
-         * 7. FRONTEND MODEL DOM BINDER
+         * 8. FRONTEND MODEL DOM BINDER
          ************************************************************/
         function synchronizeDashboardHUD() {
             if (!appProfileContext) return;
@@ -1904,14 +2308,20 @@
 
             // Streak pills
             const currentStreak = appProfileContext.streak || 1;
-            document.getElementById('streak-count-txt').textContent = `${currentStreak} ${currentStreak === 1 ? 'Day' : 'Days'}`;
+            const activeLang = localStorage.getItem('gq_language') || 'en';
+            let calculatedUnit = currentStreak === 1 ? 'Day' : 'Days';
+            if (activeLang === 'hi') {
+                calculatedUnit = currentStreak === 1 ? 'दिन' : 'दिनों';
+            } else if (activeLang === 'hn') {
+                calculatedUnit = currentStreak === 1 ? 'Din' : 'Dino';
+            }
+            document.getElementById('streak-count-txt').textContent = `${currentStreak} ${calculatedUnit}`;
 
             // Dashboard Metrics Panel Bindings
             document.getElementById('stats-xp-val').textContent = appProfileContext.xp || 120;
             document.getElementById('stats-level-val').textContent = `Level ${appProfileContext.level || 1}`;
             document.getElementById('stats-solved-val').textContent = appProfileContext.solved || 0;
             document.getElementById('stats-accuracy-val').textContent = `${appProfileContext.accuracy || 0}%`;
-            document.getElementById('stats-rank-lbl').textContent = appProfileContext.rank || 'Scholar';
 
             // Glass popup overlays bindings
             document.getElementById('pop-name-lbl').textContent = appProfileContext.name || "Student";
@@ -1933,7 +2343,7 @@
         }
 
         /************************************************************
-         * 8. DYNAMIC NAVIGATION CONTROLLER & MAIN ROUTERS
+         * 9. DYNAMIC NAVIGATION CONTROLLER & MAIN ROUTERS
          ************************************************************/
         function switchMainTab(targetSection) {
             // Scroll to top automatically
@@ -1960,14 +2370,11 @@
             } else if (targetSection === 'ai') {
                 document.getElementById('tab-section-ai').classList.add('active');
                 document.getElementById('nav-item-ai').classList.add('active');
-            } else if (targetSection === 'stats') {
-                document.getElementById('tab-section-stats').classList.add('active');
-                document.getElementById('nav-item-stats').classList.add('active');
             }
         }
 
         /************************************************************
-         * 9. DYNAMIC CHAT CONVERSATION WORKER
+         * 10. DYNAMIC CHAT CONVERSATION WORKER
          ************************************************************/
         const chatScroller = document.getElementById('chat-scroller');
         const chatInputEl = document.getElementById('chat-input-el');
@@ -2057,7 +2464,7 @@
         }
 
         /************************************************************
-         * 10. SYSTEM MODALS OVERLAY CONTROLLERS (PROFILE VIEW)
+         * 11. SYSTEM MODALS OVERLAY CONTROLLERS (PROFILE VIEW)
          ************************************************************/
         const headerProfileBtn = document.getElementById('header-profile-btn');
         const profilePopupOverlay = document.getElementById('profile-popup-overlay');
@@ -2074,7 +2481,7 @@
 
         profilePopupOverlay.addEventListener('click', (e) => {
             if (e.target === profilePopupOverlay) {
-                profilePopupOverlay.classList.remove('remove');
+                profilePopupOverlay.classList.remove('show');
             }
         });
 
@@ -2096,7 +2503,7 @@
         }
 
         /************************************************************
-         * 11. CUSTOM SYSTEM CLICK FEEDBACKS (RIPPLES)
+         * 12. CUSTOM SYSTEM CLICK FEEDBACKS (RIPPLES)
          ************************************************************/
         document.addEventListener('click', function (e) {
             let targetEl = e.target;
@@ -2131,13 +2538,13 @@
         }
 
         /************************************************************
-         * 12. CANVAS PARTICLE RENDERING CONTROLLER (60FPS FLUID PHYSICS)
+         * 13. CANVAS PARTICLE RENDERING CONTROLLER (60FPS FLUID PHYSICS)
          ************************************************************/
         const particlesCanvas = document.getElementById('particles');
         const ctx2d = particlesCanvas.getContext('2d');
 
         let elementsRegistry = [];
-        const configLimit = 50;
+        const configLimit = 40;
 
         function setViewportSpecs() {
             particlesCanvas.width = window.innerWidth;
