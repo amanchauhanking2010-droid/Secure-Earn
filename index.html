@@ -3,67 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GoalQuest.AI — Learn Smart. Practice Better.</title>
+    <title>GoalQuest.AI — Premium Educational Hub</title>
     
-    <!-- Premium Fonts -->
+    <!-- Premium Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Firebase SDK Compat -->
+    <!-- Firebase SDK Compat Core & Services -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <style>
+        /* Modern CSS Variables & Visual Design Tokens */
+        :root {
+            --bg-darkest: #030303;
+            --bg-card: rgba(10, 10, 16, 0.65);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --neon-blue: #00f2fe;
+            --neon-purple: #9b51e0;
+            --neon-gold: #f59e0b;
+            --neon-emerald: #10b981;
+            --neon-red: #ef4444;
+            --glow-blue: rgba(0, 242, 254, 0.15);
+            --glow-purple: rgba(155, 81, 224, 0.15);
+            --transition-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --transition-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
         /* Modern Reset */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             -webkit-tap-highlight-color: transparent;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
         body, html {
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #030303;
-            font-family: 'Inter', sans-serif;
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background-color: var(--bg-darkest);
+            color: var(--text-primary);
+            position: relative;
         }
 
-        /* Fullscreen Glowing AI Backdrops */
-        .ambient-glow-purple {
+        /* Ambient Fluid Lighting Layer */
+        .ambient-glow {
             position: absolute;
-            top: -15%;
-            left: -15%;
-            width: 60%;
-            height: 60%;
-            background: radial-gradient(circle, rgba(127, 0, 255, 0.12) 0%, rgba(0,0,0,0) 70%);
-            filter: blur(80px);
-            z-index: 1;
+            border-radius: 50%;
             pointer-events: none;
-            animation: driftGlowPurple 25s infinite alternate ease-in-out;
+            z-index: 1;
+            filter: blur(120px);
+            opacity: 0.6;
         }
 
-        .ambient-glow-blue {
-            position: absolute;
-            bottom: -15%;
-            right: -15%;
-            width: 60%;
-            height: 60%;
-            background: radial-gradient(circle, rgba(0, 242, 254, 0.12) 0%, rgba(0,0,0,0) 70%);
-            filter: blur(80px);
-            z-index: 1;
-            pointer-events: none;
-            animation: driftGlowBlue 30s infinite alternate ease-in-out;
+        .glow-1 {
+            top: -10%;
+            left: -10%;
+            width: 45vw;
+            height: 45vw;
+            background: radial-gradient(circle, var(--neon-purple) 0%, transparent 70%);
+            animation: floatGlow 18s infinite alternate ease-in-out;
         }
 
-        /* Particle System Canvas */
+        .glow-2 {
+            bottom: -10%;
+            right: -10%;
+            width: 45vw;
+            height: 45vw;
+            background: radial-gradient(circle, var(--neon-blue) 0%, transparent 70%);
+            animation: floatGlow 22s infinite alternate-reverse ease-in-out;
+        }
+
+        @keyframes floatGlow {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(8%, 8%) scale(1.15); }
+        }
+
         canvas#particles {
             position: absolute;
             top: 0;
@@ -74,9 +95,11 @@
             pointer-events: none;
         }
 
-        /* Dynamic Page Router Containers */
+        /* App Router Container Layout */
         .page-view {
             position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             display: flex;
@@ -84,194 +107,177 @@
             justify-content: center;
             z-index: 3;
             opacity: 0;
-            transform: scale(0.96) translateY(20px);
-            pointer-events: none;
-            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            visibility: hidden;
+            transform: translateY(20px) scale(0.98);
+            transition: opacity 0.5s var(--transition-smooth), 
+                        transform 0.5s var(--transition-smooth), 
+                        visibility 0.5s var(--transition-smooth);
         }
 
         .page-view.active {
             opacity: 1;
-            transform: scale(1) translateY(0);
-            pointer-events: all;
+            visibility: visible;
+            transform: translateY(0) scale(1);
         }
 
-        /* Main Shell Glassmorphism Container */
+        /* Glassmorphic Shell Wrapper */
         .card-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
-            padding: 48px 32px;
+            padding: 44px 32px;
             max-width: 420px;
-            max-height: 90vh;
+            max-height: 85vh;
             overflow-y: auto;
-            scrollbar-width: none; /* Firefox */
-            width: 90%;
-            background: rgba(10, 10, 14, 0.45);
-            border: 1px solid rgba(255, 255, 255, 0.07);
+            scrollbar-width: none;
+            width: 92%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
             border-radius: 32px;
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            box-shadow: 
-                0 30px 70px rgba(0, 0, 0, 0.7),
-                inset 0 1px 0px rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8),
+                        inset 0 1px 1px rgba(255, 255, 255, 0.1);
         }
 
         .card-wrapper::-webkit-scrollbar {
-            display: none; /* Chrome/Safari */
+            display: none;
         }
 
-        /* AI Glowing Brand Orb */
+        /* Glowing Accent Brand Orb */
         .brand-orb {
             position: relative;
-            width: 64px;
-            height: 64px;
-            margin-bottom: 28px;
-            border-radius: 20px;
+            width: 68px;
+            height: 68px;
+            margin-bottom: 24px;
+            border-radius: 22px;
             background: linear-gradient(135deg, rgba(0, 242, 254, 0.05) 0%, rgba(155, 81, 224, 0.05) 100%);
-            border: 1px solid rgba(0, 242, 254, 0.2);
+            border: 1px solid rgba(0, 242, 254, 0.25);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 30px rgba(0, 242, 254, 0.1);
-            animation: pulseGlow 4s infinite alternate ease-in-out;
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.12);
+            animation: orbPulse 4s infinite alternate ease-in-out;
             flex-shrink: 0;
         }
 
-        .brand-orb::after {
-            content: '';
-            position: absolute;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #00f2fe, #9b51e0);
-            box-shadow: 0 0 15px rgba(0, 242, 254, 0.8);
-            animation: orbitMotion 6s linear infinite;
-        }
-
-        /* Central App Typography */
-        .title-group {
-            animation: floatTitle 5s ease-in-out infinite alternate;
-            margin-bottom: 16px;
+        @keyframes orbPulse {
+            0% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 242, 254, 0.1); }
+            100% { transform: scale(1.04); box-shadow: 0 0 35px rgba(155, 81, 224, 0.2); }
         }
 
         .app-title {
-            font-size: 3.25rem;
-            font-weight: 800;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 700;
             letter-spacing: -0.04em;
-            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 40%, #9b51e0 100%);
+            background: linear-gradient(135deg, var(--neon-blue) 0%, #4facfe 40%, var(--neon-purple) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            display: inline-block;
-            filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.5));
+            margin-bottom: 12px;
         }
 
-        /* Sleek Subtext / Tagline */
         .tagline {
-            font-size: 1.05rem;
-            font-weight: 400;
-            color: #94a3b8; /* Tailwind slate-400 */
+            font-size: 1rem;
+            color: var(--text-secondary);
             line-height: 1.5;
-            letter-spacing: -0.01em;
+            margin-bottom: 36px;
             max-width: 290px;
-            margin-bottom: 44px;
         }
 
-        /* Button Container Styling */
-        .button-group {
-            width: 100%;
-            display: flex;
-            justify-content: center;
+        /* Ripple Action click design */
+        .ripple {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple-effect 0.6s ease-out;
+            pointer-events: none;
         }
 
-        /* UI Preview Button: Google SSO style */
-        .sso-btn {
+        @keyframes ripple-effect {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Custom Buttons */
+        .btn-premium {
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
             width: 100%;
-            max-width: 310px;
-            padding: 16px 24px;
+            max-width: 320px;
+            padding: 18px 28px;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 9999px;
-            color: #f8fafc;
+            border-radius: 20px;
+            color: var(--text-primary);
             font-size: 0.95rem;
-            font-weight: 600;
-            text-decoration: none;
+            font-weight: 700;
             cursor: pointer;
             overflow: hidden;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            transition: 
-                transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.4s var(--transition-smooth);
         }
 
-        .sso-btn .google-icon-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 20px;
-            height: 20px;
-        }
-
-        /* Micro shimmer light effect */
-        .sso-btn::before, .btn-glowing::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -150%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.12),
-                transparent
-            );
-            transform: skewX(-20deg);
-            animation: dynamicShimmer 6s infinite ease-in-out;
-        }
-
-        /* CSS Button Hover & Active Press feedback */
-        .sso-btn:hover {
+        .btn-premium:hover {
             background: rgba(255, 255, 255, 0.08);
             border-color: rgba(0, 242, 254, 0.4);
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 
-                0 12px 30px rgba(0, 242, 254, 0.12),
-                0 0 10px rgba(155, 81, 224, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 242, 254, 0.15);
         }
 
-        .sso-btn:active {
-            transform: translateY(0px) scale(0.98);
-            background: rgba(255, 255, 255, 0.04);
-            transition: transform 0.1s ease;
+        .btn-premium:active {
+            transform: translateY(1px);
         }
 
-        /* ONBOARDING STYLING */
+        .btn-glowing {
+            background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-purple) 100%);
+            border: none;
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 700;
+            box-shadow: 0 8px 24px rgba(0, 242, 254, 0.3);
+        }
+
+        .btn-glowing:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(0, 242, 254, 0.5), 0 0 15px rgba(155, 81, 224, 0.3);
+        }
+
+        .btn-glowing .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2.5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Form Controls */
         .onboarding-title {
+            font-family: 'Space Grotesk', sans-serif;
             font-size: 1.8rem;
             font-weight: 700;
-            letter-spacing: -0.03em;
-            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             margin-bottom: 8px;
         }
 
         .onboarding-subtitle {
             font-size: 0.95rem;
-            color: #94a3b8;
-            margin-bottom: 32px;
-            max-width: 320px;
-            line-height: 1.4;
+            color: var(--text-secondary);
+            margin-bottom: 28px;
         }
 
         .onboarding-form {
@@ -280,53 +286,46 @@
         }
 
         .input-group {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             width: 100%;
-            position: relative;
         }
 
         .input-label {
             display: block;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #94a3b8;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-secondary);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 8px;
+            letter-spacing: 0.08em;
+            margin-bottom: 6px;
         }
 
         .form-input, .form-select {
             width: 100%;
-            padding: 14px 18px;
-            background: rgba(255, 255, 255, 0.03);
+            padding: 15px 18px;
+            background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 14px;
+            border-radius: 16px;
             color: #ffffff;
-            font-family: 'Inter', sans-serif;
             font-size: 0.95rem;
             outline: none;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .form-input::placeholder {
-            color: #4b5563;
+            transition: all 0.3s var(--transition-smooth);
         }
 
         .form-input:focus, .form-select:focus {
             border-color: rgba(0, 242, 254, 0.5);
             background: rgba(255, 255, 255, 0.06);
-            box-shadow: 0 0 15px rgba(0, 242, 254, 0.12);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.1);
         }
 
-        .form-input.invalid, .form-select.invalid {
-            border-color: #ef4444 !important;
+        .form-input.invalid {
+            border-color: var(--neon-red) !important;
             box-shadow: 0 0 15px rgba(239, 68, 68, 0.15) !important;
-            animation: inputShake 0.4s ease-in-out;
         }
 
         .input-error {
             font-size: 0.75rem;
-            color: #ef4444;
+            color: var(--neon-red);
             margin-top: 6px;
             display: none;
         }
@@ -335,603 +334,419 @@
             appearance: none;
             background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
             background-repeat: no-repeat;
-            background-position: right 16px center;
+            background-position: right 18px center;
             background-size: 16px;
-            padding-right: 40px;
+            padding-right: 44px;
             cursor: pointer;
         }
 
         .form-select option {
-            background-color: #0d0c15;
+            background-color: #0c0b12;
             color: #ffffff;
         }
 
-        /* Glowing Accent Button */
-        .btn-glowing {
-            position: relative;
-            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #9b51e0 100%);
-            border: none;
-            color: #ffffff;
-            font-size: 1rem;
-            font-weight: 700;
-            padding: 16px 24px;
-            border-radius: 9999px;
-            width: 100%;
-            max-width: 310px;
-            cursor: pointer;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 242, 254, 0.25);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            margin-top: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-glowing:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 
-                0 12px 30px rgba(0, 242, 254, 0.45), 
-                0 0 15px rgba(155, 81, 224, 0.25);
-        }
-
-        .btn-glowing:active {
-            transform: translateY(0) scale(0.98);
-        }
-
-        .btn-glowing .spinner {
-            display: none;
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #ffffff;
-            animation: spin 0.8s linear infinite;
-        }
-
-        /* SUCCESS SCREEN STYLING */
+        /* Success screen check animation */
         .success-icon-wrapper {
             position: relative;
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background: rgba(34, 197, 94, 0.1);
-            border: 2px solid #22c55e;
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid var(--neon-emerald);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 32px;
-            box-shadow: 0 0 30px rgba(34, 197, 94, 0.3);
-            animation: successPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
-            flex-shrink: 0;
+            margin-bottom: 24px;
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+            animation: successPop 0.6s var(--transition-bounce) both;
+        }
+
+        @keyframes successPop {
+            0% { transform: scale(0.6); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         .success-icon-wrapper svg {
             width: 40px;
             height: 40px;
-            stroke: #22c55e;
+            stroke: var(--neon-emerald);
             stroke-width: 3;
             stroke-linecap: round;
             stroke-linejoin: round;
             fill: none;
-            stroke-dasharray: 100;
-            stroke-dashoffset: 100;
-            animation: drawCheck 0.8s ease-out 0.4s forwards;
         }
 
-        .success-title {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #ffffff;
-            margin-bottom: 12px;
-            letter-spacing: -0.02em;
+        /* ====================================================
+         * UPGRADED PORT: PREMIUM DASHBOARD LAYOUT
+         * ==================================================== */
+        .dash-viewport {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            z-index: 5;
+            background: radial-gradient(circle at top, rgba(155, 81, 224, 0.03), transparent 60%);
         }
 
-        .success-subtitle {
-            font-size: 0.95rem;
-            color: #94a3b8;
-            line-height: 1.5;
-            margin-bottom: 40px;
-            max-width: 320px;
-        }
-
-        /* PREMIUM CUSTOM ERROR MODAL OVERLAY */
-        .error-modal-overlay {
+        /* FIXED HEADER SECTION */
+        .premium-header {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            z-index: 999;
+            height: 76px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.4s ease;
-        }
-
-        .error-modal-overlay.show {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .error-card {
-            background: rgba(20, 10, 10, 0.85);
-            border: 1px solid rgba(239, 68, 68, 0.25);
-            box-shadow: 0 20px 50px rgba(239, 68, 68, 0.15), inset 0 1px 0 rgba(255,255,255,0.05);
-            max-width: 400px;
-            width: 90%;
-            border-radius: 24px;
-            padding: 32px 24px;
-            text-align: center;
-            transform: scale(0.9);
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .error-modal-overlay.show .error-card {
-            transform: scale(1);
-        }
-
-        .error-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.4);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            color: #ef4444;
-        }
-
-        .error-modal-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #fca5a5;
-            margin-bottom: 12px;
-        }
-
-        .error-modal-desc {
-            font-size: 0.9rem;
-            color: #94a3b8;
-            line-height: 1.5;
-            margin-bottom: 24px;
-            text-align: left;
-        }
-
-        .error-modal-desc code {
-            display: block;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 0.8rem;
-            color: #f87171;
-            margin-top: 10px;
-            word-break: break-all;
-        }
-
-        .error-close-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-            font-weight: 600;
-            padding: 12px 24px;
-            border-radius: 9999px;
-            cursor: pointer;
-            width: 100%;
-            transition: background 0.3s, border-color 0.3s;
-        }
-
-        .error-close-btn:hover {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-
-        /* NEW EXPANDED DASHBOARD AND SUB-PAGE STYLES */
-        .dash-layout {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            height: 100%;
-            padding: 24px;
-            max-width: 480px;
             justify-content: space-between;
+            padding: 0 24px;
+            background: rgba(3, 3, 3, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-glass);
+            z-index: 100;
         }
 
-        /* Glass Header */
-        .dash-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 20px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 20px;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            width: 100%;
-            margin-bottom: 20px;
-            flex-shrink: 0;
-        }
-
-        .streak-container {
+        /* Streak pill configuration */
+        .streak-pill {
             display: flex;
             align-items: center;
             gap: 8px;
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            padding: 8px 16px;
+            border-radius: 9999px;
+            font-size: 0.85rem;
             font-weight: 700;
-            font-size: 1rem;
-            color: #f59e0b; /* Orange/Gold for fire */
+            color: var(--neon-gold);
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.05);
+            animation: pulseGold 2s infinite alternate ease-in-out;
         }
 
-        .streak-fire-icon {
-            font-size: 1.3rem;
-            animation: firePulse 1.5s infinite alternate ease-in-out;
+        @keyframes pulseGold {
+            0% { box-shadow: 0 0 10px rgba(245, 158, 11, 0.02); }
+            100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.15); }
         }
 
-        .profile-avatar-trigger {
-            width: 38px;
-            height: 38px;
+        .streak-fire {
+            font-size: 1.1rem;
+            animation: flare 1s infinite alternate ease-in-out;
+        }
+
+        @keyframes flare {
+            0% { transform: scale(0.9) rotate(-3deg); }
+            100% { transform: scale(1.1) rotate(3deg); }
+        }
+
+        .header-title-center {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .profile-container-btn {
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
-            border: 2px solid rgba(0, 242, 254, 0.5);
+            padding: 2px;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
             cursor: pointer;
-            overflow: hidden;
-            background: linear-gradient(135deg, #00f2fe, #9b51e0);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+            transition: transform 0.3s var(--transition-bounce);
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.3s ease;
         }
 
-        .profile-avatar-trigger:hover {
+        .profile-container-btn:hover {
             transform: scale(1.1);
         }
 
-        .profile-avatar-trigger img {
+        .profile-inner-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #0d0c15;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .profile-inner-avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        /* Large Premium Menu Stack */
-        .dash-menu-stack {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            flex-grow: 1;
+        /* SCROLLABLE MAIN CONTENT AREA */
+        .dash-scrollable-body {
+            position: absolute;
+            top: 76px;
+            bottom: 84px;
+            left: 0;
+            width: 100%;
             overflow-y: auto;
             scrollbar-width: none;
-            padding-bottom: 12px;
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .dash-menu-stack::-webkit-scrollbar {
+        .dash-scrollable-body::-webkit-scrollbar {
             display: none;
         }
 
-        /* Menu Buttons */
-        .dash-menu-btn {
+        .section-wrapper {
+            width: 100%;
+            max-width: 460px;
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+            animation: contentFadeUp 0.6s var(--transition-smooth) both;
+        }
+
+        .section-wrapper.active {
+            display: flex;
+        }
+
+        @keyframes contentFadeUp {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* PREMIUM DYNAMIC HUD MENU CARDS */
+        .premium-menu-card {
             position: relative;
+            width: 100%;
+            border-radius: 24px;
+            padding: 24px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+            border: 1px solid var(--border-glass);
+            cursor: pointer;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 22px 24px;
-            border-radius: 24px;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            text-align: left;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            background: rgba(255, 255, 255, 0.03);
-            overflow: hidden;
-            text-decoration: none;
+            transition: all 0.4s var(--transition-smooth);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
-        .dash-menu-btn::before {
+        /* Individual gradient borders using CSS absolute pseudo overlays */
+        .premium-menu-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: -150%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
-            transform: skewX(-20deg);
-            animation: dynamicShimmer 8s infinite ease-in-out;
+            inset: 0;
+            border-radius: 24px;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.01) 50%, rgba(255,255,255,0.04) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            transition: background 0.4s ease;
         }
 
-        .dash-menu-btn-primary {
-            background: linear-gradient(135deg, rgba(0, 242, 254, 0.15) 0%, rgba(79, 172, 254, 0.1) 100%);
-            border: 1px solid rgba(0, 242, 254, 0.3);
-            box-shadow: 0 8px 32px rgba(0, 242, 254, 0.08);
-        }
-
-        .dash-menu-btn-primary:hover {
-            transform: translateY(-3px) scale(1.02);
-            border-color: rgba(0, 242, 254, 0.6);
-            box-shadow: 0 15px 40px rgba(0, 242, 254, 0.18);
-        }
-
-        .dash-menu-btn-secondary {
-            background: rgba(10, 10, 14, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .dash-menu-btn-secondary:hover {
-            transform: translateY(-3px) scale(1.01);
-            background: rgba(255, 255, 255, 0.06);
-            border-color: rgba(155, 81, 224, 0.4);
-            box-shadow: 0 15px 40px rgba(155, 81, 224, 0.1);
-        }
-
-        .menu-btn-inner {
+        .premium-menu-card-inner {
             display: flex;
             align-items: center;
-            gap: 18px;
+            gap: 20px;
+            z-index: 2;
         }
 
-        .menu-btn-icon {
-            font-size: 1.8rem;
-            flex-shrink: 0;
-        }
-
-        .menu-btn-title {
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 4px;
-        }
-
-        .menu-btn-desc {
-            font-size: 0.85rem;
-            color: #94a3b8;
-        }
-
-        .menu-btn-arrow {
-            font-size: 1.1rem;
-            color: #475569;
-            transition: transform 0.3s ease, color 0.3s ease;
-        }
-
-        .dash-menu-btn:hover .menu-btn-arrow {
-            transform: translateX(4px);
-            color: #00f2fe;
-        }
-
-        /* Sub Page Shell */
-        .subpage-container {
-            width: 100%;
-            height: 100%;
-            padding: 24px;
-            max-width: 480px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .subpage-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            margin-bottom: 24px;
-            flex-shrink: 0;
-        }
-
-        .subpage-title-group {
-            text-align: right;
-        }
-
-        .subpage-title {
-            font-size: 1.3rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .subpage-subtitle {
-            font-size: 0.8rem;
-            color: #64748b;
-        }
-
-        .back-btn {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+        .card-emoji-box {
+            width: 56px;
+            height: 56px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
+            font-size: 1.6rem;
+            transition: all 0.4s var(--transition-smooth);
+        }
+
+        .card-meta-text {
+            text-align: left;
+        }
+
+        .card-meta-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
             color: #ffffff;
-            transition: all 0.3s ease;
+            margin-bottom: 4px;
+            transition: color 0.3s;
         }
 
-        .back-btn:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(0, 242, 254, 0.4);
-            transform: scale(1.05);
+        .card-meta-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
         }
 
-        .subpage-content {
-            flex-grow: 1;
-            overflow-y: auto;
-            scrollbar-width: none;
-            padding-bottom: 20px;
+        .card-arrow-icon {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.15);
+            transition: all 0.4s var(--transition-smooth);
+            z-index: 2;
         }
 
-        .subpage-content::-webkit-scrollbar {
-            display: none;
+        /* Hover & focus micro-interactions */
+        .premium-menu-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            background: rgba(255, 255, 255, 0.05);
         }
 
-        /* Start Now: Subjects Grid */
-        .subject-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
+        .premium-menu-card:hover::before {
+            background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-purple) 100%);
         }
 
-        .subject-card {
-            background: rgba(15, 15, 22, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+        .premium-menu-card:hover .card-emoji-box {
+            background: rgba(0, 242, 254, 0.1);
+            border-color: rgba(0, 242, 254, 0.2);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.15);
+        }
+
+        .premium-menu-card:hover .card-arrow-icon {
+            color: var(--neon-blue);
+            transform: translateX(5px);
+        }
+
+        .premium-menu-card:active {
+            transform: translateY(-1px) scale(0.99);
+        }
+
+        /* DYNAMIC CHIP HIGHLIGHT */
+        .glow-shimmer-wrap {
+            position: relative;
+        }
+        .glow-shimmer-wrap::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 24px;
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.1);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .glow-shimmer-wrap:hover::after {
+            opacity: 1;
+        }
+
+        /* ====================================================
+         * SECONDARY SUBPAGE INTERFACES (LEARN, AI, STATS, PROFILE)
+         * ==================================================== */
+         
+        /* SUBJECT MODULES (LEARN TAB) */
+        .subject-group-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            width: 100%;
+        }
+
+        .subject-metric-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-glass);
             border-radius: 20px;
-            padding: 20px;
+            padding: 18px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            transition: all 0.3s ease;
-            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        .subject-card:hover {
+        .subject-metric-card:hover {
             border-color: rgba(0, 242, 254, 0.3);
-            background: rgba(255, 255, 255, 0.05);
-            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.04);
         }
 
-        .subject-info {
+        .subject-left-set {
             display: flex;
             align-items: center;
             gap: 16px;
         }
 
-        .subject-icon-box {
-            width: 48px;
-            height: 48px;
+        .subject-glyph {
+            width: 46px;
+            height: 46px;
             border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.4rem;
+            font-size: 1.3rem;
+            background: rgba(155, 81, 224, 0.1);
+            border: 1px solid rgba(155, 81, 224, 0.2);
         }
 
-        .subject-title {
-            font-size: 1rem;
+        .subject-text-stack {
+            text-align: left;
+        }
+
+        .subject-name-lbl {
+            font-size: 0.95rem;
             font-weight: 700;
             color: #ffffff;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
-        .subject-progress-text {
-            font-size: 0.8rem;
-            color: #64748b;
+        .subject-subcompletion {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
         }
 
-        /* SVG Circular Progress Loader */
-        .progress-ring-container {
+        /* Circular progress indicators */
+        .progress-circle-wrap {
             position: relative;
-            width: 36px;
-            height: 36px;
+            width: 38px;
+            height: 38px;
         }
 
-        .progress-ring-circle {
-            transition: stroke-dashoffset 0.35s;
+        .circle-progress-ring {
             transform: rotate(-90deg);
             transform-origin: 50% 50%;
         }
 
-        /* Progress Page Metrics Grid */
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
-        .metric-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 18px;
-            padding: 16px;
-            text-align: left;
-        }
-
-        .metric-value {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: #ffffff;
-            margin-bottom: 4px;
-        }
-
-        .metric-label {
-            font-size: 0.75rem;
-            color: #64748b;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-        }
-
-        /* Inline CSS Bar Graph (Chart) */
-        .chart-box {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 20px;
-            padding: 24px 16px;
-            text-align: left;
-            margin-bottom: 24px;
-        }
-
-        .chart-title {
-            font-size: 0.95rem;
-            font-weight: 700;
-            margin-bottom: 18px;
-            color: #cbd5e1;
-        }
-
-        .bar-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            height: 120px;
-            padding-top: 10px;
-        }
-
-        .chart-bar-column {
+        /* CHAT BOT INTERACTION DESIGNS (AI TUTOR TAB) */
+        .teacher-chat-interface {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            flex-grow: 1;
-            gap: 8px;
+            width: 100%;
+            height: calc(100vh - 240px);
+            background: rgba(10, 10, 16, 0.4);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
         }
 
-        .chart-bar-fill {
-            width: 14px;
-            background: linear-gradient(to top, #9b51e0, #00f2fe);
-            border-radius: 4px;
-            height: 0%; /* Dynamic */
-            transition: height 1s ease-out;
-            box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
-        }
-
-        .chart-bar-label {
-            font-size: 0.7rem;
-            color: #64748b;
-            font-weight: 600;
-        }
-
-        /* AI Teacher Chat Interface */
-        .chat-layout {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .chat-messages-area {
+        .chat-screen-logs {
             flex-grow: 1;
             overflow-y: auto;
-            scrollbar-width: none;
-            padding-right: 4px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             gap: 16px;
-            margin-bottom: 16px;
+            scrollbar-width: none;
         }
 
-        .chat-messages-area::-webkit-scrollbar {
+        .chat-screen-logs::-webkit-scrollbar {
             display: none;
         }
 
@@ -941,219 +756,226 @@
             border-radius: 18px;
             font-size: 0.9rem;
             line-height: 1.45;
+            text-align: left;
+            animation: bubbleIntro 0.4s var(--transition-smooth) both;
         }
 
-        .chat-bubble-ai {
+        @keyframes bubbleIntro {
+            0% { opacity: 0; transform: translateY(10px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .chat-bubble-system {
             align-self: flex-start;
             background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            color: #e2e8f0;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
             border-top-left-radius: 4px;
         }
 
         .chat-bubble-user {
             align-self: flex-end;
-            background: linear-gradient(135deg, rgba(0, 242, 254, 0.15) 0%, rgba(155, 81, 224, 0.15) 100%);
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.15), rgba(155, 81, 224, 0.15));
             border: 1px solid rgba(0, 242, 254, 0.25);
             color: #ffffff;
             border-top-right-radius: 4px;
         }
 
-        /* Suggested Question Chips */
-        .suggestion-chips {
+        /* Suggestions Pills Scroll */
+        .chat-suggested-chips {
             display: flex;
             gap: 8px;
             overflow-x: auto;
+            padding: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
             scrollbar-width: none;
-            padding: 4px 0 12px 0;
             flex-shrink: 0;
         }
 
-        .suggestion-chips::-webkit-scrollbar {
+        .chat-suggested-chips::-webkit-scrollbar {
             display: none;
         }
 
-        .chip {
+        .suggested-pill {
             white-space: nowrap;
             background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-glass);
             padding: 8px 14px;
             border-radius: 9999px;
-            font-size: 0.8rem;
-            color: #94a3b8;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
         }
 
-        .chip:hover {
+        .suggested-pill:hover {
             background: rgba(0, 242, 254, 0.08);
             border-color: rgba(0, 242, 254, 0.3);
             color: #ffffff;
         }
 
-        /* Chat Input Area */
-        .chat-input-bar {
+        /* Text Input controls */
+        .chat-input-row {
             display: flex;
-            gap: 10px;
             align-items: center;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 8px 8px 8px 18px;
-            border-radius: 9999px;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            gap: 10px;
+            padding: 10px 12px;
+            background: rgba(3, 3, 3, 0.5);
+            border-top: 1px solid var(--border-glass);
             flex-shrink: 0;
         }
 
-        .chat-input-element {
+        .chat-text-area {
             flex-grow: 1;
             background: transparent;
             border: none;
             outline: none;
             color: #ffffff;
-            font-family: 'Inter', sans-serif;
             font-size: 0.9rem;
+            padding: 10px 8px;
         }
 
-        .chat-input-element::placeholder {
-            color: #475569;
-        }
-
-        .chat-send-btn {
-            width: 42px;
-            height: 42px;
+        .chat-submit-btn {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #00f2fe, #9b51e0);
             border: none;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            color: #ffffff;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            color: #ffffff;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s var(--transition-bounce);
         }
 
-        .chat-send-btn:hover {
-            transform: scale(1.05);
+        .chat-submit-btn:hover {
+            transform: scale(1.1);
         }
 
-        /* Typing Loader Animation */
+        /* Typing Dots Animation styling */
         .typing-loader {
             display: flex;
             gap: 4px;
-            padding: 4px 8px;
+            padding: 6px 10px;
         }
 
         .typing-dot {
             width: 6px;
             height: 6px;
-            background: #94a3b8;
+            background: var(--text-secondary);
             border-radius: 50%;
-            animation: dotWave 1.2s infinite ease-in-out;
+            animation: typingWave 1.2s infinite ease-in-out;
         }
 
         .typing-dot:nth-child(2) { animation-delay: 0.2s; }
         .typing-dot:nth-child(3) { animation-delay: 0.4s; }
 
-        /* Stats & Leaderboard Achievements Layout */
-        .stats-summary {
-            display: flex;
-            background: linear-gradient(135deg, rgba(0, 242, 254, 0.05) 0%, rgba(155, 81, 224, 0.05) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 22px;
-            padding: 20px;
-            align-items: center;
-            justify-content: space-around;
-            margin-bottom: 24px;
+        @keyframes typingWave {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
 
-        .summary-item {
-            text-align: center;
-        }
-
-        .summary-val {
-            font-size: 1.3rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #00f2fe, #9b51e0);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .summary-lbl {
-            font-size: 0.75rem;
-            color: #64748b;
-            margin-top: 4px;
-            font-weight: 500;
-        }
-
-        .badge-grid {
+        /* HIGHLIGHT PERFORMANCE METRICS & CERTIFICATES (DASHBOARD STATS) */
+        .metrics-grid-summary {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
+            width: 100%;
         }
 
-        .badge-card {
+        .summary-mini-card {
             background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
+            border: 1px solid var(--border-glass);
+            border-radius: 18px;
             padding: 16px;
-            text-align: center;
-            transition: all 0.3s ease;
+            text-align: left;
         }
 
-        .badge-card-unlocked {
-            border-color: rgba(0, 242, 254, 0.2);
-            box-shadow: 0 8px 24px rgba(0, 242, 254, 0.05);
-        }
-
-        .badge-card-locked {
-            opacity: 0.4;
-            filter: grayscale(1);
-        }
-
-        .badge-art {
-            font-size: 2.2rem;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .badge-name {
-            font-size: 0.9rem;
-            font-weight: 700;
+        .mini-card-value {
+            font-size: 1.5rem;
+            font-weight: 800;
             color: #ffffff;
             margin-bottom: 4px;
         }
 
-        .badge-status {
+        .mini-card-label {
             font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            font-weight: 700;
         }
 
-        .status-unlocked { color: #22c55e; }
-        .status-locked { color: #64748b; }
+        /* Micro progress graph chart */
+        .progress-analytics-graph {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            padding: 20px;
+            width: 100%;
+            text-align: left;
+        }
 
-        /* Profile Details styling */
-        .profile-container {
+        .graph-header-lbl {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 16px;
+        }
+
+        .analytic-graph-bar-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            height: 110px;
+            padding-top: 10px;
+        }
+
+        .analytics-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            flex-grow: 1;
+        }
+
+        .analytics-col-fill {
+            width: 12px;
+            background: linear-gradient(to top, var(--neon-purple), var(--neon-blue));
+            border-radius: 4px;
+            height: 0%;
+            transition: height 1s var(--transition-smooth);
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.15);
+        }
+
+        .analytics-col-day {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* PROFILE SCREEN CONTAINER & CONTROL ITEMS */
+        .profile-workspace-view {
+            width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
         }
 
-        .large-avatar-box {
+        .profile-avatar-giant {
             position: relative;
-            width: 90px;
-            height: 90px;
+            width: 96px;
+            height: 96px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #00f2fe, #9b51e0);
             padding: 3px;
-            box-shadow: 0 0 30px rgba(0, 242, 254, 0.25);
-            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.3);
+            margin-bottom: 16px;
         }
 
-        .large-avatar-box img {
+        .profile-avatar-giant img {
             width: 100%;
             height: 100%;
             border-radius: 50%;
@@ -1161,128 +983,258 @@
             background: #0d0c15;
         }
 
-        .profile-name {
-            font-size: 1.4rem;
-            font-weight: 800;
+        .profile-identity-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
             color: #ffffff;
             margin-bottom: 4px;
         }
 
-        .profile-email {
+        .profile-identity-email {
             font-size: 0.85rem;
-            color: #64748b;
-            margin-bottom: 32px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
         }
 
-        .info-stack {
-            width: 100%;
+        .profile-meta-rows {
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            margin-bottom: 40px;
+            gap: 12px;
+            width: 100%;
+            margin-bottom: 28px;
         }
 
-        .info-row {
+        .meta-data-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 16px 20px;
             background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-glass);
             border-radius: 16px;
         }
 
-        .info-lbl {
-            font-size: 0.85rem;
-            color: #64748b;
-            font-weight: 600;
+        .meta-row-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 700;
         }
 
-        .info-val {
-            font-size: 0.9rem;
+        .meta-row-value {
+            font-size: 0.88rem;
             font-weight: 700;
             color: #ffffff;
         }
 
-        /* Firebase Auth Synchronization Loading Mask */
-        #app-loading {
-            background-color: #030303;
+        /* FIXED BOTTOM NAVIGATION BAR */
+        .premium-bottom-navigation {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 84px;
+            background: rgba(3, 3, 3, 0.7);
+            border-top: 1px solid var(--border-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 16px 12px 16px;
+        }
+
+        .nav-tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            width: 64px;
+            color: var(--text-secondary);
+            transition: color 0.3s var(--transition-smooth);
+            position: relative;
+        }
+
+        .nav-tab-icon {
+            font-size: 1.4rem;
+            transition: transform 0.3s var(--transition-bounce), color 0.3s;
+        }
+
+        .nav-tab-text {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        /* Hover indicator configurations */
+        .nav-tab-item:hover {
+            color: #ffffff;
+        }
+
+        .nav-tab-item:hover .nav-tab-icon {
+            transform: translateY(-2px);
+        }
+
+        .nav-tab-item.active {
+            color: var(--neon-blue);
+        }
+
+        .nav-tab-item.active .nav-tab-icon {
+            transform: scale(1.15) translateY(-3px);
+            filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.6));
+        }
+
+        /* Active highlight dot glow indicator */
+        .nav-tab-item::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--neon-blue);
+            box-shadow: 0 0 8px var(--neon-blue);
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.3s var(--transition-bounce);
+        }
+
+        .nav-tab-item.active::after {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* ====================================================
+         * FLOATING PREMIUM DETAIL MODALS
+         * ==================================================== */
+        .fullscreen-overlay-glass {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s var(--transition-smooth), visibility 0.4s;
+        }
+
+        .fullscreen-overlay-glass.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .popup-card-glass {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            box-shadow: 0 24px 50px rgba(0, 0, 0, 0.6);
+            width: 90%;
+            max-width: 400px;
+            border-radius: 28px;
+            padding: 32px 24px;
+            text-align: center;
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.4s var(--transition-bounce);
+        }
+
+        .fullscreen-overlay-glass.show .popup-card-glass {
+            transform: scale(1) translateY(0);
+        }
+
+        /* Firebase Auth synchronization sync load block */
+        #app-loading-gate {
+            background-color: var(--bg-darkest);
+            z-index: 2000;
             display: flex;
         }
 
-        /* Fire effect Keyframe */
-        @keyframes firePulse {
-            0% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(245, 158, 11, 0.5)); }
-            100% { transform: scale(1.15); filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.9)); }
+        /* Micro Shimmer Light Layer */
+        .btn-premium::before, .btn-glowing::before, .premium-menu-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transform: skewX(-20deg);
+            animation: dynamicShimmer 6s infinite ease-in-out;
+            pointer-events: none;
         }
 
-        /* Typing Dots Wave Keyframe */
-        @keyframes dotWave {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
+        @keyframes dynamicShimmer {
+            0% { left: -150%; }
+            50% { left: 150%; }
+            100% { left: 150%; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Ambient Gradient Backdrops -->
-    <div class="ambient-glow-purple"></div>
-    <div class="ambient-glow-blue"></div>
+    <!-- Ambient Glow Drops -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
 
-    <!-- Micro Particle Background Layer -->
+    <!-- Interactive Particle Backdrop Layer -->
     <canvas id="particles"></canvas>
 
-    <!-- 0. APP AUTH SYNC LOADING SCREEN -->
-    <div class="page-view active" id="app-loading">
+    <!-- 0. GATE SYSTEM: AUTHENTICATION SYNC OVERLAY -->
+    <div class="page-view active" id="app-loading-gate">
         <div class="card-wrapper" style="box-shadow: none; border: none; background: transparent;">
             <div class="brand-orb" style="width: 80px; height: 80px;">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#00f2fe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M2 17L12 22L22 17" stroke="#9b51e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M2 12L12 17L22 12" stroke="#4facfe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
-            <p style="color: #94a3b8; font-size: 0.95rem; margin-top: 10px; letter-spacing: 0.05em;">Syncing learning environment...</p>
+            <p style="color: var(--text-secondary); font-size: 0.95rem; margin-top: 12px; letter-spacing: 0.04em;">Initializing Secure Learning Portal...</p>
         </div>
     </div>
 
-    <!-- PAGE 1: LANDING PAGE -->
+    <!-- PAGE 1: USER SIGN-IN & GOOGLE SSO GATE -->
     <div class="page-view" id="page-landing" style="display: none;">
         <div class="card-wrapper">
-            <!-- Glowing Core Brand Icon -->
             <div class="brand-orb">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#00f2fe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M2 17L12 22L22 17" stroke="#9b51e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M2 12L12 17L22 12" stroke="#4facfe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
 
-            <!-- Typography -->
-            <div class="title-group">
-                <h1 class="app-title">GoalQuest.AI</h1>
-            </div>
+            <h1 class="app-title">GoalQuest.AI</h1>
             <p class="tagline">Learn Smart. Practice Better. Achieve More.</p>
 
-            <!-- Button Block -->
-            <div class="button-group">
-                <button class="sso-btn" id="sso-trigger" aria-label="Continue with Google">
-                    <span class="google-icon-wrapper">
-                        <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
-                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
-                        </svg>
-                    </span>
-                    Continue with Google
-                </button>
-            </div>
+            <button class="btn-premium ripple-trigger" id="sso-trigger" aria-label="Continue with Google">
+                <span style="display: flex; align-items: center; justify-content: center; width: 22px; height: 22px;">
+                    <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+                    </svg>
+                </span>
+                Continue with Google
+            </button>
         </div>
     </div>
 
-    <!-- PAGE 2: ONBOARDING PAGE -->
+    <!-- PAGE 2: PERSONALIZED ONBOARDING PROFILE SETUP -->
     <div class="page-view" id="page-onboarding" style="display: none;">
         <div class="card-wrapper">
             <div class="brand-orb">
@@ -1293,455 +1245,359 @@
                 </svg>
             </div>
 
-            <h2 class="onboarding-title">Welcome to GoalQuest.AI</h2>
-            <p class="onboarding-subtitle">Let's personalize your learning journey.</p>
+            <h2 class="onboarding-title">Welcome to GoalQuest</h2>
+            <p class="onboarding-subtitle">Personalize your high-performance schedule.</p>
 
             <form class="onboarding-form" id="onboard-form" novalidate>
                 <!-- Full Name -->
                 <div class="input-group">
                     <label class="input-label" for="onboard-name">Full Name</label>
-                    <input type="text" id="onboard-name" class="form-input" placeholder="Enter your full name" required autocomplete="name">
-                    <div class="input-error" id="error-name">Please enter a valid name (at least 2 characters).</div>
+                    <input type="text" id="onboard-name" class="form-input" placeholder="Your full name" required autocomplete="name">
+                    <div class="input-error" id="error-name">Name must be at least 2 characters.</div>
                 </div>
 
-                <!-- Mobile Number -->
+                <!-- Mobile Phone Number -->
                 <div class="input-group">
                     <label class="input-label" for="onboard-mobile">Mobile Number</label>
-                    <input type="tel" id="onboard-mobile" class="form-input" placeholder="e.g. +1234567890 or 9876543210" required autocomplete="tel">
-                    <div class="input-error" id="error-mobile">Please enter a valid mobile number (10-15 digits).</div>
+                    <input type="tel" id="onboard-mobile" class="form-input" placeholder="e.g., +91 98765 43210" required autocomplete="tel">
+                    <div class="input-error" id="error-mobile">Enter a valid 10-15 digit mobile number.</div>
                 </div>
 
-                <!-- Goal -->
+                <!-- Educational Aim -->
                 <div class="input-group">
-                    <label class="input-label" for="onboard-goal">Your Ultimate Goal</label>
-                    <input type="text" id="onboard-goal" class="form-input" placeholder="Example: Score 95%+ in CBSE Board" required>
-                    <div class="input-error" id="error-goal">Please outline your goal (at least 5 characters).</div>
+                    <label class="input-label" for="onboard-goal">Target Learning Goal</label>
+                    <input type="text" id="onboard-goal" class="form-input" placeholder="Example: Secure 95%+ in Boards" required>
+                    <div class="input-error" id="error-goal">Outline your academic target (min 5 chars).</div>
                 </div>
 
-                <!-- Preparing For Exam Dropdown -->
+                <!-- Syllabus Stream Selection -->
                 <div class="input-group">
-                    <label class="input-label" for="onboard-exam">Preparing For Exam</label>
+                    <label class="input-label" for="onboard-exam">Exam Target</label>
                     <select id="onboard-exam" class="form-select">
                         <option value="CBSE Class 10" selected>CBSE Class 10</option>
                         <option value="CBSE Class 12">CBSE Class 12</option>
-                        <option value="JEE Main / Advanced">JEE Main / Advanced</option>
-                        <option value="NEET Prep">NEET Prep</option>
+                        <option value="JEE Preparation">JEE Main / Advanced</option>
+                        <option value="NEET Prep Suite">NEET Prep Suite</option>
                     </select>
                 </div>
 
-                <!-- Submit Button -->
-                <div class="button-group">
-                    <button type="submit" class="btn-glowing" id="onboard-submit">
-                        <span class="btn-text">Continue</span>
-                        <span class="spinner" id="onboard-spinner"></span>
-                    </button>
-                </div>
+                <button type="submit" class="btn-premium btn-glowing ripple-trigger" id="onboard-submit" style="margin-top: 14px;">
+                    <span class="btn-text">Initialize Profile</span>
+                    <span class="spinner" id="onboard-spinner"></span>
+                </button>
             </form>
         </div>
     </div>
 
-    <!-- PAGE 3: SUCCESS ANIMATION PAGE -->
+    <!-- PAGE 3: INTERACTIVE REGISTRATION SUCCESS -->
     <div class="page-view" id="page-success" style="display: none;">
         <div class="card-wrapper">
-            <!-- Green Glowing Success Checkmark -->
             <div class="success-icon-wrapper">
-                <svg viewBox="0 0 52 52">
-                    <circle cx="26" cy="26" r="25" fill="none"/>
-                    <path d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                <svg viewBox="0 0 24 24">
+                    <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>
             </div>
 
-            <h2 class="success-title">🎉 Congratulations!</h2>
-            <p class="success-subtitle">
-                Your GoalQuest.AI account has been successfully created.<br><br>
-                Your personalized AI learning journey is now ready.
-            </p>
+            <h2 class="app-title" style="font-size: 2.2rem; margin-bottom: 8px;">Synchronized!</h2>
+            <p class="tagline" style="margin-bottom: 32px;">Your custom academic workspace is compiled and ready to deploy.</p>
 
-            <div class="button-group">
-                <button class="btn-glowing" id="btn-dashboard">
-                    Continue to Dashboard
-                </button>
-            </div>
+            <button class="btn-premium btn-glowing ripple-trigger" id="btn-dashboard">
+                Enter Dashboard Hub
+            </button>
         </div>
     </div>
 
-    <!-- PAGE 4: DASHBOARD HUB -->
+    <!-- PAGE 4: UPGRADED ULTIMATE DASHBOARD CONSOLE (MAIN WORKSPACE) -->
     <div class="page-view" id="page-dashboard" style="display: none;">
-        <div class="dash-layout">
-            <!-- Header Section -->
-            <div class="dash-header">
-                <div class="streak-container">
-                    <span class="streak-fire-icon">🔥</span>
-                    <span id="header-streak-txt">1 Day</span>
+        <div class="dash-viewport">
+            
+            <!-- FIXED TOP NAVIGATION HEADER -->
+            <div class="premium-header">
+                <!-- Streak tracker -->
+                <div class="streak-pill" id="dashboard-streak-trigger">
+                    <span class="streak-fire">🔥</span>
+                    <span id="streak-count-txt">0 Days</span>
                 </div>
-                <div class="profile-avatar-trigger" id="avatar-btn">
-                    <img id="header-avatar-img" src="" alt="Profile">
-                </div>
-            </div>
-
-            <!-- Dashboard Button Menu Stack -->
-            <div class="dash-menu-stack">
-                <!-- 1. Start Now -->
-                <div class="dash-menu-btn dash-menu-btn-primary" onclick="transitionToPage('page-dashboard', 'page-start-now')">
-                    <div class="menu-btn-inner">
-                        <span class="menu-btn-icon">🚀</span>
-                        <div>
-                            <h3 class="menu-btn-title">Start Now</h3>
-                            <p class="menu-btn-desc">Pick your subject and start learning</p>
-                        </div>
-                    </div>
-                    <span class="menu-btn-arrow">➔</span>
-                </div>
-
-                <!-- 2. Check Your Progress -->
-                <div class="dash-menu-btn dash-menu-btn-secondary" onclick="transitionToPage('page-dashboard', 'page-progress')">
-                    <div class="menu-btn-inner">
-                        <span class="menu-btn-icon">📈</span>
-                        <div>
-                            <h3 class="menu-btn-title">Check Your Progress</h3>
-                            <p class="menu-btn-desc">See level, weekly goals and streak</p>
-                        </div>
-                    </div>
-                    <span class="menu-btn-arrow">➔</span>
-                </div>
-
-                <!-- 3. AI Teacher -->
-                <div class="dash-menu-btn dash-menu-btn-secondary" onclick="transitionToPage('page-dashboard', 'page-ai-teacher')">
-                    <div class="menu-btn-inner">
-                        <span class="menu-btn-icon">🤖</span>
-                        <div>
-                            <h3 class="menu-btn-title">AI Teacher</h3>
-                            <p class="menu-btn-desc">Instant 24/7 personal tutor help</p>
-                        </div>
-                    </div>
-                    <span class="menu-btn-arrow">➔</span>
-                </div>
-
-                <!-- 4. Dashboard Stats -->
-                <div class="dash-menu-btn dash-menu-btn-secondary" onclick="transitionToPage('page-dashboard', 'page-stats')">
-                    <div class="menu-btn-inner">
-                        <span class="menu-btn-icon">📊</span>
-                        <div>
-                            <h3 class="menu-btn-title">Stats & Badges</h3>
-                            <p class="menu-btn-desc">Achievements, Rank and Study XP</p>
-                        </div>
-                    </div>
-                    <span class="menu-btn-arrow">➔</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SUB-PAGE: START NOW (SUBJECT SELECTION) -->
-    <div class="page-view" id="page-start-now" style="display: none;">
-        <div class="subpage-container">
-            <div class="subpage-header">
-                <button class="back-btn" onclick="transitionToPage('page-start-now', 'page-dashboard')">➔</button>
-                <div class="subpage-title-group">
-                    <h2 class="subpage-title">Subject Selection</h2>
-                    <span class="subpage-subtitle">Select a stream to begin learning</span>
-                </div>
-            </div>
-
-            <div class="subpage-content">
-                <div class="subject-grid">
-                    <!-- Math Card -->
-                    <div class="subject-card" onclick="alert('Launching Mathematics Module...')">
-                        <div class="subject-info">
-                            <div class="subject-icon-box" style="background: rgba(0, 242, 254, 0.1); border: 1px solid rgba(0, 242, 254, 0.3);">📐</div>
-                            <div>
-                                <h4 class="subject-title">Mathematics</h4>
-                                <span class="subject-progress-text">Level 1 • 45% Complete</span>
-                            </div>
-                        </div>
-                        <div class="progress-ring-container">
-                            <svg width="36" height="36">
-                                <circle stroke="rgba(255,255,255,0.05)" stroke-width="3" fill="transparent" r="15" cx="18" cy="18"/>
-                                <circle stroke="#00f2fe" stroke-width="3" fill="transparent" r="15" cx="18" cy="18" class="progress-ring-circle" stroke-dasharray="94.2" stroke-dashoffset="51.8"/>
-                            </svg>
-                        </div>
-                    </div>
-
-                    <!-- Science Card -->
-                    <div class="subject-card" onclick="alert('Launching Science Module...')">
-                        <div class="subject-info">
-                            <div class="subject-icon-box" style="background: rgba(155, 81, 224, 0.1); border: 1px solid rgba(155, 81, 224, 0.3);">🧬</div>
-                            <div>
-                                <h4 class="subject-title">Science & Biology</h4>
-                                <span class="subject-progress-text">Level 1 • 80% Complete</span>
-                            </div>
-                        </div>
-                        <div class="progress-ring-container">
-                            <svg width="36" height="36">
-                                <circle stroke="rgba(255,255,255,0.05)" stroke-width="3" fill="transparent" r="15" cx="18" cy="18"/>
-                                <circle stroke="#9b51e0" stroke-width="3" fill="transparent" r="15" cx="18" cy="18" class="progress-ring-circle" stroke-dasharray="94.2" stroke-dashoffset="18.8"/>
-                            </svg>
-                        </div>
-                    </div>
-
-                    <!-- Physics Card -->
-                    <div class="subject-card" onclick="alert('Launching Physics Module...')">
-                        <div class="subject-info">
-                            <div class="subject-icon-box" style="background: rgba(79, 172, 254, 0.1); border: 1px solid rgba(79, 172, 254, 0.3);">⚡</div>
-                            <div>
-                                <h4 class="subject-title">Applied Physics</h4>
-                                <span class="subject-progress-text">Level 1 • 15% Complete</span>
-                            </div>
-                        </div>
-                        <div class="progress-ring-container">
-                            <svg width="36" height="36">
-                                <circle stroke="rgba(255,255,255,0.05)" stroke-width="3" fill="transparent" r="15" cx="18" cy="18"/>
-                                <circle stroke="#4facfe" stroke-width="3" fill="transparent" r="15" cx="18" cy="18" class="progress-ring-circle" stroke-dasharray="94.2" stroke-dashoffset="80.1"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SUB-PAGE: CHECK YOUR PROGRESS -->
-    <div class="page-view" id="page-progress" style="display: none;">
-        <div class="subpage-container">
-            <div class="subpage-header">
-                <button class="back-btn" onclick="transitionToPage('page-progress', 'page-dashboard')">➔</button>
-                <div class="subpage-title-group">
-                    <h2 class="subpage-title">Your Progress</h2>
-                    <span class="subpage-subtitle">Track your learning momentum</span>
-                </div>
-            </div>
-
-            <div class="subpage-content">
-                <!-- Metrics Grid -->
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-value" id="prog-xp-val">120</div>
-                        <div class="metric-label">Total XP</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value" id="prog-lvl-val">1</div>
-                        <div class="metric-label">Current Level</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value" id="prog-solved-val">0</div>
-                        <div class="metric-label">Solved Qs</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value" id="prog-accuracy-val">0%</div>
-                        <div class="metric-label">Accuracy</div>
-                    </div>
-                </div>
-
-                <!-- Custom Bar Graph -->
-                <div class="chart-box">
-                    <h4 class="chart-title">Weekly XP Milestones</h4>
-                    <div class="bar-container" id="progress-bar-graph">
-                        <div class="chart-bar-column">
-                            <div class="chart-bar-fill" style="height: 0%;" data-height="25%"></div>
-                            <span class="chart-bar-label">Mon</span>
-                        </div>
-                        <div class="chart-bar-column">
-                            <div class="chart-bar-fill" style="height: 0%;" data-height="45%"></div>
-                            <span class="chart-bar-label">Tue</span>
-                        </div>
-                        <div class="chart-bar-column">
-                            <div class="chart-bar-fill" style="height: 0%;" data-height="30%"></div>
-                            <span class="chart-bar-label">Wed</span>
-                        </div>
-                        <div class="chart-bar-column">
-                            <div class="chart-bar-fill" style="height: 0%;" data-height="65%"></div>
-                            <span class="chart-bar-label">Thu</span>
-                        </div>
-                        <div class="chart-bar-column">
-                            <div class="chart-bar-fill" style="height: 0%;" data-height="50%"></div>
-                            <span class="chart-bar-label">Fri</span>
-                        </div>
-                        <div class="chart-bar-column">
-                            <div class="chart-bar-fill" style="height: 0%;" data-height="85%"></div>
-                            <span class="chart-bar-label">Sat</span>
-                        </div>
-                        <div class="chart-bar-column">
-                            <div class="chart-bar-fill" style="height: 0%;" data-height="95%"></div>
-                            <span class="chart-bar-label">Sun</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SUB-PAGE: AI TEACHER CHAT -->
-    <div class="page-view" id="page-ai-teacher" style="display: none;">
-        <div class="subpage-container">
-            <div class="subpage-header">
-                <button class="back-btn" onclick="transitionToPage('page-ai-teacher', 'page-dashboard')">➔</button>
-                <div class="subpage-title-group">
-                    <h2 class="subpage-title">AI Teacher</h2>
-                    <span class="subpage-subtitle">Instant answers to any academic problem</span>
-                </div>
-            </div>
-
-            <!-- Chat interface dynamic UI -->
-            <div class="subpage-content chat-layout">
-                <!-- Message window -->
-                <div class="chat-messages-area" id="chat-scroller">
-                    <div class="chat-bubble chat-bubble-ai">
-                        Hello! I am your <strong>GoalQuest AI Tutor</strong>. Ask me any study-related question, or select an example below!
-                    </div>
-                </div>
-
-                <!-- Suggestions chips -->
-                <div class="suggestion-chips">
-                    <div class="chip" onclick="sendSuggestedMessage('Explain Quantum Physics in simple words')">⚛️ Quantum Physics</div>
-                    <div class="chip" onclick="sendSuggestedMessage('Help me solve a math quadratic equation')">📐 Math Formulas</div>
-                    <div class="chip" onclick="sendSuggestedMessage('What is photosynthesis?')">🌿 Photosynthesis</div>
-                </div>
-
-                <!-- Bottom Input box -->
-                <div class="chat-input-bar">
-                    <input type="text" class="chat-input-element" id="chat-input-field" placeholder="Ask your AI Tutor anything...">
-                    <button class="chat-send-btn" id="chat-send-trigger">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="22" y1="2" x2="11" y2="13"></line>
-                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SUB-PAGE: STATS & ACHIEVEMENTS -->
-    <div class="page-view" id="page-stats" style="display: none;">
-        <div class="subpage-container">
-            <div class="subpage-header">
-                <button class="back-btn" onclick="transitionToPage('page-stats', 'page-dashboard')">➔</button>
-                <div class="subpage-title-group">
-                    <h2 class="subpage-title">Achievements</h2>
-                    <span class="subpage-subtitle">Your accomplishments and unlocks</span>
-                </div>
-            </div>
-
-            <div class="subpage-content">
-                <div class="stats-summary">
-                    <div class="summary-item">
-                        <div class="summary-val" id="stats-rank-txt">Newbie</div>
-                        <div class="summary-lbl">Rank</div>
-                    </div>
-                    <div class="summary-item">
-                        <div class="summary-val" id="stats-coins-txt">50</div>
-                        <div class="summary-lbl">Coins 🪙</div>
-                    </div>
-                    <div class="summary-item">
-                        <div class="summary-val">85%</div>
-                        <div class="summary-lbl">Today's Goal</div>
-                    </div>
-                </div>
-
-                <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; text-align: left; color: #e2e8f0;">Earned Badges</h3>
                 
-                <div class="badge-grid" id="badges-container">
-                    <!-- Badge 1 Unlocked -->
-                    <div class="badge-card badge-card-unlocked">
-                        <span class="badge-art">🔥</span>
-                        <h4 class="badge-name">First Step</h4>
-                        <span class="badge-status status-unlocked">Unlocked</span>
-                    </div>
-
-                    <!-- Badge 2 Unlocked -->
-                    <div class="badge-card badge-card-unlocked">
-                        <span class="badge-art">🎯</span>
-                        <h4 class="badge-name">Quick Starter</h4>
-                        <span class="badge-status status-unlocked">Unlocked</span>
-                    </div>
-
-                    <!-- Badge 3 Locked -->
-                    <div class="badge-card badge-card-locked">
-                        <span class="badge-art">👑</span>
-                        <h4 class="badge-name">Grandmaster</h4>
-                        <span class="badge-status status-locked">Locked</span>
-                    </div>
-
-                    <!-- Badge 4 Locked -->
-                    <div class="badge-card badge-card-locked">
-                        <span class="badge-art">🦉</span>
-                        <h4 class="badge-name">Super Scholar</h4>
-                        <span class="badge-status status-locked">Locked</span>
-                    </div>
+                <div class="header-title-center">GoalQuest.AI Dashboard</div>
+                
+                <!-- Avatar triggers custom details overlay -->
+                <div class="profile-container-btn" id="header-profile-btn">
+                    <div class="profile-inner-avatar" id="header-avatar-slot">G</div>
                 </div>
             </div>
+
+            <!-- SCROLLABLE DASHBOARD VIEWPORT -->
+            <div class="dash-scrollable-body" id="dash-scroll-container">
+                
+                <!-- TAB 1: DASHBOARD HOME HUB -->
+                <div class="section-wrapper active" id="tab-section-home">
+                    
+                    <!-- MENU CARD 1: Start Now -->
+                    <div class="glow-shimmer-wrap">
+                        <div class="premium-menu-card ripple-trigger" onclick="switchMainTab('learn')">
+                            <div class="premium-menu-card-inner">
+                                <div class="card-emoji-box">🚀</div>
+                                <div class="card-meta-text">
+                                    <h3 class="card-meta-title">Start Now</h3>
+                                    <p class="card-meta-desc">Continue your personalized learning path</p>
+                                </div>
+                            </div>
+                            <span class="card-arrow-icon">➔</span>
+                        </div>
+                    </div>
+
+                    <!-- MENU CARD 2: Check Your Knowledge -->
+                    <div class="glow-shimmer-wrap">
+                        <div class="premium-menu-card ripple-trigger" onclick="triggerMockAlert('PYQs & Dynamic Quizzes engine initializing...')">
+                            <div class="premium-menu-card-inner">
+                                <div class="card-emoji-box">📖</div>
+                                <div class="card-meta-text">
+                                    <h3 class="card-meta-title">Check Your Knowledge</h3>
+                                    <p class="card-meta-desc">Practice mock papers and interactive quizzes</p>
+                                </div>
+                            </div>
+                            <span class="card-arrow-icon">➔</span>
+                        </div>
+                    </div>
+
+                    <!-- MENU CARD 3: AI Teacher -->
+                    <div class="glow-shimmer-wrap">
+                        <div class="premium-menu-card ripple-trigger" onclick="switchMainTab('ai')">
+                            <div class="premium-menu-card-inner">
+                                <div class="card-emoji-box">🤖</div>
+                                <div class="card-meta-text">
+                                    <h3 class="card-meta-title">AI Teacher</h3>
+                                    <p class="card-meta-desc">Ask doubt or explain any Class 10 topic</p>
+                                </div>
+                            </div>
+                            <span class="card-arrow-icon">➔</span>
+                        </div>
+                    </div>
+
+                    <!-- MENU CARD 4: Performance Analytics -->
+                    <div class="glow-shimmer-wrap">
+                        <div class="premium-menu-card ripple-trigger" onclick="switchMainTab('learn')">
+                            <div class="premium-menu-card-inner">
+                                <div class="card-emoji-box">🏆</div>
+                                <div class="card-meta-text">
+                                    <h3 class="card-meta-title">Performance & Progress</h3>
+                                    <p class="card-meta-desc">Review metric records, XP logs and ranks</p>
+                                </div>
+                            </div>
+                            <span class="card-arrow-icon">➔</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: ACTIVE LEARNING ROOM (LEARN TAB) -->
+                <div class="section-wrapper" id="tab-section-learn">
+                    <h2 class="onboarding-title" style="text-align: left; font-size: 1.4rem;">Select Active Subject</h2>
+                    
+                    <div class="subject-group-grid">
+                        <!-- Math Course Card -->
+                        <div class="subject-metric-card ripple-trigger" onclick="triggerMockAlert('Launching CBSE 10 Math Module...')">
+                            <div class="subject-left-set">
+                                <div class="subject-glyph" style="background: rgba(0, 242, 254, 0.1); border-color: rgba(0, 242, 254, 0.25);">📐</div>
+                                <div class="subject-text-stack">
+                                    <h4 class="subject-name-lbl">Advanced Mathematics</h4>
+                                    <span class="subject-subcompletion">Syllabus • 45% Complete</span>
+                                </div>
+                            </div>
+                            <div class="progress-circle-wrap">
+                                <svg width="38" height="38">
+                                    <circle stroke="rgba(255,255,255,0.04)" stroke-width="3" fill="transparent" r="16" cx="19" cy="19"/>
+                                    <circle stroke="var(--neon-blue)" stroke-width="3" fill="transparent" r="16" cx="19" cy="19" class="circle-progress-ring" stroke-dasharray="100.5" stroke-dashoffset="55.2"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- General Science Suite -->
+                        <div class="subject-metric-card ripple-trigger" onclick="triggerMockAlert('Launching Science & Chemistry Workspace...')">
+                            <div class="subject-left-set">
+                                <div class="subject-glyph" style="background: rgba(155, 81, 224, 0.1); border-color: rgba(155, 81, 224, 0.25);">🧬</div>
+                                <div class="subject-text-stack">
+                                    <h4 class="subject-name-lbl">Physics & Biology</h4>
+                                    <span class="subject-subcompletion">Syllabus • 75% Complete</span>
+                                </div>
+                            </div>
+                            <div class="progress-circle-wrap">
+                                <svg width="38" height="38">
+                                    <circle stroke="rgba(255,255,255,0.04)" stroke-width="3" fill="transparent" r="16" cx="19" cy="19"/>
+                                    <circle stroke="var(--neon-purple)" stroke-width="3" fill="transparent" r="16" cx="19" cy="19" class="circle-progress-ring" stroke-dasharray="100.5" stroke-dashoffset="25.1"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PROGRESS SUMMARY GRAPH -->
+                    <div class="progress-analytics-graph" style="margin-top: 14px;">
+                        <h4 class="graph-header-lbl">Weekly Learning Activity (XP)</h4>
+                        <div class="analytic-graph-bar-row" id="anal-bar-row">
+                            <div class="analytics-col">
+                                <div class="analytics-col-fill" style="height: 0%;" data-percentage="20%"></div>
+                                <span class="analytics-col-day">Mon</span>
+                            </div>
+                            <div class="analytics-col">
+                                <div class="analytics-col-fill" style="height: 0%;" data-percentage="45%"></div>
+                                <span class="analytics-col-day">Tue</span>
+                            </div>
+                            <div class="analytics-col">
+                                <div class="analytics-col-fill" style="height: 0%;" data-percentage="35%"></div>
+                                <span class="analytics-col-day">Wed</span>
+                            </div>
+                            <div class="analytics-col">
+                                <div class="analytics-col-fill" style="height: 0%;" data-percentage="70%"></div>
+                                <span class="analytics-col-day">Thu</span>
+                            </div>
+                            <div class="analytics-col">
+                                <div class="analytics-col-fill" style="height: 0%;" data-percentage="50%"></div>
+                                <span class="analytics-col-day">Fri</span>
+                            </div>
+                            <div class="analytics-col">
+                                <div class="analytics-col-fill" style="height: 0%;" data-percentage="85%"></div>
+                                <span class="analytics-col-day">Sat</span>
+                            </div>
+                            <div class="analytics-col">
+                                <div class="analytics-col-fill" style="height: 0%;" data-percentage="90%"></div>
+                                <span class="analytics-col-day">Sun</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: ARTIFICIAL INTELLECT TUTOR PLATFORM (AI TAB) -->
+                <div class="section-wrapper" id="tab-section-ai">
+                    <div class="teacher-chat-interface">
+                        <!-- Message viewport logs -->
+                        <div class="chat-screen-logs" id="chat-scroller">
+                            <div class="chat-bubble chat-bubble-system">
+                                Hello! I am your <strong>GoalQuest AI Tutor</strong>. Ask me any CBSE Class 10 academic query, or select a dynamic suggestion chip below!
+                            </div>
+                        </div>
+
+                        <!-- Chip suggestions -->
+                        <div class="chat-suggested-chips">
+                            <div class="suggested-pill" onclick="sendSuggestionChat('Explain Photosynthesis formula step-by-step')">🌿 Photosynthesis</div>
+                            <div class="suggested-pill" onclick="sendSuggestionChat('What is the formula of Quadratic roots?')">📐 Quadratic Roots</div>
+                            <div class="suggested-pill" onclick="sendSuggestionChat('Explain Ohm Law in electric circuits')">⚡ Ohm's Law</div>
+                        </div>
+
+                        <!-- Typing user command triggers -->
+                        <div class="chat-input-row">
+                            <input type="text" class="chat-text-area" id="chat-input-el" placeholder="Type your doubt here...">
+                            <button class="chat-submit-btn ripple-trigger" id="chat-btn-submit">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 4: SYSTEM METRIC SUMMARIES & RANK (STATS/DASHBOARD TAB) -->
+                <div class="section-wrapper" id="tab-section-stats">
+                    <h2 class="onboarding-title" style="text-align: left; font-size: 1.4rem;">Performance Metrics</h2>
+                    
+                    <div class="metrics-grid-summary">
+                        <div class="summary-mini-card">
+                            <div class="mini-card-value" id="stats-xp-val">120</div>
+                            <div class="mini-card-label">Total XP</div>
+                        </div>
+                        <div class="summary-mini-card">
+                            <div class="mini-card-value" id="stats-level-val">Level 1</div>
+                            <div class="mini-card-label">Current Level</div>
+                        </div>
+                        <div class="summary-mini-card">
+                            <div class="mini-card-value" id="stats-solved-val">0</div>
+                            <div class="mini-card-label">Solved Quizzes</div>
+                        </div>
+                        <div class="summary-mini-card">
+                            <div class="mini-card-value" id="stats-accuracy-val">0%</div>
+                            <div class="mini-card-label">Overall Accuracy</div>
+                        </div>
+                    </div>
+
+                    <div class="subject-metric-card" style="margin-top: 10px;">
+                        <div class="subject-left-set">
+                            <div class="subject-glyph" style="background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.25);">👑</div>
+                            <div class="subject-text-stack">
+                                <h4 class="subject-name-lbl" id="stats-rank-lbl">Scholar</h4>
+                                <span class="subject-subcompletion">Dynamic Academic Rank</span>
+                            </div>
+                        </div>
+                        <span style="font-weight: 800; font-size: 0.9rem; color: var(--neon-gold)">ACTIVE</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- FIXED BOTTOM TAB CONTROL MATRIX -->
+            <div class="premium-bottom-navigation">
+                <div class="nav-tab-item active" id="nav-item-home" onclick="switchMainTab('home')">
+                    <span class="nav-tab-icon">🏠</span>
+                    <span class="nav-tab-text">Home</span>
+                </div>
+                <div class="nav-tab-item" id="nav-item-learn" onclick="switchMainTab('learn')">
+                    <span class="nav-tab-icon">📚</span>
+                    <span class="nav-tab-text">Learn</span>
+                </div>
+                <div class="nav-tab-item" id="nav-item-ai" onclick="switchMainTab('ai')">
+                    <span class="nav-tab-icon">🤖</span>
+                    <span class="nav-tab-text">AI</span>
+                </div>
+                <div class="nav-tab-item" id="nav-item-stats" onclick="switchMainTab('stats')">
+                    <span class="nav-tab-icon">👤</span>
+                    <span class="nav-tab-text">Profile</span>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <!-- SUB-PAGE: USER PROFILE -->
-    <div class="page-view" id="page-profile" style="display: none;">
-        <div class="subpage-container">
-            <div class="subpage-header">
-                <button class="back-btn" onclick="transitionToPage('page-profile', 'page-dashboard')">➔</button>
-                <div class="subpage-title-group">
-                    <h2 class="subpage-title">Your Profile</h2>
-                    <span class="subpage-subtitle">Manage account details</span>
-                </div>
-            </div>
-
-            <div class="subpage-content profile-container">
-                <div class="large-avatar-box">
-                    <img id="profile-avatar-img" src="" alt="Profile Avatar">
+    <!-- FLOATING INTERACTIVE GLASS OVERLAY: PROFILE META-CARD DETAILS -->
+    <div class="fullscreen-overlay-glass" id="profile-popup-overlay">
+        <div class="popup-card-glass">
+            <div class="profile-workspace-view">
+                <div class="profile-avatar-giant">
+                    <div class="profile-inner-avatar" id="pop-avatar-slot" style="font-size: 2.2rem;">G</div>
                 </div>
 
-                <h3 class="profile-name" id="profile-name-txt">User Name</h3>
-                <p class="profile-email" id="profile-email-txt">user@example.com</p>
+                <h3 class="profile-identity-name" id="pop-name-lbl">Student</h3>
+                <p class="profile-identity-email" id="pop-email-lbl">student@example.com</p>
 
-                <div class="info-stack">
-                    <div class="info-row">
-                        <span class="info-lbl">Preparing For</span>
-                        <span class="info-val" id="profile-exam-txt">CBSE Class 10</span>
+                <!-- Detailed Rows -->
+                <div class="profile-meta-rows">
+                    <div class="meta-data-row">
+                        <span class="meta-row-label">Mobile Number</span>
+                        <span class="meta-row-value" id="pop-mobile-lbl">+91 00000 00000</span>
                     </div>
-                    <div class="info-row">
-                        <span class="info-lbl">Target Goal</span>
-                        <span class="info-val" id="profile-goal-txt">Score 95%+ in Boards</span>
+                    <div class="meta-data-row">
+                        <span class="meta-row-label">Educational Aim</span>
+                        <span class="meta-row-value" id="pop-goal-lbl">High Performance</span>
+                    </div>
+                    <div class="meta-data-row">
+                        <span class="meta-row-label">Curriculum Exam</span>
+                        <span class="meta-row-value" id="pop-exam-lbl">CBSE Class 10</span>
                     </div>
                 </div>
 
-                <button class="sso-btn" id="logout-trigger" style="border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.05); color: #fca5a5;">
-                    Sign Out / Log Out
+                <!-- Signout interaction -->
+                <button class="btn-premium ripple-trigger" id="pop-logout-btn" style="border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.05); color: var(--neon-red); margin-top: 10px;">
+                    Sign Out Account
+                </button>
+                <button class="btn-premium ripple-trigger" id="pop-close-btn" style="margin-top: 12px; background: transparent; border-color: transparent;">
+                    Back to Console
                 </button>
             </div>
-        </div>
-    </div>
-
-    <!-- PREMIUM CUSTOM ERROR MODAL -->
-    <div class="error-modal-overlay" id="custom-error-modal">
-        <div class="error-card">
-            <div class="error-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon>
-                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                </svg>
-            </div>
-            <h3 class="error-modal-title">Domain Not Authorized</h3>
-            <div class="error-modal-desc" id="error-explanation">
-                यह डोमेन आपके Firebase प्रोजेक्ट में अधिकृत (Authorized) नहीं है:
-                <code id="current-url">Loading...</code>
-                <br>
-                <strong>इसे ठीक करने के लिए:</strong>
-                <ol style="margin-left: 20px; margin-top: 8px;">
-                    <li>Firebase Console में जाएं।</li>
-                    <li>Authentication ➔ Settings ➔ Authorized Domains में जाएं।</li>
-                    <li>इस डोमेन/IP को जोड़ें।</li>
-                    <li>स्थानीय परीक्षण (Local testing) के लिए <code>localhost</code> को एक स्थानीय वेब सर्वर (जैसे Live Server) पर चलाएं।</li>
-                </ol>
-            </div>
-            <button class="error-close-btn" id="error-modal-close">Got It</button>
         </div>
     </div>
 
     <!-- Script Implementations -->
     <script>
         /************************************************************
-         * 1. FIREBASE INITIALIZATION
-         * Your official Firebase configuration coordinates integrated.
+         * 1. FIREBASE CONFIGURATION & INITIALIZATION
          ************************************************************/
         const firebaseConfig = {
           apiKey: "AIzaSyCHvYW3gkq_wKn0gZ-ao7GgDHbR7lcx65c",
@@ -1754,235 +1610,139 @@
           measurementId: "G-YCD2D186RK"
         };
 
-        // Initialize Firebase SDK
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Global User State holder
-        let authenticatedUser = null;
-        let userProfileData = null;
+        // System Core App State Holder
+        let appUserContext = null;
+        let appProfileContext = null;
 
         /************************************************************
-         * 2. PAGE ROUTER ENGINE
+         * 2. PAGE TRANSITIONS ROUTER MATRIX
          ************************************************************/
         function transitionToPage(fromPageId, toPageId) {
-            const fromEl = document.getElementById(fromPageId);
-            const toEl = document.getElementById(toPageId);
+            const fromPage = document.getElementById(fromPageId);
+            const toPage = document.getElementById(toPageId);
 
-            if (!fromEl || !toEl) return;
+            if (!fromPage || !toPage) return;
 
-            // Trigger fading out transition
-            fromEl.classList.remove('active');
+            // Trigger active state change with transitions
+            fromPage.classList.remove('active');
             
             setTimeout(() => {
-                // Instantly swap display states once faded out
-                fromEl.style.display = 'none';
-                toEl.style.display = 'flex';
+                fromPage.style.display = 'none';
+                toPage.style.display = 'flex';
                 
-                // Allow reflow for scaling CSS transitions
-                toEl.offsetHeight;
-                
-                // Trigger active class fade-in
-                toEl.classList.add('active');
+                toPage.offsetHeight; // force rendering engine tick
+                toPage.classList.add('active');
 
-                // Trigger specific sub-page interactive animations on navigation
-                if (toPageId === 'page-progress') {
-                    animateWeeklyChart();
+                // If navigating to dashboard workspace, synchronize components
+                if (toPageId === 'page-dashboard') {
+                    animateDashboardProgressBars();
                 }
-            }, 600); 
+            }, 500);
         }
 
         /************************************************************
-         * 3. AUTH STATE OBSERVER (AUTOMATIC LOGIN & SESSION ROUTING)
+         * 3. SIGN-IN & AUTH STATE CHANGE WORKERS
          ************************************************************/
         auth.onAuthStateChanged(async (user) => {
-            const appLoadingScreen = document.getElementById('app-loading');
-            
-            if (user) {
-                authenticatedUser = user;
-                try {
-                    // Fetch user document profiles in firestore
-                    const profileRef = db.collection("users").doc(user.uid);
-                    const snap = await profileRef.get();
+            const loadingGate = document.getElementById('app-loading-gate');
 
-                    if (snap.exists) {
-                        userProfileData = snap.data();
+            if (user) {
+                appUserContext = user;
+                try {
+                    const profileReference = db.collection("users").doc(user.uid);
+                    const userDoc = await profileReference.get();
+
+                    if (userDoc.exists) {
+                        appProfileContext = userDoc.data();
                         
-                        // Handle streak calculations on load
-                        await verifyAndTrackStreak(user.uid);
+                        // Handle streak compilation
+                        await verifyAndSynchronizeStreak(user.uid);
                         
-                        // Bind synced profiles to Dashboard views
-                        synchronizeDashboardDOM();
-                        
-                        // Transition straight to Dashboard Hub
-                        appLoadingScreen.classList.remove('active');
+                        // Synchronize UI layouts
+                        synchronizeDashboardHUD();
+
+                        // Route to dashboard
+                        loadingGate.classList.remove('active');
                         setTimeout(() => {
-                            appLoadingScreen.style.display = 'none';
+                            loadingGate.style.display = 'none';
                             document.getElementById('page-dashboard').style.display = 'flex';
                             document.getElementById('page-dashboard').offsetHeight;
                             document.getElementById('page-dashboard').classList.add('active');
-                        }, 600);
+                            animateDashboardProgressBars();
+                        }, 500);
+
                     } else {
-                        // User registered but incomplete onboarding, reroute to onboarding
-                        appLoadingScreen.classList.remove('active');
+                        // Forward to personalization wizard
+                        if (user.displayName) {
+                            document.getElementById('onboard-name').value = user.displayName;
+                        }
+                        loadingGate.classList.remove('active');
                         setTimeout(() => {
-                            appLoadingScreen.style.display = 'none';
+                            loadingGate.style.display = 'none';
                             document.getElementById('page-onboarding').style.display = 'flex';
                             document.getElementById('page-onboarding').offsetHeight;
                             document.getElementById('page-onboarding').classList.add('active');
-                        }, 600);
+                        }, 500);
                     }
+
                 } catch (error) {
-                    console.error("Auth Session Error:", error);
-                    appLoadingScreen.style.display = 'none';
+                    console.error("Secure initial fetch failure:", error);
+                    alert("Initialization error. Returning to landing module.");
+                    loadingGate.style.display = 'none';
                     document.getElementById('page-landing').style.display = 'flex';
                     document.getElementById('page-landing').classList.add('active');
-                    showCustomError(error.code, error.message);
                 }
             } else {
-                // No active auth session, fade out load gate and expose landing
-                appLoadingScreen.classList.remove('active');
+                // Clear user contexts and route back to landing
+                appUserContext = null;
+                appProfileContext = null;
+                loadingGate.classList.remove('active');
                 setTimeout(() => {
-                    appLoadingScreen.style.display = 'none';
+                    loadingGate.style.display = 'none';
                     document.getElementById('page-landing').style.display = 'flex';
                     document.getElementById('page-landing').offsetHeight;
                     document.getElementById('page-landing').classList.add('active');
-                }, 600);
+                }, 500);
             }
         });
 
         /************************************************************
-         * 4. DAILY STREAK SYNC CONTROLLER
-         ************************************************************/
-        async function verifyAndTrackStreak(uid) {
-            const todayStr = new Date().toISOString().split('T')[0];
-            let currentStreak = userProfileData.streak || 1;
-            let lastActiveDate = userProfileData.lastActiveDate;
-
-            if (lastActiveDate) {
-                const today = new Date(todayStr);
-                const lastActive = new Date(lastActiveDate);
-                const diffTime = Math.abs(today - lastActive);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-                if (diffDays === 1) {
-                    // Incremented daily momentum
-                    currentStreak += 1;
-                } else if (diffDays > 1) {
-                    // Overdue days reset
-                    currentStreak = 1;
-                }
-            } else {
-                currentStreak = 1;
-            }
-
-            // Sync updated logs back to storage
-            userProfileData.streak = currentStreak;
-            userProfileData.lastActiveDate = todayStr;
-
-            await db.collection("users").doc(uid).update({
-                streak: currentStreak,
-                lastActiveDate: todayStr
-            });
-        }
-
-        /************************************************************
-         * 5. POPULATE SYNCED DOM ELEMENTS
-         ************************************************************/
-        function synchronizeDashboardDOM() {
-            if (!userProfileData) return;
-
-            // Header profile image/avatars fallback
-            const avatarUrl = userProfileData.photoURL || `https://api.dicebear.com/7.x/bottts/svg?seed=${userProfileData.uid}`;
-            
-            // Header
-            document.getElementById('header-avatar-img').src = avatarUrl;
-            document.getElementById('header-streak-txt').textContent = `${userProfileData.streak || 1} ${userProfileData.streak === 1 ? 'Day' : 'Days'}`;
-            
-            // Subpages Details
-            document.getElementById('prog-xp-val').textContent = userProfileData.xp || 120;
-            document.getElementById('prog-lvl-val').textContent = userProfileData.level || 1;
-            document.getElementById('prog-solved-val').textContent = userProfileData.solved || 0;
-            document.getElementById('prog-accuracy-val').textContent = `${userProfileData.accuracy || 0}%`;
-
-            // Stats Sub-page
-            document.getElementById('stats-rank-txt').textContent = userProfileData.rank || 'Newbie';
-            document.getElementById('stats-coins-txt').textContent = userProfileData.coins || 50;
-
-            // Profile Subpage
-            document.getElementById('profile-avatar-img').src = avatarUrl;
-            document.getElementById('profile-name-txt').textContent = userProfileData.name || 'User';
-            document.getElementById('profile-email-txt').textContent = userProfileData.email || 'user@example.com';
-            document.getElementById('profile-exam-txt').textContent = userProfileData.class ? `CBSE Class ${userProfileData.class}` : 'CBSE Class 10';
-            document.getElementById('profile-goal-txt').textContent = userProfileData.goal || 'Achieve My Goals';
-        }
-
-        // Setup click handler to toggle Profile Subpage
-        document.getElementById('avatar-btn').addEventListener('click', () => {
-            transitionToPage('page-dashboard', 'page-profile');
-        });
-
-        /************************************************************
-         * 6. PREMIUM CUSTOM MODAL TRIGGER
-         ************************************************************/
-        const errorModal = document.getElementById('custom-error-modal');
-        const errorExplanation = document.getElementById('error-explanation');
-        const errorCloseBtn = document.getElementById('error-modal-close');
-        const currentUrlCode = document.getElementById('current-url');
-
-        function showCustomError(errCode, errMessage) {
-            currentUrlCode.textContent = window.location.href;
-            if (errCode === 'auth/unauthorized-domain') {
-                errorModal.classList.add('show');
-            } else {
-                errorExplanation.innerHTML = `Something went wrong during login:<br><code>${errMessage}</code>`;
-                errorModal.classList.add('show');
-            }
-        }
-
-        errorCloseBtn.addEventListener('click', () => {
-            errorModal.classList.remove('show');
-        });
-
-        /************************************************************
-         * 7. GOOGLE SIGN-IN INTERACTION
+         * 4. AUTH & GOOGLE POPUP TRIGGERS
          ************************************************************/
         const ssoButton = document.getElementById('sso-trigger');
-
         ssoButton.addEventListener('click', async (e) => {
             e.preventDefault();
-            
-            // Prevent duplicate clicks
             ssoButton.style.pointerEvents = 'none';
             ssoButton.style.opacity = '0.7';
 
-            const provider = new firebase.auth.GoogleAuthProvider();
+            const authProvider = new firebase.auth.GoogleAuthProvider();
 
             try {
-                const result = await auth.signInWithPopup(provider);
-                authenticatedUser = result.user;
+                const response = await auth.signInWithPopup(authProvider);
+                appUserContext = response.user;
 
-                // Check database to see if this user profile document already exists
-                const userDocRef = db.collection("users").doc(authenticatedUser.uid);
-                const userSnapshot = await userDocRef.get();
+                const profileReference = db.collection("users").doc(appUserContext.uid);
+                const snapshotDoc = await profileReference.get();
 
-                if (userSnapshot.exists) {
-                    userProfileData = userSnapshot.data();
-                    await verifyAndTrackStreak(authenticatedUser.uid);
-                    synchronizeDashboardDOM();
+                if (snapshotDoc.exists) {
+                    appProfileContext = snapshotDoc.data();
+                    await verifyAndSynchronizeStreak(appUserContext.uid);
+                    synchronizeDashboardHUD();
                     transitionToPage('page-landing', 'page-success');
-                    triggerConfetti();
+                    triggerConfettiExplosion();
                 } else {
-                    // Go to onboarding and prefill default name if present in Google account
-                    if (authenticatedUser.displayName) {
-                        document.getElementById('onboard-name').value = authenticatedUser.displayName;
+                    if (appUserContext.displayName) {
+                        document.getElementById('onboard-name').value = appUserContext.displayName;
                     }
                     transitionToPage('page-landing', 'page-onboarding');
                 }
-            } catch (error) {
-                console.error("Firebase Auth Error:", error);
-                showCustomError(error.code, error.message);
+            } catch (err) {
+                console.error("Single Sign On error logs:", err);
+                alert("Sign-in process cancelled or timed out.");
             } finally {
                 ssoButton.style.pointerEvents = 'all';
                 ssoButton.style.opacity = '1';
@@ -1990,83 +1750,75 @@
         });
 
         /************************************************************
-         * 8. ONBOARDING & DATA STORAGE
+         * 5. PERSONALIZATION ONBOARDING WORKERS
          ************************************************************/
         const onboardForm = document.getElementById('onboard-form');
-        const nameInput = document.getElementById('onboard-name');
-        const mobileInput = document.getElementById('onboard-mobile');
-        const goalInput = document.getElementById('onboard-goal');
-        const examSelect = document.getElementById('onboard-exam');
-        const submitBtn = document.getElementById('onboard-submit');
-        const btnText = submitBtn.querySelector('.btn-text');
-        const spinner = document.getElementById('onboard-spinner');
+        const onboardingName = document.getElementById('onboard-name');
+        const onboardingMobile = document.getElementById('onboard-mobile');
+        const onboardingGoal = document.getElementById('onboard-goal');
+        const onboardingExam = document.getElementById('onboard-exam');
+        const submitOnboardBtn = document.getElementById('onboard-submit');
+        const onboardSpinner = document.getElementById('onboard-spinner');
 
-        // Reset inline input validation highlighting on user input
-        [nameInput, mobileInput, goalInput].forEach(input => {
-            input.addEventListener('input', () => {
-                input.classList.remove('invalid');
-                const errorDiv = document.getElementById('error-' + input.id.split('-')[1]);
-                if (errorDiv) errorDiv.style.display = 'none';
+        // Reset validity on form edits
+        [onboardingName, onboardingMobile, onboardingGoal].forEach(inputEl => {
+            inputEl.addEventListener('input', () => {
+                inputEl.classList.remove('invalid');
+                const errDiv = document.getElementById('error-' + inputEl.id.split('-')[1]);
+                if (errDiv) errDiv.style.display = 'none';
             });
         });
 
-        // Inline Field validation helper
-        function validateFields() {
-            let isValid = true;
+        function performFormValidations() {
+            let pass = true;
 
-            // Name verification
-            if (nameInput.value.trim().length < 2) {
-                nameInput.classList.add('invalid');
+            if (onboardingName.value.trim().length < 2) {
+                onboardingName.classList.add('invalid');
                 document.getElementById('error-name').style.display = 'block';
-                isValid = false;
+                pass = false;
             }
 
-            // Mobile validation
-            const mobileRegex = /^[0-9\-\+\s\(\)]{10,15}$/;
-            if (!mobileRegex.test(mobileInput.value.replace(/\s+/g, ''))) {
-                mobileInput.classList.add('invalid');
+            const cleanMobile = onboardingMobile.value.replace(/[\s\-\+\(\)]/g, '');
+            if (cleanMobile.length < 10 || cleanMobile.length > 15 || isNaN(cleanMobile)) {
+                onboardingMobile.classList.add('invalid');
                 document.getElementById('error-mobile').style.display = 'block';
-                isValid = false;
+                pass = false;
             }
 
-            // Goal requirement
-            if (goalInput.value.trim().length < 5) {
-                goalInput.classList.add('invalid');
+            if (onboardingGoal.value.trim().length < 5) {
+                onboardingGoal.classList.add('invalid');
                 document.getElementById('error-goal').style.display = 'block';
-                isValid = false;
+                pass = false;
             }
 
-            return isValid;
+            return pass;
         }
 
         onboardForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            if (!validateFields()) return;
+            if (!performFormValidations()) return;
 
-            // Show interactive loader state
-            submitBtn.style.pointerEvents = 'none';
-            btnText.style.display = 'none';
-            spinner.style.display = 'inline-block';
+            submitOnboardBtn.style.pointerEvents = 'none';
+            submitOnboardBtn.querySelector('.btn-text').style.display = 'none';
+            onboardSpinner.style.display = 'inline-block';
 
             try {
-                if (!authenticatedUser) {
-                    throw new Error("User authentication context is lost. Please refresh and try again.");
-                }
+                if (!appUserContext) throw new Error("Auth session frame dropped. Relog required.");
 
-                // Prepare user profile model to upload
-                const userData = {
-                    uid: authenticatedUser.uid,
-                    name: nameInput.value.trim(),
-                    email: authenticatedUser.email || "",
-                    photoURL: authenticatedUser.photoURL || "",
-                    mobileNumber: mobileInput.value.trim(),
-                    goal: goalInput.value.trim(),
+                const userPayload = {
+                    uid: appUserContext.uid,
+                    name: onboardingName.value.trim(),
+                    email: appUserContext.email || "",
+                    photoURL: appUserContext.photoURL || "",
+                    mobileNumber: onboardingMobile.value.trim(),
+                    goal: onboardingGoal.value.trim(),
                     board: "CBSE",
                     class: "10",
+                    exam: onboardingExam.value,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     
-                    // Premium Gamification Defaults
+                    // Gamified values
                     streak: 1,
                     lastActiveDate: new Date().toISOString().split('T')[0],
                     xp: 120,
@@ -2074,108 +1826,201 @@
                     level: 1,
                     solved: 0,
                     accuracy: 0,
-                    rank: "Newbie",
-                    weeklyProgress: [10, 20, 15, 30, 25, 40, 50],
-                    badges: ["Quick Starter", "First Step"]
+                    rank: "Scholar"
                 };
 
-                // Store user context to Firestore
-                await db.collection("users").doc(authenticatedUser.uid).set(userData);
-                userProfileData = userData;
-                synchronizeDashboardDOM();
+                await db.collection("users").doc(appUserContext.uid).set(userPayload);
+                appProfileContext = userPayload;
 
-                // Transition to success & trigger confetti
+                synchronizeDashboardHUD();
                 transitionToPage('page-onboarding', 'page-success');
-                triggerConfetti();
+                triggerConfettiExplosion();
 
-            } catch (error) {
-                console.error("Firestore database write error:", error);
-                alert("Failed to save your details: " + error.message);
+            } catch (err) {
+                console.error("Firestore serialization failure:", err);
+                alert("Failed to initialize remote database: " + err.message);
             } finally {
-                submitBtn.style.pointerEvents = 'all';
-                btnText.style.display = 'inline-block';
-                spinner.style.display = 'none';
+                submitOnboardBtn.style.pointerEvents = 'all';
+                submitOnboardBtn.querySelector('.btn-text').style.display = 'inline-block';
+                onboardSpinner.style.display = 'none';
             }
         });
 
-        // Continue to Dashboard button on Success page
         document.getElementById('btn-dashboard').addEventListener('click', () => {
             transitionToPage('page-success', 'page-dashboard');
         });
 
         /************************************************************
-         * 9. LOUGOUT SESSION DESTRUCTION
+         * 6. CALIBRATE STREAKS AND DAILY PROGRESS IN FIRESTORE
          ************************************************************/
-        document.getElementById('logout-trigger').addEventListener('click', async () => {
-            if (confirm("Are you sure you want to sign out?")) {
-                try {
-                    await auth.signOut();
-                    authenticatedUser = null;
-                    userProfileData = null;
-                    transitionToPage('page-profile', 'page-landing');
-                } catch (error) {
-                    alert("Logout failed: " + error.message);
+        async function verifyAndSynchronizeStreak(uid) {
+            const todayDateStr = new Date().toISOString().split('T')[0];
+            let activeStreak = appProfileContext.streak || 1;
+            let lastRecordedActive = appProfileContext.lastActiveDate;
+
+            if (lastRecordedActive) {
+                const today = new Date(todayDateStr);
+                const lastActive = new Date(lastRecordedActive);
+                const elapsedDiff = Math.abs(today - lastActive);
+                const daysDiff = Math.ceil(elapsedDiff / (1000 * 60 * 60 * 24));
+
+                if (daysDiff === 1) {
+                    activeStreak += 1;
+                } else if (daysDiff > 1) {
+                    activeStreak = 1;
                 }
+            } else {
+                activeStreak = 1;
             }
-        });
+
+            appProfileContext.streak = activeStreak;
+            appProfileContext.lastActiveDate = todayDateStr;
+
+            await db.collection("users").doc(uid).update({
+                streak: activeStreak,
+                lastActiveDate: todayDateStr
+            });
+        }
 
         /************************************************************
-         * 10. AI TEACHER CHAT FUNCTIONALITY
+         * 7. FRONTEND MODEL DOM BINDER
+         ************************************************************/
+        function synchronizeDashboardHUD() {
+            if (!appProfileContext) return;
+
+            // Header profile settings
+            const avatarUrl = appProfileContext.photoURL;
+            const fallbackLetter = appProfileContext.name ? appProfileContext.name.charAt(0).toUpperCase() : 'G';
+            const avatarSlot = document.getElementById('header-avatar-slot');
+            const popAvatarSlot = document.getElementById('pop-avatar-slot');
+
+            if (avatarUrl) {
+                avatarSlot.innerHTML = `<img src="${avatarUrl}" alt="Avatar">`;
+                popAvatarSlot.innerHTML = `<img src="${avatarUrl}" alt="Avatar">`;
+            } else {
+                avatarSlot.textContent = fallbackLetter;
+                popAvatarSlot.textContent = fallbackLetter;
+            }
+
+            // Streak pills
+            const currentStreak = appProfileContext.streak || 1;
+            document.getElementById('streak-count-txt').textContent = `${currentStreak} ${currentStreak === 1 ? 'Day' : 'Days'}`;
+
+            // Dashboard Metrics Panel Bindings
+            document.getElementById('stats-xp-val').textContent = appProfileContext.xp || 120;
+            document.getElementById('stats-level-val').textContent = `Level ${appProfileContext.level || 1}`;
+            document.getElementById('stats-solved-val').textContent = appProfileContext.solved || 0;
+            document.getElementById('stats-accuracy-val').textContent = `${appProfileContext.accuracy || 0}%`;
+            document.getElementById('stats-rank-lbl').textContent = appProfileContext.rank || 'Scholar';
+
+            // Glass popup overlays bindings
+            document.getElementById('pop-name-lbl').textContent = appProfileContext.name || "Student";
+            document.getElementById('pop-email-lbl').textContent = appProfileContext.email || "student@example.com";
+            document.getElementById('pop-mobile-lbl').textContent = appProfileContext.mobileNumber || "N/A";
+            document.getElementById('pop-goal-lbl').textContent = appProfileContext.goal || "Not Specified";
+            document.getElementById('pop-exam-lbl').textContent = appProfileContext.exam || "CBSE Class 10";
+        }
+
+        function animateDashboardProgressBars() {
+            const graphs = document.querySelectorAll('.analytics-col-fill');
+            graphs.forEach(bar => {
+                bar.style.height = '0%';
+                setTimeout(() => {
+                    const targetHeight = bar.getAttribute('data-percentage');
+                    bar.style.height = targetHeight;
+                }, 150);
+            });
+        }
+
+        /************************************************************
+         * 8. DYNAMIC NAVIGATION CONTROLLER & MAIN ROUTERS
+         ************************************************************/
+        function switchMainTab(targetSection) {
+            // Scroll to top automatically
+            document.getElementById('dash-scroll-container').scrollTop = 0;
+
+            // Deactivate all sections first
+            document.querySelectorAll('.section-wrapper').forEach(wrap => {
+                wrap.classList.remove('active');
+            });
+
+            // Deactivate all navigation bar items
+            document.querySelectorAll('.nav-tab-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Activate corresponding page structures
+            if (targetSection === 'home') {
+                document.getElementById('tab-section-home').classList.add('active');
+                document.getElementById('nav-item-home').classList.add('active');
+            } else if (targetSection === 'learn') {
+                document.getElementById('tab-section-learn').classList.add('active');
+                document.getElementById('nav-item-learn').classList.add('active');
+                animateDashboardProgressBars();
+            } else if (targetSection === 'ai') {
+                document.getElementById('tab-section-ai').classList.add('active');
+                document.getElementById('nav-item-ai').classList.add('active');
+            } else if (targetSection === 'stats') {
+                document.getElementById('tab-section-stats').classList.add('active');
+                document.getElementById('nav-item-stats').classList.add('active');
+            }
+        }
+
+        /************************************************************
+         * 9. DYNAMIC CHAT CONVERSATION WORKER
          ************************************************************/
         const chatScroller = document.getElementById('chat-scroller');
-        const chatInputField = document.getElementById('chat-input-field');
-        const chatSendTrigger = document.getElementById('chat-send-trigger');
+        const chatInputEl = document.getElementById('chat-input-el');
+        const chatBtnSubmit = document.getElementById('chat-btn-submit');
 
-        chatSendTrigger.addEventListener('click', () => handleOutgoingChatMessage());
-        chatInputField.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleOutgoingChatMessage();
+        chatBtnSubmit.addEventListener('click', () => executeUserChatQuery());
+        chatInputEl.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') executeUserChatQuery();
         });
 
-        function sendSuggestedMessage(msg) {
-            chatInputField.value = msg;
-            handleOutgoingChatMessage();
+        function sendSuggestionChat(promptMsg) {
+            chatInputEl.value = promptMsg;
+            executeUserChatQuery();
         }
 
-        function handleOutgoingChatMessage() {
-            const queryText = chatInputField.value.trim();
-            if (!queryText) return;
+        function executeUserChatQuery() {
+            const queryRaw = chatInputEl.value.trim();
+            if (!queryRaw) return;
 
-            // 1. Render User Message
-            appendChatBubble(queryText, 'user');
-            chatInputField.value = '';
+            // Render Bubble user
+            appendMessageBubble(queryRaw, 'user');
+            chatInputEl.value = '';
 
-            // 2. Render Thinking Loader Animation
-            const loaderId = appendChatLoader();
+            // Inject temporary typing loaders
+            const loaderKey = appendChatTypingLoader();
             chatScroller.scrollTop = chatScroller.scrollHeight;
 
-            // 3. Simulated AI Cognitive Output after delay
+            // Simulate tutor feedback loops
             setTimeout(() => {
-                removeChatLoader(loaderId);
-                const mockResponse = getMockAIEducationalResponse(queryText);
-                appendChatBubble(mockResponse, 'ai');
+                removeChatTypingLoader(loaderKey);
+                const computedAIResponse = computeTutorFeedback(queryRaw);
+                appendMessageBubble(computedAIResponse, 'system');
                 chatScroller.scrollTop = chatScroller.scrollHeight;
-            }, 1800);
+            }, 1600);
         }
 
-        function appendChatBubble(text, sender) {
-            const bubble = document.createElement('div');
-            bubble.className = `chat-bubble chat-bubble-${sender}`;
+        function appendMessageBubble(messageText, sender) {
+            const bubbleEl = document.createElement('div');
+            bubbleEl.className = `chat-bubble chat-bubble-${sender}`;
             
-            if (sender === 'ai') {
-                // Dynamic mock markdown elements formatting
-                bubble.innerHTML = formatMarkdownMock(text);
+            if (sender === 'system') {
+                bubbleEl.innerHTML = formatMarkdown(messageText);
             } else {
-                bubble.textContent = text;
+                bubbleEl.textContent = messageText;
             }
-            
-            chatScroller.appendChild(bubble);
+            chatScroller.appendChild(bubbleEl);
         }
 
-        function appendChatLoader() {
+        function appendChatTypingLoader() {
             const loaderDiv = document.createElement('div');
-            const uniqueId = 'loader-' + Date.now();
-            loaderDiv.id = uniqueId;
-            loaderDiv.className = 'chat-bubble chat-bubble-ai';
+            const rawId = 'tutor-loader-' + Date.now();
+            loaderDiv.id = rawId;
+            loaderDiv.className = 'chat-bubble chat-bubble-system';
             loaderDiv.innerHTML = `
                 <div class="typing-loader">
                     <div class="typing-dot"></div>
@@ -2183,73 +2028,128 @@
                     <div class="typing-dot"></div>
                 </div>`;
             chatScroller.appendChild(loaderDiv);
-            return uniqueId;
+            return rawId;
         }
 
-        function removeChatLoader(loaderId) {
-            const loader = document.getElementById(loaderId);
+        function removeChatTypingLoader(targetId) {
+            const loader = document.getElementById(targetId);
             if (loader) loader.remove();
         }
 
-        function formatMarkdownMock(rawText) {
-            // High fidelity codeblocks & bold text mock markup parser
-            let formatted = rawText
+        function formatMarkdown(rawText) {
+            return rawText
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/`(.*?)`/g, '<code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; font-family: monospace; color:#00f2fe">$1</code>')
+                .replace(/`(.*?)`/g, '<code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; font-family: monospace; color: var(--neon-blue)">$1</code>')
                 .replace(/\n/g, '<br>');
-            return formatted;
         }
 
-        function getMockAIEducationalResponse(userQuery) {
-            // Intelligent Educational Mock Context Base
-            const query = userQuery.toLowerCase();
-            if (query.includes('quantum')) {
-                return `**Quantum Physics** explains how subatomic particles behave. Unlike normal-sized things: \n\n1. **Superposition**: Particles can exist in multiple states at once until measured.\n2. **Entanglement**: Two linked particles immediately affect each other, no matter the distance.\n\nThink of it like a spinning coin that is both Heads and Tails at the same time until you stop it!`;
-            } else if (query.includes('quadratic') || query.includes('math')) {
-                return `Here is the famous **Quadratic Formula** used to solve equation \`ax² + bx + c = 0\`:\n\n\`x = (-b ± √(b² - 4ac)) / 2a\`\n\nTo find the roots, compute the discriminant \`D = b² - 4ac\` first. If it is positive, you get two real solutions! Let me know if you want to solve an exact equation step-by-step.`;
-            } else if (query.includes('photosynthesis')) {
-                return `**Photosynthesis** is the process plants use to convert sunlight into energy! \n\nFormula:\n\`6CO₂ + 6H₂O + Sunlight ➔ C₆H₁₂O₆ + 6O₂\`\n\nChlorophyll in the leaves traps sunlight energy to build glucose while generating oxygen for humans to breathe.`;
+        function computeTutorFeedback(query) {
+            const cleanQuery = query.toLowerCase();
+
+            if (cleanQuery.includes('photosynthesis')) {
+                return `**Photosynthesis** is the chemical process plants use to convert sunlight into bio-energy!\n\n**Balanced Equation:**\n\`6CO₂ + 6H₂O + Sunlight ➔ C₆H₁₂O₆ + 6O₂\`\n\nChlorophyll within chloroplasts traps light packets, splitting water molecules to yield energetic sugars while venting oxygen.`;
+            } else if (cleanQuery.includes('quadratic') || cleanQuery.includes('root') || cleanQuery.includes('math')) {
+                return `For any standard quadratic layout \`ax² + bx + c = 0\`, roots are found via the **Quadratic Formula**:\n\n\`x = (-b ± √(b² - 4ac)) / 2a\`\n\nWhere the discriminant \`D = b² - 4ac\` dictates solution limits. If \`D < 0\`, real roots do not exist!`;
+            } else if (cleanQuery.includes('ohm') || cleanQuery.includes('electric') || cleanQuery.includes('circuit')) {
+                return `**Ohm's Law** dictates steady state electrical current layouts:\n\n\`V = I × R\`\n\nWhere:\n• \`V\` = Voltage (Volts)\n• \`I\` = Current (Amperes)\n• \`R\` = Resistance (Ohms)\n\nCurrent stays directly proportional to voltage across constant temperatures.`;
             }
-            return `I have thoroughly analyzed your question: **"${userQuery}"**.\n\nBased on your profile objectives, here is a structured summary:\n• Step 1: Study the fundamental variables.\n• Step 2: Formulate your thesis and run a mock test.\n• Step 3: Revise with specialized GoalQuest metrics.\n\nLet me know if you would like to generate custom mock questions on this subject!`;
+            return `I have evaluated your request: **"${query}"**.\n\nHere is your step-by-step structural breakdown:\n• **Step 1:** Isolate standard formulas and clean physical parameters.\n• **Step 2:** Formulate systemic equations.\n• **Step 3:** Validate results using mock practice suites.\n\nLet me know if you would like to run step-by-step practice solutions for this topic!`;
         }
 
         /************************************************************
-         * 11. WEEKLY XP PROGRESS BAR GRAPH ANIMATION
+         * 10. SYSTEM MODALS OVERLAY CONTROLLERS (PROFILE VIEW)
          ************************************************************/
-        function animateWeeklyChart() {
-            const bars = document.querySelectorAll('.chart-bar-fill');
-            bars.forEach(bar => {
-                bar.style.height = '0%'; // reset
-                setTimeout(() => {
-                    const targetHeight = bar.getAttribute('data-height');
-                    bar.style.height = targetHeight;
-                }, 100);
+        const headerProfileBtn = document.getElementById('header-profile-btn');
+        const profilePopupOverlay = document.getElementById('profile-popup-overlay');
+        const popCloseBtn = document.getElementById('pop-close-btn');
+        const popLogoutBtn = document.getElementById('pop-logout-btn');
+
+        headerProfileBtn.addEventListener('click', () => {
+            profilePopupOverlay.classList.add('show');
+        });
+
+        popCloseBtn.addEventListener('click', () => {
+            profilePopupOverlay.classList.remove('show');
+        });
+
+        profilePopupOverlay.addEventListener('click', (e) => {
+            if (e.target === profilePopupOverlay) {
+                profilePopupOverlay.classList.remove('remove');
+            }
+        });
+
+        popLogoutBtn.addEventListener('click', async () => {
+            if (confirm("Sign out of current active session?")) {
+                try {
+                    await auth.signOut();
+                    profilePopupOverlay.classList.remove('show');
+                    transitionToPage('page-dashboard', 'page-landing');
+                } catch (err) {
+                    alert("Auth termination error: " + err.message);
+                }
+            }
+        });
+
+        // Debug alerts helper
+        function triggerMockAlert(msgText) {
+            alert(msgText);
+        }
+
+        /************************************************************
+         * 11. CUSTOM SYSTEM CLICK FEEDBACKS (RIPPLES)
+         ************************************************************/
+        document.addEventListener('click', function (e) {
+            let targetEl = e.target;
+            while (targetEl && targetEl !== document.body) {
+                if (targetEl.classList.contains('ripple-trigger') || targetEl.classList.contains('premium-menu-card')) {
+                    createClickRipple(e, targetEl);
+                    break;
+                }
+                targetEl = targetEl.parentNode;
+            }
+        });
+
+        function createClickRipple(event, element) {
+            const rippleSpan = document.createElement('span');
+            rippleSpan.className = 'ripple';
+            
+            const dimensions = Math.max(element.clientWidth, element.clientHeight);
+            rippleSpan.style.width = rippleSpan.style.height = `${dimensions}px`;
+            
+            const elementRect = element.getBoundingClientRect();
+            const rippleX = event.clientX - elementRect.left - (dimensions / 2);
+            const rippleY = event.clientY - elementRect.top - (dimensions / 2);
+            
+            rippleSpan.style.left = `${rippleX}px`;
+            rippleSpan.style.top = `${rippleY}px`;
+            
+            element.appendChild(rippleSpan);
+            
+            rippleSpan.addEventListener('animationend', () => {
+                rippleSpan.remove();
             });
         }
 
-
         /************************************************************
-         * 12. PARTICLES & CONFETTI ANIMATION ENGINE
+         * 12. CANVAS PARTICLE RENDERING CONTROLLER (60FPS FLUID PHYSICS)
          ************************************************************/
-        const canvas = document.getElementById('particles');
-        const ctx = canvas.getContext('2d');
+        const particlesCanvas = document.getElementById('particles');
+        const ctx2d = particlesCanvas.getContext('2d');
 
-        let particlesArray = [];
-        const baseParticleCount = 45;
+        let elementsRegistry = [];
+        const configLimit = 50;
 
-        // Auto responsive sizing
-        function setCanvasDimensions() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        function setViewportSpecs() {
+            particlesCanvas.width = window.innerWidth;
+            particlesCanvas.height = window.innerHeight;
         }
-        window.addEventListener('resize', setCanvasDimensions);
-        setCanvasDimensions();
+        window.addEventListener('resize', setViewportSpecs);
+        setViewportSpecs();
 
-        // Custom Particle / Confetti Unified Object
-        class ParticleElement {
-            constructor(isConfetti = false) {
-                this.isConfetti = isConfetti;
-                if (isConfetti) {
+        class SystemCoordinate {
+            constructor(spawnConfetti = false) {
+                this.isConfetti = spawnConfetti;
+                if (spawnConfetti) {
                     this.initConfetti();
                 } else {
                     this.initBackgroundParticle();
@@ -2257,50 +2157,49 @@
             }
 
             initBackgroundParticle() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
+                this.x = Math.random() * particlesCanvas.width;
+                this.y = Math.random() * particlesCanvas.height;
                 this.size = Math.random() * 2 + 0.4;
                 this.speedX = (Math.random() - 0.5) * 0.15;
-                this.speedY = (Math.random() - 0.5) * 0.15 - 0.15; // Slowly drift upward
-                this.color = this.assignRandomColor();
-                this.alpha = Math.random() * 0.4 + 0.1;
-                this.pulseSpeed = Math.random() * 0.003 + 0.001;
+                this.speedY = (Math.random() - 0.5) * 0.15 - 0.15; // Slow drift upward
+                this.color = this.getRandomBrandColor();
+                this.alpha = Math.random() * 0.3 + 0.1;
+                this.pulseFactor = Math.random() * 0.003 + 0.001;
             }
 
             initConfetti() {
-                // Spawn particles directly from center viewport outwards
-                this.x = canvas.width / 2;
-                this.y = canvas.height / 2;
-                this.size = Math.random() * 6 + 4;
+                this.x = particlesCanvas.width / 2;
+                this.y = particlesCanvas.height / 2;
+                this.size = Math.random() * 7 + 4;
                 
                 const angle = Math.random() * Math.PI * 2;
                 const speed = Math.random() * 8 + 4;
                 
                 this.speedX = Math.cos(angle) * speed;
-                this.speedY = Math.sin(angle) * speed - 2; // Extra vertical velocity burst
+                this.speedY = Math.sin(angle) * speed - 2.5;
                 
-                this.color = this.assignSuccessColors();
+                this.color = this.getSuccessColors();
                 this.alpha = 1.0;
-                this.gravity = 0.18;
+                this.gravity = 0.16;
                 this.rotation = Math.random() * 360;
                 this.rotationSpeed = (Math.random() - 0.5) * 8;
             }
 
-            assignRandomColor() {
+            getRandomBrandColor() {
                 const colors = [
                     'rgba(0, 242, 254, ',  // Cyan
-                    'rgba(79, 172, 254, ',  // Sky Blue
+                    'rgba(79, 172, 254, ',  // Soft Blue
                     'rgba(155, 81, 224, '   // Purple
                 ];
                 return colors[Math.floor(Math.random() * colors.length)];
             }
 
-            assignSuccessColors() {
+            getSuccessColors() {
                 const colors = [
-                    'rgba(34, 197, 94, ',   // Green
-                    'rgba(0, 242, 254, ',   // Cyan
+                    'rgba(16, 185, 129, ',  // Emerald Green
+                    'rgba(0, 242, 254, ',   // Blue
                     'rgba(155, 81, 224, ',  // Purple
-                    'rgba(251, 191, 36, '   // Gold
+                    'rgba(245, 158, 11, '   // Gold
                 ];
                 return colors[Math.floor(Math.random() * colors.length)];
             }
@@ -2309,81 +2208,76 @@
                 if (this.isConfetti) {
                     this.x += this.speedX;
                     this.y += this.speedY;
-                    this.speedY += this.gravity; // Gravity pull
+                    this.speedY += this.gravity;
                     this.rotation += this.rotationSpeed;
-                    this.alpha -= 0.012; // Gradual fade-out
+                    this.alpha -= 0.012;
                 } else {
                     this.x += this.speedX;
                     this.y += this.speedY;
 
-                    // Standard wrap boundaries rules
-                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                    // Standard bounding box bounce
+                    if (this.x < 0 || this.x > particlesCanvas.width) this.speedX *= -1;
                     if (this.y < -10) {
-                        this.y = canvas.height + 10;
-                        this.x = Math.random() * canvas.width;
+                        this.y = particlesCanvas.height + 10;
+                        this.x = Math.random() * particlesCanvas.width;
                     }
 
-                    // Breathing brightness
-                    this.alpha += this.pulseSpeed;
-                    if (this.alpha > 0.65 || this.alpha < 0.1) {
-                        this.pulseSpeed *= -1;
+                    // Breathing alpha cycles
+                    this.alpha += this.pulseFactor;
+                    if (this.alpha > 0.6 || this.alpha < 0.1) {
+                        this.pulseFactor *= -1;
                     }
                 }
             }
 
             draw() {
-                ctx.save();
+                ctx2d.save();
                 if (this.isConfetti) {
-                    ctx.translate(this.x, this.y);
-                    ctx.rotate(this.rotation * Math.PI / 180);
-                    ctx.beginPath();
-                    // Draw confetti square
-                    ctx.rect(-this.size/2, -this.size/2, this.size, this.size);
-                    ctx.fillStyle = this.color + this.alpha + ')';
-                    ctx.fill();
+                    ctx2d.translate(this.x, this.y);
+                    ctx2d.rotate(this.rotation * Math.PI / 180);
+                    ctx2d.beginPath();
+                    ctx2d.rect(-this.size/2, -this.size/2, this.size, this.size);
+                    ctx2d.fillStyle = this.color + this.alpha + ')';
+                    ctx2d.fill();
                 } else {
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fillStyle = this.color + this.alpha + ')';
-                    ctx.fill();
+                    ctx2d.beginPath();
+                    ctx2d.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx2d.fillStyle = this.color + this.alpha + ')';
+                    ctx2d.fill();
                 }
-                ctx.restore();
+                ctx2d.restore();
             }
         }
 
-        // Trigger confetti burst on success
-        function triggerConfetti() {
+        function triggerConfettiExplosion() {
             for (let i = 0; i < 90; i++) {
-                particlesArray.push(new ParticleElement(true));
+                elementsRegistry.push(new SystemCoordinate(true));
             }
         }
 
-        // Initialize particles
-        function initParticles() {
-            particlesArray = [];
-            for (let i = 0; i < baseParticleCount; i++) {
-                particlesArray.push(new ParticleElement(false));
+        function initializeParticlesSystem() {
+            elementsRegistry = [];
+            for (let i = 0; i < configLimit; i++) {
+                elementsRegistry.push(new SystemCoordinate(false));
             }
         }
 
-        // Active animation run engine loop
-        function animationLoop() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (let i = 0; i < particlesArray.length; i++) {
-                particlesArray[i].update();
-                particlesArray[i].draw();
+        function executionAnimationLoop() {
+            ctx2d.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
+            for (let i = 0; i < elementsRegistry.length; i++) {
+                elementsRegistry[i].update();
+                elementsRegistry[i].draw();
 
-                // Clean up faded confetti particles
-                if (particlesArray[i].isConfetti && particlesArray[i].alpha <= 0) {
-                    particlesArray.splice(i, 1);
+                if (elementsRegistry[i].isConfetti && elementsRegistry[i].alpha <= 0) {
+                    elementsRegistry.splice(i, 1);
                     i--;
                 }
             }
-            requestAnimationFrame(animationLoop);
+            requestAnimationFrame(executionAnimationLoop);
         }
 
-        initParticles();
-        animationLoop();
+        initializeParticlesSystem();
+        executionAnimationLoop();
     </script>
 </body>
 </html>
