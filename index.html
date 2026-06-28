@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1766,6 +1767,10 @@
         let appUserContext = null;
         let appProfileContext = null;
 
+        // Google AI Studio (Gemini) API Key
+        // यहाँ अपनी Google AI Studio की API Key दर्ज करें:
+        const GEMINI_API_KEY = "AQ.Ab8RN6L4GytPz4k-RuQDvGN-KzeqcNBJ-4WzKEfu3-NiraupCA"; 
+
         /************************************************************
          * 2. TRANSLATION ENGINE (ENGLISH, हिन्दी, HINGLISH)
          ************************************************************/
@@ -1849,7 +1854,7 @@
                 math_sub: "पाठ्यक्रम • 45% पूर्ण",
                 science_title: "भौतिकी और जीव विज्ञान",
                 science_sub: "पाठ्यक्रम • 75% पूर्ण",
-                weekly_activity: "साप्ताहिक सीखने की गतिविधि (XP)",
+                weekly_activity: "साारीरिक गतिविधि (XP)",
                 chat_welcome: "नमस्ते! मैं आपका <strong>गोलक्वेस्ट एआई ट्यूटर</strong> हूं। मुझसे कोई भी सीबीएसई कक्षा 10 का शैक्षणिक प्रश्न पूछें, या नीचे दिए गए सुझाव चिप को चुनें!",
                 chat_photosynthesis: "प्रकाश संश्लेषण",
                 chat_roots: "द्विघात समीकरण",
@@ -2390,7 +2395,55 @@
             executeUserChatQuery();
         }
 
-        function executeUserChatQuery() {
+        // Google AI Studio API Calling Helper
+        async function callGeminiAPI(userQuery) {
+            const modelName = "gemini-1.5-flash"; // Highly efficient, fast model
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${GEMINI_API_KEY}`;
+
+            // Fetch personalization meta parameters
+            const studentName = appProfileContext?.name || "Student";
+            const targetExam = appProfileContext?.exam || "CBSE Class 10";
+            const targetGoal = appProfileContext?.goal || "Academic Excellence";
+
+            // Customized system identity
+            const systemInstructionText = `You are GoalQuest AI Tutor, a highly-competent and encouraging academic mentor specializing in ${targetExam} syllabus. The student's name is ${studentName}, and their target is "${targetGoal}". Answer their query step-by-step, explaining concepts beautifully and logically. Always keep responses neat, highly structured, and format math symbols or key codes using readable markdown blockquotes or code blocks. Keep it supportive.`;
+
+            const requestBody = {
+                systemInstruction: {
+                    parts: [{ text: systemInstructionText }]
+                },
+                contents: [
+                    {
+                        role: "user",
+                        parts: [{ text: userQuery }]
+                    }
+                ]
+            };
+
+            const response = await fetch(endpoint, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (!response.ok) {
+                const errData = await response.json().catch(() => ({}));
+                const detailedMsg = errData?.error?.message || response.statusText;
+                throw new Error(detailedMsg);
+            }
+
+            const data = await response.json();
+            
+            if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
+                return data.candidates[0].content.parts[0].text;
+            } else {
+                throw new Error("Unable to retrieve structured content from Gemini API.");
+            }
+        }
+
+        async function executeUserChatQuery() {
             const queryRaw = chatInputEl.value.trim();
             if (!queryRaw) return;
 
@@ -2402,13 +2455,21 @@
             const loaderKey = appendChatTypingLoader();
             chatScroller.scrollTop = chatScroller.scrollHeight;
 
-            // Simulate tutor feedback loops
-            setTimeout(() => {
+            try {
+                if (!GEMINI_API_KEY || GEMINI_API_KEY === "YOUR_GEMINI_API_KEY") {
+                    throw new Error("Google AI Studio API Key configured is missing. Please set your 'GEMINI_API_KEY' in the script tag.");
+                }
+
+                const aiResponse = await callGeminiAPI(queryRaw);
                 removeChatTypingLoader(loaderKey);
-                const computedAIResponse = computeTutorFeedback(queryRaw);
-                appendMessageBubble(computedAIResponse, 'system');
+                appendMessageBubble(aiResponse, 'system');
+            } catch (err) {
+                console.error("Gemini Request Failure:", err);
+                removeChatTypingLoader(loaderKey);
+                appendMessageBubble(`**Error:** ${err.message || "Failed to reach Google Gemini Server. Please verify network status and API Key configuration."}`, 'system');
+            } finally {
                 chatScroller.scrollTop = chatScroller.scrollHeight;
-            }, 1600);
+            }
         }
 
         function appendMessageBubble(messageText, sender) {
@@ -2448,19 +2509,6 @@
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/`(.*?)`/g, '<code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; font-family: monospace; color: var(--neon-blue)">$1</code>')
                 .replace(/\n/g, '<br>');
-        }
-
-        function computeTutorFeedback(query) {
-            const cleanQuery = query.toLowerCase();
-
-            if (cleanQuery.includes('photosynthesis')) {
-                return `**Photosynthesis** is the chemical process plants use to convert sunlight into bio-energy!\n\n**Balanced Equation:**\n\`6CO₂ + 6H₂O + Sunlight ➔ C₆H₁₂O₆ + 6O₂\`\n\nChlorophyll within chloroplasts traps light packets, splitting water molecules to yield energetic sugars while venting oxygen.`;
-            } else if (cleanQuery.includes('quadratic') || cleanQuery.includes('root') || cleanQuery.includes('math')) {
-                return `For any standard quadratic layout \`ax² + bx + c = 0\`, roots are found via the **Quadratic Formula**:\n\n\`x = (-b ± √(b² - 4ac)) / 2a\`\n\nWhere the discriminant \`D = b² - 4ac\` dictates solution limits. If \`D < 0\`, real roots do not exist!`;
-            } else if (cleanQuery.includes('ohm') || cleanQuery.includes('electric') || cleanQuery.includes('circuit')) {
-                return `**Ohm's Law** dictates steady state electrical current layouts:\n\n\`V = I × R\`\n\nWhere:\n• \`V\` = Voltage (Volts)\n• \`I\` = Current (Amperes)\n• \`R\` = Resistance (Ohms)\n\nCurrent stays directly proportional to voltage across constant temperatures.`;
-            }
-            return `I have evaluated your request: **"${query}"**.\n\nHere is your step-by-step structural breakdown:\n• **Step 1:** Isolate standard formulas and clean physical parameters.\n• **Step 2:** Formulate systemic equations.\n• **Step 3:** Validate results using mock practice suites.\n\nLet me know if you would like to run step-by-step practice solutions for this topic!`;
         }
 
         /************************************************************
