@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Firebase SDK Compat (Optimized for Single-File HTML Deployment) -->
+    <!-- Firebase SDK Compat -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -435,84 +435,792 @@
             max-width: 320px;
         }
 
-        /* Keyframe Core Animations */
-        @keyframes driftGlowPurple {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(8%, 12%) scale(1.15); }
+        /* PREMIUM CUSTOM ERROR MODAL OVERLAY */
+        .error-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
         }
 
-        @keyframes driftGlowBlue {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(-8%, -12%) scale(1.15); }
+        .error-modal-overlay.show {
+            opacity: 1;
+            pointer-events: all;
         }
 
-        @keyframes floatTitle {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-6px); }
+        .error-card {
+            background: rgba(20, 10, 10, 0.85);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            box-shadow: 0 20px 50px rgba(239, 68, 68, 0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+            max-width: 400px;
+            width: 90%;
+            border-radius: 24px;
+            padding: 32px 24px;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        @keyframes pulseGlow {
-            0% { 
-                box-shadow: 0 0 20px rgba(0, 242, 254, 0.1); 
-                border-color: rgba(0, 242, 254, 0.2); 
-            }
-            100% { 
-                box-shadow: 0 0 32px rgba(155, 81, 224, 0.3); 
-                border-color: rgba(155, 81, 224, 0.45); 
-            }
+        .error-modal-overlay.show .error-card {
+            transform: scale(1);
         }
 
-        @keyframes orbitMotion {
-            0% { transform: rotate(0deg) translateX(18px) rotate(0deg); }
-            100% { transform: rotate(360deg) translateX(18px) rotate(-360deg); }
+        .error-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: #ef4444;
         }
 
-        @keyframes dynamicShimmer {
-            0% { left: -150%; }
-            35% { left: 150%; }
-            100% { left: 150%; }
+        .error-modal-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fca5a5;
+            margin-bottom: 12px;
         }
 
-        @keyframes inputShake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-6px); }
-            40%, 80% { transform: translateX(6px); }
+        .error-modal-desc {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            line-height: 1.5;
+            margin-bottom: 24px;
+            text-align: left;
         }
 
-        @keyframes successPop {
-            0% { transform: scale(0); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+        .error-modal-desc code {
+            display: block;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #f87171;
+            margin-top: 10px;
+            word-break: break-all;
         }
 
-        @keyframes drawCheck {
-            to { stroke-dashoffset: 0; }
+        .error-close-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 9999px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s, border-color 0.3s;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .error-close-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
-        /* Mobile Viewport Fine-Tuning */
-        @media (max-width: 480px) {
-            .card-wrapper {
-                padding: 40px 24px;
-                border-radius: 28px;
-            }
-            .app-title {
-                font-size: 2.75rem;
-            }
-            .tagline {
-                font-size: 0.95rem;
-                margin-bottom: 36px;
-                padding: 0 8px;
-            }
-            .sso-btn, .btn-glowing {
-                padding: 14px 20px;
-                font-size: 0.9rem;
-            }
-            .onboarding-title, .success-title {
-                font-size: 1.6rem;
-            }
+        /* NEW EXPANDED DASHBOARD AND SUB-PAGE STYLES */
+        .dash-layout {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            padding: 24px;
+            max-width: 480px;
+            justify-content: space-between;
+        }
+
+        /* Glass Header */
+        .dash-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            width: 100%;
+            margin-bottom: 20px;
+            flex-shrink: 0;
+        }
+
+        .streak-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #f59e0b; /* Orange/Gold for fire */
+        }
+
+        .streak-fire-icon {
+            font-size: 1.3rem;
+            animation: firePulse 1.5s infinite alternate ease-in-out;
+        }
+
+        .profile-avatar-trigger {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 2px solid rgba(0, 242, 254, 0.5);
+            cursor: pointer;
+            overflow: hidden;
+            background: linear-gradient(135deg, #00f2fe, #9b51e0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-avatar-trigger:hover {
+            transform: scale(1.1);
+        }
+
+        .profile-avatar-trigger img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Large Premium Menu Stack */
+        .dash-menu-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            flex-grow: 1;
+            overflow-y: auto;
+            scrollbar-width: none;
+            padding-bottom: 12px;
+        }
+
+        .dash-menu-stack::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Menu Buttons */
+        .dash-menu-btn {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 22px 24px;
+            border-radius: 24px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.03);
+            overflow: hidden;
+            text-decoration: none;
+        }
+
+        .dash-menu-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+            transform: skewX(-20deg);
+            animation: dynamicShimmer 8s infinite ease-in-out;
+        }
+
+        .dash-menu-btn-primary {
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.15) 0%, rgba(79, 172, 254, 0.1) 100%);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 242, 254, 0.08);
+        }
+
+        .dash-menu-btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            border-color: rgba(0, 242, 254, 0.6);
+            box-shadow: 0 15px 40px rgba(0, 242, 254, 0.18);
+        }
+
+        .dash-menu-btn-secondary {
+            background: rgba(10, 10, 14, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .dash-menu-btn-secondary:hover {
+            transform: translateY(-3px) scale(1.01);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(155, 81, 224, 0.4);
+            box-shadow: 0 15px 40px rgba(155, 81, 224, 0.1);
+        }
+
+        .menu-btn-inner {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .menu-btn-icon {
+            font-size: 1.8rem;
+            flex-shrink: 0;
+        }
+
+        .menu-btn-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .menu-btn-desc {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .menu-btn-arrow {
+            font-size: 1.1rem;
+            color: #475569;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .dash-menu-btn:hover .menu-btn-arrow {
+            transform: translateX(4px);
+            color: #00f2fe;
+        }
+
+        /* Sub Page Shell */
+        .subpage-container {
+            width: 100%;
+            height: 100%;
+            padding: 24px;
+            max-width: 480px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .subpage-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 24px;
+            flex-shrink: 0;
+        }
+
+        .subpage-title-group {
+            text-align: right;
+        }
+
+        .subpage-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subpage-subtitle {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .back-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(0, 242, 254, 0.4);
+            transform: scale(1.05);
+        }
+
+        .subpage-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            scrollbar-width: none;
+            padding-bottom: 20px;
+        }
+
+        .subpage-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Start Now: Subjects Grid */
+        .subject-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .subject-card {
+            background: rgba(15, 15, 22, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .subject-card:hover {
+            border-color: rgba(0, 242, 254, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .subject-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .subject-icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        .subject-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .subject-progress-text {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* SVG Circular Progress Loader */
+        .progress-ring-container {
+            position: relative;
+            width: 36px;
+            height: 36px;
+        }
+
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        /* Progress Page Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 18px;
+            padding: 16px;
+            text-align: left;
+        }
+
+        .metric-value {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        /* Inline CSS Bar Graph (Chart) */
+        .chart-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            padding: 24px 16px;
+            text-align: left;
+            margin-bottom: 24px;
+        }
+
+        .chart-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            color: #cbd5e1;
+        }
+
+        .bar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            height: 120px;
+            padding-top: 10px;
+        }
+
+        .chart-bar-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-grow: 1;
+            gap: 8px;
+        }
+
+        .chart-bar-fill {
+            width: 14px;
+            background: linear-gradient(to top, #9b51e0, #00f2fe);
+            border-radius: 4px;
+            height: 0%; /* Dynamic */
+            transition: height 1s ease-out;
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
+        }
+
+        .chart-bar-label {
+            font-size: 0.7rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        /* AI Teacher Chat Interface */
+        .chat-layout {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .chat-messages-area {
+            flex-grow: 1;
+            overflow-y: auto;
+            scrollbar-width: none;
+            padding-right: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .chat-messages-area::-webkit-scrollbar {
+            display: none;
+        }
+
+        .chat-bubble {
+            max-width: 85%;
+            padding: 14px 18px;
+            border-radius: 18px;
+            font-size: 0.9rem;
+            line-height: 1.45;
+        }
+
+        .chat-bubble-ai {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #e2e8f0;
+            border-top-left-radius: 4px;
+        }
+
+        .chat-bubble-user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.15) 0%, rgba(155, 81, 224, 0.15) 100%);
+            border: 1px solid rgba(0, 242, 254, 0.25);
+            color: #ffffff;
+            border-top-right-radius: 4px;
+        }
+
+        /* Suggested Question Chips */
+        .suggestion-chips {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding: 4px 0 12px 0;
+            flex-shrink: 0;
+        }
+
+        .suggestion-chips::-webkit-scrollbar {
+            display: none;
+        }
+
+        .chip {
+            white-space: nowrap;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 8px 14px;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chip:hover {
+            background: rgba(0, 242, 254, 0.08);
+            border-color: rgba(0, 242, 254, 0.3);
+            color: #ffffff;
+        }
+
+        /* Chat Input Area */
+        .chat-input-bar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 8px 8px 8px 18px;
+            border-radius: 9999px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            flex-shrink: 0;
+        }
+
+        .chat-input-element {
+            flex-grow: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .chat-input-element::placeholder {
+            color: #475569;
+        }
+
+        .chat-send-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00f2fe, #9b51e0);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #ffffff;
+            transition: transform 0.3s ease;
+        }
+
+        .chat-send-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Typing Loader Animation */
+        .typing-loader {
+            display: flex;
+            gap: 4px;
+            padding: 4px 8px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: #94a3b8;
+            border-radius: 50%;
+            animation: dotWave 1.2s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        /* Stats & Leaderboard Achievements Layout */
+        .stats-summary {
+            display: flex;
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.05) 0%, rgba(155, 81, 224, 0.05) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 22px;
+            padding: 20px;
+            align-items: center;
+            justify-content: space-around;
+            margin-bottom: 24px;
+        }
+
+        .summary-item {
+            text-align: center;
+        }
+
+        .summary-val {
+            font-size: 1.3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00f2fe, #9b51e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .summary-lbl {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .badge-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .badge-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .badge-card-unlocked {
+            border-color: rgba(0, 242, 254, 0.2);
+            box-shadow: 0 8px 24px rgba(0, 242, 254, 0.05);
+        }
+
+        .badge-card-locked {
+            opacity: 0.4;
+            filter: grayscale(1);
+        }
+
+        .badge-art {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .badge-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .badge-status {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+        }
+
+        .status-unlocked { color: #22c55e; }
+        .status-locked { color: #64748b; }
+
+        /* Profile Details styling */
+        .profile-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .large-avatar-box {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00f2fe, #9b51e0);
+            padding: 3px;
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.25);
+            margin-bottom: 20px;
+        }
+
+        .large-avatar-box img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #0d0c15;
+        }
+
+        .profile-name {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .profile-email {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 32px;
+        }
+
+        .info-stack {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+        }
+
+        .info-lbl {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .info-val {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        /* Firebase Auth Synchronization Loading Mask */
+        #app-loading {
+            background-color: #030303;
+            z-index: 1000;
+            display: flex;
+        }
+
+        /* Fire effect Keyframe */
+        @keyframes firePulse {
+            0% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(245, 158, 11, 0.5)); }
+            100% { transform: scale(1.15); filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.9)); }
+        }
+
+        /* Typing Dots Wave Keyframe */
+        @keyframes dotWave {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
         }
     </style>
 </head>
@@ -525,8 +1233,22 @@
     <!-- Micro Particle Background Layer -->
     <canvas id="particles"></canvas>
 
+    <!-- 0. APP AUTH SYNC LOADING SCREEN -->
+    <div class="page-view active" id="app-loading">
+        <div class="card-wrapper" style="box-shadow: none; border: none; background: transparent;">
+            <div class="brand-orb" style="width: 80px; height: 80px;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#00f2fe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="#9b51e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="#4facfe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <p style="color: #94a3b8; font-size: 0.95rem; margin-top: 10px; letter-spacing: 0.05em;">Syncing learning environment...</p>
+        </div>
+    </div>
+
     <!-- PAGE 1: LANDING PAGE -->
-    <div class="page-view active" id="page-landing">
+    <div class="page-view" id="page-landing" style="display: none;">
         <div class="card-wrapper">
             <!-- Glowing Core Brand Icon -->
             <div class="brand-orb">
@@ -561,7 +1283,7 @@
     </div>
 
     <!-- PAGE 2: ONBOARDING PAGE -->
-    <div class="page-view" id="page-onboarding">
+    <div class="page-view" id="page-onboarding" style="display: none;">
         <div class="card-wrapper">
             <div class="brand-orb">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -619,7 +1341,7 @@
     </div>
 
     <!-- PAGE 3: SUCCESS ANIMATION PAGE -->
-    <div class="page-view" id="page-success">
+    <div class="page-view" id="page-success" style="display: none;">
         <div class="card-wrapper">
             <!-- Green Glowing Success Checkmark -->
             <div class="success-icon-wrapper">
@@ -643,19 +1365,393 @@
         </div>
     </div>
 
+    <!-- PAGE 4: DASHBOARD HUB -->
+    <div class="page-view" id="page-dashboard" style="display: none;">
+        <div class="dash-layout">
+            <!-- Header Section -->
+            <div class="dash-header">
+                <div class="streak-container">
+                    <span class="streak-fire-icon">🔥</span>
+                    <span id="header-streak-txt">1 Day</span>
+                </div>
+                <div class="profile-avatar-trigger" id="avatar-btn">
+                    <img id="header-avatar-img" src="" alt="Profile">
+                </div>
+            </div>
+
+            <!-- Dashboard Button Menu Stack -->
+            <div class="dash-menu-stack">
+                <!-- 1. Start Now -->
+                <div class="dash-menu-btn dash-menu-btn-primary" onclick="transitionToPage('page-dashboard', 'page-start-now')">
+                    <div class="menu-btn-inner">
+                        <span class="menu-btn-icon">🚀</span>
+                        <div>
+                            <h3 class="menu-btn-title">Start Now</h3>
+                            <p class="menu-btn-desc">Pick your subject and start learning</p>
+                        </div>
+                    </div>
+                    <span class="menu-btn-arrow">➔</span>
+                </div>
+
+                <!-- 2. Check Your Progress -->
+                <div class="dash-menu-btn dash-menu-btn-secondary" onclick="transitionToPage('page-dashboard', 'page-progress')">
+                    <div class="menu-btn-inner">
+                        <span class="menu-btn-icon">📈</span>
+                        <div>
+                            <h3 class="menu-btn-title">Check Your Progress</h3>
+                            <p class="menu-btn-desc">See level, weekly goals and streak</p>
+                        </div>
+                    </div>
+                    <span class="menu-btn-arrow">➔</span>
+                </div>
+
+                <!-- 3. AI Teacher -->
+                <div class="dash-menu-btn dash-menu-btn-secondary" onclick="transitionToPage('page-dashboard', 'page-ai-teacher')">
+                    <div class="menu-btn-inner">
+                        <span class="menu-btn-icon">🤖</span>
+                        <div>
+                            <h3 class="menu-btn-title">AI Teacher</h3>
+                            <p class="menu-btn-desc">Instant 24/7 personal tutor help</p>
+                        </div>
+                    </div>
+                    <span class="menu-btn-arrow">➔</span>
+                </div>
+
+                <!-- 4. Dashboard Stats -->
+                <div class="dash-menu-btn dash-menu-btn-secondary" onclick="transitionToPage('page-dashboard', 'page-stats')">
+                    <div class="menu-btn-inner">
+                        <span class="menu-btn-icon">📊</span>
+                        <div>
+                            <h3 class="menu-btn-title">Stats & Badges</h3>
+                            <p class="menu-btn-desc">Achievements, Rank and Study XP</p>
+                        </div>
+                    </div>
+                    <span class="menu-btn-arrow">➔</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUB-PAGE: START NOW (SUBJECT SELECTION) -->
+    <div class="page-view" id="page-start-now" style="display: none;">
+        <div class="subpage-container">
+            <div class="subpage-header">
+                <button class="back-btn" onclick="transitionToPage('page-start-now', 'page-dashboard')">➔</button>
+                <div class="subpage-title-group">
+                    <h2 class="subpage-title">Subject Selection</h2>
+                    <span class="subpage-subtitle">Select a stream to begin learning</span>
+                </div>
+            </div>
+
+            <div class="subpage-content">
+                <div class="subject-grid">
+                    <!-- Math Card -->
+                    <div class="subject-card" onclick="alert('Launching Mathematics Module...')">
+                        <div class="subject-info">
+                            <div class="subject-icon-box" style="background: rgba(0, 242, 254, 0.1); border: 1px solid rgba(0, 242, 254, 0.3);">📐</div>
+                            <div>
+                                <h4 class="subject-title">Mathematics</h4>
+                                <span class="subject-progress-text">Level 1 • 45% Complete</span>
+                            </div>
+                        </div>
+                        <div class="progress-ring-container">
+                            <svg width="36" height="36">
+                                <circle stroke="rgba(255,255,255,0.05)" stroke-width="3" fill="transparent" r="15" cx="18" cy="18"/>
+                                <circle stroke="#00f2fe" stroke-width="3" fill="transparent" r="15" cx="18" cy="18" class="progress-ring-circle" stroke-dasharray="94.2" stroke-dashoffset="51.8"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Science Card -->
+                    <div class="subject-card" onclick="alert('Launching Science Module...')">
+                        <div class="subject-info">
+                            <div class="subject-icon-box" style="background: rgba(155, 81, 224, 0.1); border: 1px solid rgba(155, 81, 224, 0.3);">🧬</div>
+                            <div>
+                                <h4 class="subject-title">Science & Biology</h4>
+                                <span class="subject-progress-text">Level 1 • 80% Complete</span>
+                            </div>
+                        </div>
+                        <div class="progress-ring-container">
+                            <svg width="36" height="36">
+                                <circle stroke="rgba(255,255,255,0.05)" stroke-width="3" fill="transparent" r="15" cx="18" cy="18"/>
+                                <circle stroke="#9b51e0" stroke-width="3" fill="transparent" r="15" cx="18" cy="18" class="progress-ring-circle" stroke-dasharray="94.2" stroke-dashoffset="18.8"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Physics Card -->
+                    <div class="subject-card" onclick="alert('Launching Physics Module...')">
+                        <div class="subject-info">
+                            <div class="subject-icon-box" style="background: rgba(79, 172, 254, 0.1); border: 1px solid rgba(79, 172, 254, 0.3);">⚡</div>
+                            <div>
+                                <h4 class="subject-title">Applied Physics</h4>
+                                <span class="subject-progress-text">Level 1 • 15% Complete</span>
+                            </div>
+                        </div>
+                        <div class="progress-ring-container">
+                            <svg width="36" height="36">
+                                <circle stroke="rgba(255,255,255,0.05)" stroke-width="3" fill="transparent" r="15" cx="18" cy="18"/>
+                                <circle stroke="#4facfe" stroke-width="3" fill="transparent" r="15" cx="18" cy="18" class="progress-ring-circle" stroke-dasharray="94.2" stroke-dashoffset="80.1"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUB-PAGE: CHECK YOUR PROGRESS -->
+    <div class="page-view" id="page-progress" style="display: none;">
+        <div class="subpage-container">
+            <div class="subpage-header">
+                <button class="back-btn" onclick="transitionToPage('page-progress', 'page-dashboard')">➔</button>
+                <div class="subpage-title-group">
+                    <h2 class="subpage-title">Your Progress</h2>
+                    <span class="subpage-subtitle">Track your learning momentum</span>
+                </div>
+            </div>
+
+            <div class="subpage-content">
+                <!-- Metrics Grid -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value" id="prog-xp-val">120</div>
+                        <div class="metric-label">Total XP</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="prog-lvl-val">1</div>
+                        <div class="metric-label">Current Level</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="prog-solved-val">0</div>
+                        <div class="metric-label">Solved Qs</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="prog-accuracy-val">0%</div>
+                        <div class="metric-label">Accuracy</div>
+                    </div>
+                </div>
+
+                <!-- Custom Bar Graph -->
+                <div class="chart-box">
+                    <h4 class="chart-title">Weekly XP Milestones</h4>
+                    <div class="bar-container" id="progress-bar-graph">
+                        <div class="chart-bar-column">
+                            <div class="chart-bar-fill" style="height: 0%;" data-height="25%"></div>
+                            <span class="chart-bar-label">Mon</span>
+                        </div>
+                        <div class="chart-bar-column">
+                            <div class="chart-bar-fill" style="height: 0%;" data-height="45%"></div>
+                            <span class="chart-bar-label">Tue</span>
+                        </div>
+                        <div class="chart-bar-column">
+                            <div class="chart-bar-fill" style="height: 0%;" data-height="30%"></div>
+                            <span class="chart-bar-label">Wed</span>
+                        </div>
+                        <div class="chart-bar-column">
+                            <div class="chart-bar-fill" style="height: 0%;" data-height="65%"></div>
+                            <span class="chart-bar-label">Thu</span>
+                        </div>
+                        <div class="chart-bar-column">
+                            <div class="chart-bar-fill" style="height: 0%;" data-height="50%"></div>
+                            <span class="chart-bar-label">Fri</span>
+                        </div>
+                        <div class="chart-bar-column">
+                            <div class="chart-bar-fill" style="height: 0%;" data-height="85%"></div>
+                            <span class="chart-bar-label">Sat</span>
+                        </div>
+                        <div class="chart-bar-column">
+                            <div class="chart-bar-fill" style="height: 0%;" data-height="95%"></div>
+                            <span class="chart-bar-label">Sun</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUB-PAGE: AI TEACHER CHAT -->
+    <div class="page-view" id="page-ai-teacher" style="display: none;">
+        <div class="subpage-container">
+            <div class="subpage-header">
+                <button class="back-btn" onclick="transitionToPage('page-ai-teacher', 'page-dashboard')">➔</button>
+                <div class="subpage-title-group">
+                    <h2 class="subpage-title">AI Teacher</h2>
+                    <span class="subpage-subtitle">Instant answers to any academic problem</span>
+                </div>
+            </div>
+
+            <!-- Chat interface dynamic UI -->
+            <div class="subpage-content chat-layout">
+                <!-- Message window -->
+                <div class="chat-messages-area" id="chat-scroller">
+                    <div class="chat-bubble chat-bubble-ai">
+                        Hello! I am your <strong>GoalQuest AI Tutor</strong>. Ask me any study-related question, or select an example below!
+                    </div>
+                </div>
+
+                <!-- Suggestions chips -->
+                <div class="suggestion-chips">
+                    <div class="chip" onclick="sendSuggestedMessage('Explain Quantum Physics in simple words')">⚛️ Quantum Physics</div>
+                    <div class="chip" onclick="sendSuggestedMessage('Help me solve a math quadratic equation')">📐 Math Formulas</div>
+                    <div class="chip" onclick="sendSuggestedMessage('What is photosynthesis?')">🌿 Photosynthesis</div>
+                </div>
+
+                <!-- Bottom Input box -->
+                <div class="chat-input-bar">
+                    <input type="text" class="chat-input-element" id="chat-input-field" placeholder="Ask your AI Tutor anything...">
+                    <button class="chat-send-btn" id="chat-send-trigger">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUB-PAGE: STATS & ACHIEVEMENTS -->
+    <div class="page-view" id="page-stats" style="display: none;">
+        <div class="subpage-container">
+            <div class="subpage-header">
+                <button class="back-btn" onclick="transitionToPage('page-stats', 'page-dashboard')">➔</button>
+                <div class="subpage-title-group">
+                    <h2 class="subpage-title">Achievements</h2>
+                    <span class="subpage-subtitle">Your accomplishments and unlocks</span>
+                </div>
+            </div>
+
+            <div class="subpage-content">
+                <div class="stats-summary">
+                    <div class="summary-item">
+                        <div class="summary-val" id="stats-rank-txt">Newbie</div>
+                        <div class="summary-lbl">Rank</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-val" id="stats-coins-txt">50</div>
+                        <div class="summary-lbl">Coins 🪙</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-val">85%</div>
+                        <div class="summary-lbl">Today's Goal</div>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; text-align: left; color: #e2e8f0;">Earned Badges</h3>
+                
+                <div class="badge-grid" id="badges-container">
+                    <!-- Badge 1 Unlocked -->
+                    <div class="badge-card badge-card-unlocked">
+                        <span class="badge-art">🔥</span>
+                        <h4 class="badge-name">First Step</h4>
+                        <span class="badge-status status-unlocked">Unlocked</span>
+                    </div>
+
+                    <!-- Badge 2 Unlocked -->
+                    <div class="badge-card badge-card-unlocked">
+                        <span class="badge-art">🎯</span>
+                        <h4 class="badge-name">Quick Starter</h4>
+                        <span class="badge-status status-unlocked">Unlocked</span>
+                    </div>
+
+                    <!-- Badge 3 Locked -->
+                    <div class="badge-card badge-card-locked">
+                        <span class="badge-art">👑</span>
+                        <h4 class="badge-name">Grandmaster</h4>
+                        <span class="badge-status status-locked">Locked</span>
+                    </div>
+
+                    <!-- Badge 4 Locked -->
+                    <div class="badge-card badge-card-locked">
+                        <span class="badge-art">🦉</span>
+                        <h4 class="badge-name">Super Scholar</h4>
+                        <span class="badge-status status-locked">Locked</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUB-PAGE: USER PROFILE -->
+    <div class="page-view" id="page-profile" style="display: none;">
+        <div class="subpage-container">
+            <div class="subpage-header">
+                <button class="back-btn" onclick="transitionToPage('page-profile', 'page-dashboard')">➔</button>
+                <div class="subpage-title-group">
+                    <h2 class="subpage-title">Your Profile</h2>
+                    <span class="subpage-subtitle">Manage account details</span>
+                </div>
+            </div>
+
+            <div class="subpage-content profile-container">
+                <div class="large-avatar-box">
+                    <img id="profile-avatar-img" src="" alt="Profile Avatar">
+                </div>
+
+                <h3 class="profile-name" id="profile-name-txt">User Name</h3>
+                <p class="profile-email" id="profile-email-txt">user@example.com</p>
+
+                <div class="info-stack">
+                    <div class="info-row">
+                        <span class="info-lbl">Preparing For</span>
+                        <span class="info-val" id="profile-exam-txt">CBSE Class 10</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-lbl">Target Goal</span>
+                        <span class="info-val" id="profile-goal-txt">Score 95%+ in Boards</span>
+                    </div>
+                </div>
+
+                <button class="sso-btn" id="logout-trigger" style="border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.05); color: #fca5a5;">
+                    Sign Out / Log Out
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PREMIUM CUSTOM ERROR MODAL -->
+    <div class="error-modal-overlay" id="custom-error-modal">
+        <div class="error-card">
+            <div class="error-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+            </div>
+            <h3 class="error-modal-title">Domain Not Authorized</h3>
+            <div class="error-modal-desc" id="error-explanation">
+                यह डोमेन आपके Firebase प्रोजेक्ट में अधिकृत (Authorized) नहीं है:
+                <code id="current-url">Loading...</code>
+                <br>
+                <strong>इसे ठीक करने के लिए:</strong>
+                <ol style="margin-left: 20px; margin-top: 8px;">
+                    <li>Firebase Console में जाएं।</li>
+                    <li>Authentication ➔ Settings ➔ Authorized Domains में जाएं।</li>
+                    <li>इस डोमेन/IP को जोड़ें।</li>
+                    <li>स्थानीय परीक्षण (Local testing) के लिए <code>localhost</code> को एक स्थानीय वेब सर्वर (जैसे Live Server) पर चलाएं।</li>
+                </ol>
+            </div>
+            <button class="error-close-btn" id="error-modal-close">Got It</button>
+        </div>
+    </div>
+
     <!-- Script Implementations -->
     <script>
         /************************************************************
          * 1. FIREBASE INITIALIZATION
-         * Replace with your exact Firebase configuration details.
+         * Your official Firebase configuration coordinates integrated.
          ************************************************************/
         const firebaseConfig = {
-            apiKey: "AIzaSyCHvYW3gkq_wKn0gZ-ao7GgDHbR7lcx65c",
-            authDomain: "my-student-749be.firebaseapp.com",
-            projectId: "my-student-749be",
-            storageBucket: "my-student-749be.firebasestorage.app",
-            messagingSenderId: "610193478229",
-            appId: "1:610193478229:web:e27890cc4695f0b8833adc"
+          apiKey: "AIzaSyBMGOhyTv6aBX4p8VIEfLrFZZzyami_SLc",
+          authDomain: "goalquestai.firebaseapp.com",
+          databaseURL: "https://goalquestai-default-rtdb.firebaseio.com",
+          projectId: "goalquestai",
+          storageBucket: "goalquestai.firebasestorage.app",
+          messagingSenderId: "356645828264",
+          appId: "1:356645828264:web:19427863062b1d4e1c749d",
+          measurementId: "G-6PL9L7YQTP"
         };
 
         // Initialize Firebase SDK
@@ -665,6 +1761,7 @@
 
         // Global User State holder
         let authenticatedUser = null;
+        let userProfileData = null;
 
         /************************************************************
          * 2. PAGE ROUTER ENGINE
@@ -688,11 +1785,168 @@
                 
                 // Trigger active class fade-in
                 toEl.classList.add('active');
-            }, 600); // Corresponds to CSS opacity transition speed (0.6s)
+
+                // Trigger specific sub-page interactive animations on navigation
+                if (toPageId === 'page-progress') {
+                    animateWeeklyChart();
+                }
+            }, 600); 
         }
 
         /************************************************************
-         * 3. GOOGLE SIGN-IN INTERACTION
+         * 3. AUTH STATE OBSERVER (AUTOMATIC LOGIN & SESSION ROUTING)
+         ************************************************************/
+        auth.onAuthStateChanged(async (user) => {
+            const appLoadingScreen = document.getElementById('app-loading');
+            
+            if (user) {
+                authenticatedUser = user;
+                try {
+                    // Fetch user document profiles in firestore
+                    const profileRef = db.collection("users").doc(user.uid);
+                    const snap = await profileRef.get();
+
+                    if (snap.exists) {
+                        userProfileData = snap.data();
+                        
+                        // Handle streak calculations on load
+                        await verifyAndTrackStreak(user.uid);
+                        
+                        // Bind synced profiles to Dashboard views
+                        synchronizeDashboardDOM();
+                        
+                        // Transition straight to Dashboard Hub
+                        appLoadingScreen.classList.remove('active');
+                        setTimeout(() => {
+                            appLoadingScreen.style.display = 'none';
+                            document.getElementById('page-dashboard').style.display = 'flex';
+                            document.getElementById('page-dashboard').offsetHeight;
+                            document.getElementById('page-dashboard').classList.add('active');
+                        }, 600);
+                    } else {
+                        // User registered but incomplete onboarding, reroute to onboarding
+                        appLoadingScreen.classList.remove('active');
+                        setTimeout(() => {
+                            appLoadingScreen.style.display = 'none';
+                            document.getElementById('page-onboarding').style.display = 'flex';
+                            document.getElementById('page-onboarding').offsetHeight;
+                            document.getElementById('page-onboarding').classList.add('active');
+                        }, 600);
+                    }
+                } catch (error) {
+                    console.error("Auth Session Error:", error);
+                    appLoadingScreen.style.display = 'none';
+                    document.getElementById('page-landing').style.display = 'flex';
+                    document.getElementById('page-landing').classList.add('active');
+                    showCustomError(error.code, error.message);
+                }
+            } else {
+                // No active auth session, fade out load gate and expose landing
+                appLoadingScreen.classList.remove('active');
+                setTimeout(() => {
+                    appLoadingScreen.style.display = 'none';
+                    document.getElementById('page-landing').style.display = 'flex';
+                    document.getElementById('page-landing').offsetHeight;
+                    document.getElementById('page-landing').classList.add('active');
+                }, 600);
+            }
+        });
+
+        /************************************************************
+         * 4. DAILY STREAK SYNC CONTROLLER
+         ************************************************************/
+        async function verifyAndTrackStreak(uid) {
+            const todayStr = new Date().toISOString().split('T')[0];
+            let currentStreak = userProfileData.streak || 1;
+            let lastActiveDate = userProfileData.lastActiveDate;
+
+            if (lastActiveDate) {
+                const today = new Date(todayStr);
+                const lastActive = new Date(lastActiveDate);
+                const diffTime = Math.abs(today - lastActive);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                if (diffDays === 1) {
+                    // Incremented daily momentum
+                    currentStreak += 1;
+                } else if (diffDays > 1) {
+                    // Overdue days reset
+                    currentStreak = 1;
+                }
+            } else {
+                currentStreak = 1;
+            }
+
+            // Sync updated logs back to storage
+            userProfileData.streak = currentStreak;
+            userProfileData.lastActiveDate = todayStr;
+
+            await db.collection("users").doc(uid).update({
+                streak: currentStreak,
+                lastActiveDate: todayStr
+            });
+        }
+
+        /************************************************************
+         * 5. POPULATE SYNCED DOM ELEMENTS
+         ************************************************************/
+        function synchronizeDashboardDOM() {
+            if (!userProfileData) return;
+
+            // Header profile image/avatars fallback
+            const avatarUrl = userProfileData.photoURL || `https://api.dicebear.com/7.x/bottts/svg?seed=${userProfileData.uid}`;
+            
+            // Header
+            document.getElementById('header-avatar-img').src = avatarUrl;
+            document.getElementById('header-streak-txt').textContent = `${userProfileData.streak || 1} ${userProfileData.streak === 1 ? 'Day' : 'Days'}`;
+            
+            // Subpages Details
+            document.getElementById('prog-xp-val').textContent = userProfileData.xp || 120;
+            document.getElementById('prog-lvl-val').textContent = userProfileData.level || 1;
+            document.getElementById('prog-solved-val').textContent = userProfileData.solved || 0;
+            document.getElementById('prog-accuracy-val').textContent = `${userProfileData.accuracy || 0}%`;
+
+            // Stats Sub-page
+            document.getElementById('stats-rank-txt').textContent = userProfileData.rank || 'Newbie';
+            document.getElementById('stats-coins-txt').textContent = userProfileData.coins || 50;
+
+            // Profile Subpage
+            document.getElementById('profile-avatar-img').src = avatarUrl;
+            document.getElementById('profile-name-txt').textContent = userProfileData.name || 'User';
+            document.getElementById('profile-email-txt').textContent = userProfileData.email || 'user@example.com';
+            document.getElementById('profile-exam-txt').textContent = userProfileData.class ? `CBSE Class ${userProfileData.class}` : 'CBSE Class 10';
+            document.getElementById('profile-goal-txt').textContent = userProfileData.goal || 'Achieve My Goals';
+        }
+
+        // Setup click handler to toggle Profile Subpage
+        document.getElementById('avatar-btn').addEventListener('click', () => {
+            transitionToPage('page-dashboard', 'page-profile');
+        });
+
+        /************************************************************
+         * 6. PREMIUM CUSTOM MODAL TRIGGER
+         ************************************************************/
+        const errorModal = document.getElementById('custom-error-modal');
+        const errorExplanation = document.getElementById('error-explanation');
+        const errorCloseBtn = document.getElementById('error-modal-close');
+        const currentUrlCode = document.getElementById('current-url');
+
+        function showCustomError(errCode, errMessage) {
+            currentUrlCode.textContent = window.location.href;
+            if (errCode === 'auth/unauthorized-domain') {
+                errorModal.classList.add('show');
+            } else {
+                errorExplanation.innerHTML = `Something went wrong during login:<br><code>${errMessage}</code>`;
+                errorModal.classList.add('show');
+            }
+        }
+
+        errorCloseBtn.addEventListener('click', () => {
+            errorModal.classList.remove('show');
+        });
+
+        /************************************************************
+         * 7. GOOGLE SIGN-IN INTERACTION
          ************************************************************/
         const ssoButton = document.getElementById('sso-trigger');
 
@@ -714,7 +1968,9 @@
                 const userSnapshot = await userDocRef.get();
 
                 if (userSnapshot.exists) {
-                    // Bypass onboarding if document exists, go to Success Directly
+                    userProfileData = userSnapshot.data();
+                    await verifyAndTrackStreak(authenticatedUser.uid);
+                    synchronizeDashboardDOM();
                     transitionToPage('page-landing', 'page-success');
                     triggerConfetti();
                 } else {
@@ -726,7 +1982,7 @@
                 }
             } catch (error) {
                 console.error("Firebase Auth Error:", error);
-                alert("Sign-In failed. Please verify your Firebase settings and try again. Reason: " + error.message);
+                showCustomError(error.code, error.message);
             } finally {
                 ssoButton.style.pointerEvents = 'all';
                 ssoButton.style.opacity = '1';
@@ -734,7 +1990,7 @@
         });
 
         /************************************************************
-         * 4. ONBOARDING & DATA STORAGE
+         * 8. ONBOARDING & DATA STORAGE
          ************************************************************/
         const onboardForm = document.getElementById('onboard-form');
         const nameInput = document.getElementById('onboard-name');
@@ -765,7 +2021,7 @@
                 isValid = false;
             }
 
-            // Mobile validation (Standard Regex: requires digits and allows spaces/dashes/pluses, lengths between 10 and 15)
+            // Mobile validation
             const mobileRegex = /^[0-9\-\+\s\(\)]{10,15}$/;
             if (!mobileRegex.test(mobileInput.value.replace(/\s+/g, ''))) {
                 mobileInput.classList.add('invalid');
@@ -808,11 +2064,25 @@
                     goal: goalInput.value.trim(),
                     board: "CBSE",
                     class: "10",
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    
+                    // Premium Gamification Defaults
+                    streak: 1,
+                    lastActiveDate: new Date().toISOString().split('T')[0],
+                    xp: 120,
+                    coins: 50,
+                    level: 1,
+                    solved: 0,
+                    accuracy: 0,
+                    rank: "Newbie",
+                    weeklyProgress: [10, 20, 15, 30, 25, 40, 50],
+                    badges: ["Quick Starter", "First Step"]
                 };
 
                 // Store user context to Firestore
                 await db.collection("users").doc(authenticatedUser.uid).set(userData);
+                userProfileData = userData;
+                synchronizeDashboardDOM();
 
                 // Transition to success & trigger confetti
                 transitionToPage('page-onboarding', 'page-success');
@@ -828,14 +2098,138 @@
             }
         });
 
-        // Dashboard redirection placeholder (for UI preview completion)
+        // Continue to Dashboard button on Success page
         document.getElementById('btn-dashboard').addEventListener('click', () => {
-            alert("Redirecting to the GoalQuest.AI learning dashboard...");
+            transitionToPage('page-success', 'page-dashboard');
         });
+
+        /************************************************************
+         * 9. LOUGOUT SESSION DESTRUCTION
+         ************************************************************/
+        document.getElementById('logout-trigger').addEventListener('click', async () => {
+            if (confirm("Are you sure you want to sign out?")) {
+                try {
+                    await auth.signOut();
+                    authenticatedUser = null;
+                    userProfileData = null;
+                    transitionToPage('page-profile', 'page-landing');
+                } catch (error) {
+                    alert("Logout failed: " + error.message);
+                }
+            }
+        });
+
+        /************************************************************
+         * 10. AI TEACHER CHAT FUNCTIONALITY
+         ************************************************************/
+        const chatScroller = document.getElementById('chat-scroller');
+        const chatInputField = document.getElementById('chat-input-field');
+        const chatSendTrigger = document.getElementById('chat-send-trigger');
+
+        chatSendTrigger.addEventListener('click', () => handleOutgoingChatMessage());
+        chatInputField.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleOutgoingChatMessage();
+        });
+
+        function sendSuggestedMessage(msg) {
+            chatInputField.value = msg;
+            handleOutgoingChatMessage();
+        }
+
+        function handleOutgoingChatMessage() {
+            const queryText = chatInputField.value.trim();
+            if (!queryText) return;
+
+            // 1. Render User Message
+            appendChatBubble(queryText, 'user');
+            chatInputField.value = '';
+
+            // 2. Render Thinking Loader Animation
+            const loaderId = appendChatLoader();
+            chatScroller.scrollTop = chatScroller.scrollHeight;
+
+            // 3. Simulated AI Cognitive Output after delay
+            setTimeout(() => {
+                removeChatLoader(loaderId);
+                const mockResponse = getMockAIEducationalResponse(queryText);
+                appendChatBubble(mockResponse, 'ai');
+                chatScroller.scrollTop = chatScroller.scrollHeight;
+            }, 1800);
+        }
+
+        function appendChatBubble(text, sender) {
+            const bubble = document.createElement('div');
+            bubble.className = `chat-bubble chat-bubble-${sender}`;
+            
+            if (sender === 'ai') {
+                // Dynamic mock markdown elements formatting
+                bubble.innerHTML = formatMarkdownMock(text);
+            } else {
+                bubble.textContent = text;
+            }
+            
+            chatScroller.appendChild(bubble);
+        }
+
+        function appendChatLoader() {
+            const loaderDiv = document.createElement('div');
+            const uniqueId = 'loader-' + Date.now();
+            loaderDiv.id = uniqueId;
+            loaderDiv.className = 'chat-bubble chat-bubble-ai';
+            loaderDiv.innerHTML = `
+                <div class="typing-loader">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>`;
+            chatScroller.appendChild(loaderDiv);
+            return uniqueId;
+        }
+
+        function removeChatLoader(loaderId) {
+            const loader = document.getElementById(loaderId);
+            if (loader) loader.remove();
+        }
+
+        function formatMarkdownMock(rawText) {
+            // High fidelity codeblocks & bold text mock markup parser
+            let formatted = rawText
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/`(.*?)`/g, '<code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; font-family: monospace; color:#00f2fe">$1</code>')
+                .replace(/\n/g, '<br>');
+            return formatted;
+        }
+
+        function getMockAIEducationalResponse(userQuery) {
+            // Intelligent Educational Mock Context Base
+            const query = userQuery.toLowerCase();
+            if (query.includes('quantum')) {
+                return `**Quantum Physics** explains how subatomic particles behave. Unlike normal-sized things: \n\n1. **Superposition**: Particles can exist in multiple states at once until measured.\n2. **Entanglement**: Two linked particles immediately affect each other, no matter the distance.\n\nThink of it like a spinning coin that is both Heads and Tails at the same time until you stop it!`;
+            } else if (query.includes('quadratic') || query.includes('math')) {
+                return `Here is the famous **Quadratic Formula** used to solve equation \`ax² + bx + c = 0\`:\n\n\`x = (-b ± √(b² - 4ac)) / 2a\`\n\nTo find the roots, compute the discriminant \`D = b² - 4ac\` first. If it is positive, you get two real solutions! Let me know if you want to solve an exact equation step-by-step.`;
+            } else if (query.includes('photosynthesis')) {
+                return `**Photosynthesis** is the process plants use to convert sunlight into energy! \n\nFormula:\n\`6CO₂ + 6H₂O + Sunlight ➔ C₆H₁₂O₆ + 6O₂\`\n\nChlorophyll in the leaves traps sunlight energy to build glucose while generating oxygen for humans to breathe.`;
+            }
+            return `I have thoroughly analyzed your question: **"${userQuery}"**.\n\nBased on your profile objectives, here is a structured summary:\n• Step 1: Study the fundamental variables.\n• Step 2: Formulate your thesis and run a mock test.\n• Step 3: Revise with specialized GoalQuest metrics.\n\nLet me know if you would like to generate custom mock questions on this subject!`;
+        }
+
+        /************************************************************
+         * 11. WEEKLY XP PROGRESS BAR GRAPH ANIMATION
+         ************************************************************/
+        function animateWeeklyChart() {
+            const bars = document.querySelectorAll('.chart-bar-fill');
+            bars.forEach(bar => {
+                bar.style.height = '0%'; // reset
+                setTimeout(() => {
+                    const targetHeight = bar.getAttribute('data-height');
+                    bar.style.height = targetHeight;
+                }, 100);
+            });
+        }
 
 
         /************************************************************
-         * 5. PARTICLES & CONFETTI ANIMATION ENGINE
+         * 12. PARTICLES & CONFETTI ANIMATION ENGINE
          ************************************************************/
         const canvas = document.getElementById('particles');
         const ctx = canvas.getContext('2d');
