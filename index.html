@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -239,12 +240,6 @@
             transform: translateY(1px);
         }
 
-        .btn-premium:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-
         .btn-glowing {
             background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-purple) 100%);
             border: none;
@@ -271,31 +266,6 @@
 
         @keyframes spin {
             to { transform: rotate(360deg); }
-        }
-
-        /* Error message display */
-        .auth-error-message {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            border-radius: 12px;
-            padding: 12px 16px;
-            color: var(--neon-red);
-            font-size: 0.85rem;
-            margin-top: 16px;
-            max-width: 320px;
-            width: 100%;
-            text-align: center;
-            display: none;
-        }
-
-        .auth-error-message.visible {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Form Controls */
@@ -523,7 +493,7 @@
         .dash-scrollable-body {
             position: absolute;
             top: 76px;
-            bottom: 72px;
+            bottom: 72px; /* Bottom space matches restructured menu bar heights */
             left: 0;
             width: 100%;
             overflow-y: auto;
@@ -573,6 +543,7 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
+        /* Individual gradient borders using CSS absolute pseudo overlays */
         .premium-menu-card::before {
             content: '';
             position: absolute;
@@ -648,6 +619,7 @@
             flex-shrink: 0;
         }
 
+        /* Hover & focus micro-interactions */
         .premium-menu-card:hover {
             transform: translateY(-4px) scale(1.02);
             background: rgba(255, 255, 255, 0.05);
@@ -672,11 +644,11 @@
             transform: translateY(-1px) scale(0.99);
         }
 
+        /* Dynamic chip shadows */
         .glow-shimmer-wrap {
             position: relative;
             width: 100%;
         }
-
         .glow-shimmer-wrap::after {
             content: '';
             position: absolute;
@@ -690,11 +662,14 @@
             opacity: 0;
             transition: opacity 0.4s;
         }
-
         .glow-shimmer-wrap:hover::after {
             opacity: 1;
         }
 
+        /* ====================================================
+         * SECONDARY CORES (LEARN, AI, STATS, PROFILE)
+         * ==================================================== */
+         
         /* SUBJECT MODULES (LEARN TAB) */
         .subject-group-grid {
             display: flex;
@@ -713,7 +688,6 @@
             justify-content: space-between;
             transition: all 0.3s;
             width: 100%;
-            cursor: pointer;
         }
 
         .subject-metric-card:hover {
@@ -763,6 +737,7 @@
             color: var(--text-secondary);
         }
 
+        /* Circular progress indicators */
         .progress-circle-wrap {
             position: relative;
             width: 38px;
@@ -775,7 +750,7 @@
             transform-origin: 50% 50%;
         }
 
-        /* CHAT BOT INTERACTION DESIGNS */
+        /* CHAT BOT INTERACTION DESIGNS (AI TUTOR TAB) */
         .teacher-chat-interface {
             display: flex;
             flex-direction: column;
@@ -810,7 +785,6 @@
             line-height: 1.45;
             text-align: left;
             animation: bubbleIntro 0.4s var(--transition-smooth) both;
-            position: relative;
         }
 
         @keyframes bubbleIntro {
@@ -834,6 +808,7 @@
             border-top-right-radius: 4px;
         }
 
+        /* Suggestions Pills Scroll */
         .chat-suggested-chips {
             display: flex;
             gap: 8px;
@@ -866,6 +841,7 @@
             color: #ffffff;
         }
 
+        /* Text Input controls */
         .chat-input-row {
             display: flex;
             align-items: center;
@@ -904,6 +880,7 @@
             transform: scale(1.1);
         }
 
+        /* Typing Dots Animation styling */
         .typing-loader {
             display: flex;
             gap: 4px;
@@ -926,6 +903,7 @@
             50% { transform: translateY(-5px); }
         }
 
+        /* HIGHLIGHT PERFORMANCE METRICS & CERTIFICATES */
         .metrics-grid-summary {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -956,6 +934,7 @@
             letter-spacing: 0.05em;
         }
 
+        /* Micro progress graph chart */
         .progress-analytics-graph {
             background: rgba(255, 255, 255, 0.01);
             border: 1px solid var(--border-glass);
@@ -1003,12 +982,13 @@
             font-weight: 600;
         }
 
+        /* FIXED BOTTOM NAVIGATION BAR WITH PERFECT CENTERING */
         .premium-bottom-navigation {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 72px;
+            height: 72px; /* Slimmer, cleaner production profile height */
             background: rgba(3, 3, 3, 0.8);
             border-top: 1px solid var(--border-glass);
             backdrop-filter: blur(24px);
@@ -1016,7 +996,7 @@
             z-index: 100;
             display: flex;
             align-items: center;
-            justify-content: space-evenly;
+            justify-content: space-evenly; /* Three menu tabs evenly distributed */
             padding-bottom: env(safe-area-inset-bottom);
         }
 
@@ -1044,6 +1024,7 @@
             letter-spacing: 0.04em;
         }
 
+        /* Hover indicator configurations */
         .nav-tab-item:hover {
             color: #ffffff;
         }
@@ -1061,6 +1042,7 @@
             filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.6));
         }
 
+        /* Active highlight dot glow indicator */
         .nav-tab-item::after {
             content: '';
             position: absolute;
@@ -1080,6 +1062,9 @@
             transform: scale(1);
         }
 
+        /* ====================================================
+         * FLOATING OVERLAYS (PROFILE & SEGMENTED LANGS)
+         * ==================================================== */
         .fullscreen-overlay-glass {
             position: fixed;
             top: 0;
@@ -1127,6 +1112,7 @@
             transform: scale(1) translateY(0);
         }
 
+        /* PROFILE SCREEN CONTAINER & CONTROL ITEMS */
         .profile-workspace-view {
             width: 100%;
             display: flex;
@@ -1210,6 +1196,7 @@
             flex-direction: column !important;
         }
 
+        /* PREMIUM SEGMENTED RADIO TRACK SELECTOR */
         .lang-selector-segment {
             display: flex;
             background: rgba(255, 255, 255, 0.03);
@@ -1251,6 +1238,7 @@
             box-shadow: 0 0 10px rgba(0, 242, 254, 0.25);
         }
 
+        /* Firebase Auth synchronization loading block */
         #app-loading-gate {
             background-color: var(--bg-darkest);
             z-index: 2000;
@@ -1280,41 +1268,6 @@
             0% { left: -150%; }
             50% { left: 150%; }
             100% { left: 150%; }
-        }
-
-        @keyframes slideInRight {
-            0% { transform: translateX(120%); opacity: 0; }
-            100% { transform: translateX(0); opacity: 1; }
-        }
-        
-        .bubble-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-            justify-content: flex-end;
-        }
-        .action-btn {
-            background: rgba(255, 255, 255, 0.03) !important;
-            border: 1px solid var(--border-glass) !important;
-            color: var(--text-secondary) !important;
-            font-size: 0.72rem !important;
-            font-weight: 600;
-            padding: 5px 10px !important;
-            border-radius: 8px !important;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            transition: all 0.2s var(--transition-smooth) !important;
-        }
-        .action-btn:hover {
-            background: rgba(255, 255, 255, 0.08) !important;
-            border-color: rgba(0, 242, 254, 0.3) !important;
-            color: #ffffff !important;
-            transform: translateY(-1px);
-        }
-        .action-btn:active {
-            transform: translateY(1px);
         }
 
         /* RESPONSIVE LAYOUT CALIBRATIONS */
@@ -1373,19 +1326,9 @@
     <!-- Interactive Particle Backdrop Layer -->
     <canvas id="particles"></canvas>
 
-    <!-- AI Global Status Loader -->
-    <div id="ai-global-loader" style="display: none; position: fixed; top: 20px; right: 20px; background: rgba(10, 10, 16, 0.9); border: 1px solid var(--neon-blue); padding: 12px 24px; border-radius: 16px; z-index: 9999; align-items: center; gap: 12px; box-shadow: 0 8px 32px rgba(0, 242, 254, 0.25); backdrop-filter: blur(8px); animation: slideInRight 0.3s ease;">
-        <div class="typing-loader" style="padding: 0;">
-            <div class="typing-dot" style="background: var(--neon-blue);"></div>
-            <div class="typing-dot" style="background: var(--neon-blue);"></div>
-            <div class="typing-dot" style="background: var(--neon-blue);"></div>
-        </div>
-        <span style="font-size: 0.85rem; font-weight: 700; color: #ffffff;">AI is thinking...</span>
-    </div>
-
     <!-- 0. GATE SYSTEM: AUTHENTICATION SYNC OVERLAY -->
     <div class="page-view active" id="app-loading-gate">
-        <div class="card-wrapper" style="box-shadow: none; border: none; background: transparent; padding: 24px;">
+        <div class="card-wrapper" style="box-shadow: none; border: none; background: transparent;">
             <div class="brand-orb" style="width: 80px; height: 80px;">
                 <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#00f2fe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1393,14 +1336,7 @@
                     <path d="M2 12L12 17L22 12" stroke="#4facfe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
-            <p id="loading-gate-text" style="color: var(--text-secondary); font-size: 0.95rem; margin-top: 12px; letter-spacing: 0.04em;">Initializing Secure Learning Portal...</p>
-            
-            <!-- Dynamic Connection Failure Action UI -->
-            <div id="loading-error-actions" style="display: none; flex-direction: column; align-items: center; gap: 16px; margin-top: 20px; width: 100%; max-width: 320px;">
-                <p id="loading-error-message" style="color: var(--neon-red); font-size: 0.88rem; line-height: 1.5; margin-bottom: 8px; text-align: center;"></p>
-                <button class="btn-premium btn-glowing ripple-trigger" id="btn-retry-init" style="width: 100%;">Retry Connection</button>
-                <button class="btn-premium ripple-trigger" id="btn-skip-init" style="width: 100%; background: transparent; border-color: rgba(255,255,255,0.1);">Proceed Offline</button>
-            </div>
+            <p style="color: var(--text-secondary); font-size: 0.95rem; margin-top: 12px; letter-spacing: 0.04em;">Initializing Secure Learning Portal...</p>
         </div>
     </div>
 
@@ -1418,9 +1354,8 @@
             <h1 class="app-title" data-i18n="app_title">GoalQuest.AI</h1>
             <p class="tagline" data-i18n="landing_tagline">Learn Smart. Practice Better. Achieve More.</p>
 
-            <!-- FIX: Added Google Sign-In button with proper ID and spinner state -->
-            <button class="btn-premium btn-glowing ripple-trigger" id="google-signin-btn" aria-label="Continue with Google">
-                <span class="btn-icon" style="display: flex; align-items: center; justify-content: center; width: 22px; height: 22px;">
+            <button class="btn-premium ripple-trigger" id="sso-trigger" aria-label="Continue with Google">
+                <span style="display: flex; align-items: center; justify-content: center; width: 22px; height: 22px;">
                     <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
                         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                         <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -1428,12 +1363,8 @@
                         <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
                     </svg>
                 </span>
-                <span class="btn-text" data-i18n="continue_google">Continue with Google</span>
-                <span class="spinner" id="google-signin-spinner"></span>
+                <span data-i18n="continue_google">Continue with Google</span>
             </button>
-
-            <!-- FIX: Added error message display area -->
-            <div class="auth-error-message" id="auth-error-display"></div>
         </div>
     </div>
 
@@ -1452,24 +1383,28 @@
             <p class="onboarding-subtitle" data-i18n="onboard_subtitle">Personalize your high-performance schedule.</p>
 
             <form class="onboarding-form" id="onboard-form" novalidate>
+                <!-- Full Name -->
                 <div class="input-group">
                     <label class="input-label" for="onboard-name" data-i18n="lbl_name">Full Name</label>
                     <input type="text" id="onboard-name" class="form-input" placeholder="Your full name" required autocomplete="name">
                     <div class="input-error" id="error-name">Name must be at least 2 characters.</div>
                 </div>
 
+                <!-- Mobile Phone Number -->
                 <div class="input-group">
                     <label class="input-label" for="onboard-mobile" data-i18n="lbl_mobile">Mobile Number</label>
                     <input type="tel" id="onboard-mobile" class="form-input" placeholder="e.g., +91 98765 43210" required autocomplete="tel">
                     <div class="input-error" id="error-mobile">Enter a valid 10-15 digit mobile number.</div>
                 </div>
 
+                <!-- Educational Aim -->
                 <div class="input-group">
                     <label class="input-label" for="onboard-goal" data-i18n="lbl_goal">Target Learning Goal</label>
                     <input type="text" id="onboard-goal" class="form-input" placeholder="Example: Secure 95%+ in Boards" required>
                     <div class="input-error" id="error-goal">Outline your academic target (min 5 chars).</div>
                 </div>
 
+                <!-- Syllabus Stream Selection -->
                 <div class="input-group">
                     <label class="input-label" for="onboard-exam" data-i18n="lbl_exam">Exam Target</label>
                     <select id="onboard-exam" class="form-select">
@@ -1509,7 +1444,10 @@
     <!-- PAGE 4: UPGRADED DASHBOARD CONSOLE (MAIN WORKSPACE) -->
     <div class="page-view" id="page-dashboard" style="display: none;">
         <div class="dash-viewport">
+            
+            <!-- FIXED TOP NAVIGATION HEADER -->
             <div class="premium-header">
+                <!-- Streak tracker -->
                 <div class="streak-pill" id="dashboard-streak-trigger">
                     <span class="streak-fire">🔥</span>
                     <span id="streak-count-txt">0 Days</span>
@@ -1517,13 +1455,19 @@
                 
                 <div class="header-title-center" data-i18n="dash_header_title">GoalQuest.AI Dashboard</div>
                 
+                <!-- Avatar triggers custom details overlay -->
                 <div class="profile-container-btn" id="header-profile-btn">
                     <div class="profile-inner-avatar" id="header-avatar-slot">G</div>
                 </div>
             </div>
 
+            <!-- SCROLLABLE DASHBOARD VIEWPORT -->
             <div class="dash-scrollable-body" id="dash-scroll-container">
+                
+                <!-- TAB 1: DASHBOARD HOME HUB -->
                 <div class="section-wrapper active" id="tab-section-home">
+                    
+                    <!-- MENU CARD 1: Start Now -->
                     <div class="glow-shimmer-wrap">
                         <div class="premium-menu-card ripple-trigger" onclick="switchMainTab('learn')">
                             <div class="premium-menu-card-inner">
@@ -1537,8 +1481,9 @@
                         </div>
                     </div>
 
+                    <!-- MENU CARD 2: Check Your Knowledge -->
                     <div class="glow-shimmer-wrap">
-                        <div class="premium-menu-card ripple-trigger" onclick="switchMainTab('ai'); triggerAISpecialist('quiz');">
+                        <div class="premium-menu-card ripple-trigger" onclick="triggerMockAlert('PYQs & Dynamic Quizzes engine initializing...')">
                             <div class="premium-menu-card-inner">
                                 <div class="card-emoji-box">📖</div>
                                 <div class="card-meta-text">
@@ -1550,6 +1495,7 @@
                         </div>
                     </div>
 
+                    <!-- MENU CARD 3: AI Teacher -->
                     <div class="glow-shimmer-wrap">
                         <div class="premium-menu-card ripple-trigger" onclick="switchMainTab('ai')">
                             <div class="premium-menu-card-inner">
@@ -1563,6 +1509,7 @@
                         </div>
                     </div>
 
+                    <!-- MENU CARD 4: Performance Analytics -->
                     <div class="glow-shimmer-wrap">
                         <div class="premium-menu-card ripple-trigger" onclick="switchMainTab('learn')">
                             <div class="premium-menu-card-inner">
@@ -1577,11 +1524,13 @@
                     </div>
                 </div>
 
+                <!-- TAB 2: ACTIVE LEARNING ROOM (LEARN TAB) -->
                 <div class="section-wrapper" id="tab-section-learn">
                     <h2 class="onboarding-title" style="text-align: left; font-size: 1.4rem;" data-i18n="subject_header">Select Active Subject</h2>
                     
                     <div class="subject-group-grid">
-                        <div class="subject-metric-card ripple-trigger" onclick="switchMainTab('ai'); explainSubjectConcept('Math');">
+                        <!-- Math Course Card -->
+                        <div class="subject-metric-card ripple-trigger" onclick="triggerMockAlert('Launching CBSE 10 Math Module...')">
                             <div class="subject-left-set">
                                 <div class="subject-glyph" style="background: rgba(0, 242, 254, 0.1); border-color: rgba(0, 242, 254, 0.25);">📐</div>
                                 <div class="subject-text-stack">
@@ -1597,7 +1546,8 @@
                             </div>
                         </div>
 
-                        <div class="subject-metric-card ripple-trigger" onclick="switchMainTab('ai'); explainSubjectConcept('Science');">
+                        <!-- General Science Suite -->
+                        <div class="subject-metric-card ripple-trigger" onclick="triggerMockAlert('Launching Science & Chemistry Workspace...')">
                             <div class="subject-left-set">
                                 <div class="subject-glyph" style="background: rgba(155, 81, 224, 0.1); border-color: rgba(155, 81, 224, 0.25);">🧬</div>
                                 <div class="subject-text-stack">
@@ -1614,6 +1564,7 @@
                         </div>
                     </div>
 
+                    <!-- PROGRESS SUMMARY GRAPH -->
                     <div class="progress-analytics-graph" style="margin-top: 14px;">
                         <h4 class="graph-header-lbl" data-i18n="weekly_activity">Weekly Learning Activity (XP)</h4>
                         <div class="analytic-graph-bar-row" id="anal-bar-row">
@@ -1649,30 +1600,24 @@
                     </div>
                 </div>
 
+                <!-- TAB 3: AI TUTOR WORKSPACE (AI TAB) -->
                 <div class="section-wrapper" id="tab-section-ai">
                     <div class="teacher-chat-interface">
+                        <!-- Message viewport logs -->
                         <div class="chat-screen-logs" id="chat-scroller">
                             <div class="chat-bubble chat-bubble-system" data-i18n="chat_welcome">
                                 Hello! I am your <strong>GoalQuest AI Tutor</strong>. Ask me any CBSE Class 10 academic query, or select a dynamic suggestion chip below!
                             </div>
                         </div>
 
-                        <div class="chat-suggested-chips" style="border-top: 1px solid rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.03); padding: 8px 12px; gap: 6px;">
-                            <div class="suggested-pill" style="border-color: var(--neon-blue); color: #ffffff; font-weight: bold;" onclick="triggerAISpecialist('quiz')" data-i18n="tool_quiz">📝 Quiz Gen</div>
-                            <div class="suggested-pill" style="border-color: var(--neon-purple); color: #ffffff; font-weight: bold;" onclick="triggerAISpecialist('pyq')" data-i18n="tool_pyq">🎓 PYQ Gen</div>
-                            <div class="suggested-pill" style="border-color: var(--neon-gold); color: #ffffff; font-weight: bold;" onclick="triggerAISpecialist('homework')" data-i18n="tool_homework">✏️ Homework Helper</div>
-                            <div class="suggested-pill" style="border-color: var(--neon-emerald); color: #ffffff; font-weight: bold;" onclick="triggerAISpecialist('chapter')" data-i18n="tool_chapter">📖 Explanation</div>
-                            <div class="suggested-pill" style="border-color: #f43f5e; color: #ffffff; font-weight: bold;" onclick="triggerAISpecialist('doubt')" data-i18n="tool_doubt">❓ Doubt Solver</div>
-                            <div class="suggested-pill" style="border-color: #3b82f6; color: #ffffff; font-weight: bold;" onclick="triggerAISpecialist('motivation')" data-i18n="tool_motivation">🔥 Motivation</div>
-                            <div class="suggested-pill" style="border-color: #10b981; color: #ffffff; font-weight: bold;" onclick="triggerAISpecialist('planner')" data-i18n="tool_planner">📅 Study Planner</div>
-                        </div>
-
+                        <!-- Chip suggestions -->
                         <div class="chat-suggested-chips">
                             <div class="suggested-pill" onclick="sendSuggestionChat('Explain Photosynthesis formula step-by-step')" data-i18n="chat_photosynthesis">Photosynthesis</div>
                             <div class="suggested-pill" onclick="sendSuggestionChat('What is the formula of Quadratic roots?')" data-i18n="chat_roots">Quadratic Roots</div>
                             <div class="suggested-pill" onclick="sendSuggestionChat('Explain Ohm Law in electric circuits')" data-i18n="chat_ohms">Ohm's Law</div>
                         </div>
 
+                        <!-- Typing user command triggers -->
                         <div class="chat-input-row">
                             <input type="text" class="chat-text-area" id="chat-input-el" placeholder="Type your doubt here...">
                             <button class="chat-submit-btn ripple-trigger" id="chat-btn-submit">
@@ -1685,6 +1630,7 @@
                     </div>
                 </div>
 
+                <!-- TAB 4: SYSTEM METRIC SUMMARIES (INTEGRATED STATS) -->
                 <div class="section-wrapper" id="tab-section-stats">
                     <h2 class="onboarding-title" style="text-align: left; font-size: 1.4rem;" data-i18n="metrics_header">Performance Metrics</h2>
                     
@@ -1718,8 +1664,10 @@
                         <span style="font-weight: 800; font-size: 0.9rem; color: var(--neon-gold)" data-i18n="active_status">ACTIVE</span>
                     </div>
                 </div>
+
             </div>
 
+            <!-- FIXED BOTTOM TAB CONTROL MATRIX WITH PERFECT THREE-ICON SYMMETRY -->
             <div class="premium-bottom-navigation">
                 <div class="nav-tab-item active" id="nav-item-home" onclick="switchMainTab('home')">
                     <span class="nav-tab-icon">🏠</span>
@@ -1734,6 +1682,7 @@
                     <span class="nav-tab-text" data-i18n="nav_ai">AI</span>
                 </div>
             </div>
+
         </div>
     </div>
 
@@ -1748,6 +1697,7 @@
                 <h3 class="profile-identity-name" id="pop-name-lbl">Student</h3>
                 <p class="profile-identity-email" id="pop-email-lbl">student@example.com</p>
 
+                <!-- Detailed Rows -->
                 <div class="profile-meta-rows">
                     <div class="meta-data-row">
                         <span class="meta-row-label" data-i18n="lbl_mobile">Mobile Number</span>
@@ -1762,6 +1712,7 @@
                         <span class="meta-row-value" id="pop-exam-lbl">CBSE Class 10</span>
                     </div>
 
+                    <!-- Language Selector Section -->
                     <div class="meta-data-row flex-column" style="align-items: flex-start; gap: 8px;">
                         <span class="meta-row-label" data-i18n="pop_language">Language / भाषा</span>
                         <div class="lang-selector-segment">
@@ -1781,6 +1732,7 @@
                     </div>
                 </div>
 
+                <!-- Signout interaction -->
                 <button class="btn-premium ripple-trigger" id="pop-logout-btn" style="border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.05); color: var(--neon-red); margin-top: 10px;" data-i18n="pop_logout">
                     Sign Out Account
                 </button>
@@ -1791,20 +1743,11 @@
         </div>
     </div>
 
+    <!-- Script Implementations -->
     <script>
         /************************************************************
-         * GLOBAL STATE MATRIX
-         * FIX: Consolidated all state variables with clear documentation
+         * 1. FIREBASE CONFIGURATION & INITIALIZATION
          ************************************************************/
-        let auth = null;              // Firebase Auth instance
-        let db = null;               // Firestore database instance
-        let appUserContext = null;   // Current Firebase user object
-        let appProfileContext = null; // User profile data from Firestore
-        let lastUserQuery = "";      // Last AI chat query for regeneration
-        let isInitialized = false;   // Whether the app has completed initialization
-        let initTimeout = null;      // Timeout handle for loading gate
-
-        // Firebase configuration - VERIFIED from your project
         const firebaseConfig = {
           apiKey: "AIzaSyCHvYW3gkq_wKn0gZ-ao7GgDHbR7lcx65c",
           authDomain: "my-student-749be.firebaseapp.com",
@@ -1816,250 +1759,20 @@
           measurementId: "G-YCD2D186RK"
         };
 
-        /************************************************************
-         * CLOD AI CONFIGURATION
-         ************************************************************/
-        const CLOD_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmVWxmQkM0cnRFZ1oyOVo1dkRGQ2hBVWRubEUyIiwidXNlcklkIjoiZlVsZkJDNHJ0RWdaMjlaNXZERkNoQVVkbmxFMiIsInRlYW1JZCI6ImEyMGM2MzhiLTAwNDMtNGJkOC1hZDg4LTI0ZWQ4Mzk1MWRmMSIsInRlYW1Sb2xlIjoib3duZXIiLCJwcm9qZWN0SWQiOiI5M2RjODk0My1iZmViLTQ0MmEtYTUzMS04ZGY2MTY2M2I5ODkiLCJqdGkiOiJhcGlrZXktMTc4MjcyMDI4MzY4MiIsImlhdCI6MTc4MjcyMDI4MzwiZXhwIjoxODMyNzIwMjgzfQ.vSpTcibhynA4gnfGxQS1H-d5YPOAIhs3C1Oso8nwpgM";
-        const CLOD_BASE_URL = "https://api.clod.io/v1";
-        const CLOD_MODEL = "Trinity Mini";
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // System Core App State Holder
+        let appUserContext = null;
+        let appProfileContext = null;
+
+        // Google AI Studio (Gemini) API Key
+        // यहाँ अपनी Google AI Studio की API Key दर्ज करें:
+        const GEMINI_API_KEY = "AQ.Ab8RN6L4GytPz4k-RuQDvGN-KzeqcNBJ-4WzKEfu3-NiraupCA"; 
 
         /************************************************************
-         * FIX #1: SAFE FIREBASE INITIALIZATION WITH COMPREHENSIVE LOGGING
-         * Wrapped in try/catch with detailed error reporting
-         * VERIFIED: initializeApp() called only once
-         ************************************************************/
-        console.log('[AUTH DEBUG] Step 1: Starting Firebase initialization');
-        
-        try {
-            if (typeof firebase !== 'undefined' && typeof firebase.initializeApp === 'function') {
-                console.log('[AUTH DEBUG] Step 2: Firebase SDK loaded successfully');
-                
-                // Initialize Firebase app - ONLY CALLED ONCE
-                firebase.initializeApp(firebaseConfig);
-                console.log('[AUTH DEBUG] Step 3: initializeApp() completed successfully');
-                
-                // Initialize Auth service
-                auth = firebase.auth();
-                console.log('[AUTH DEBUG] Step 4: getAuth() / auth() initialized successfully');
-                
-                // Verify auth is working
-                if (auth && typeof auth.signInWithPopup === 'function') {
-                    console.log('[AUTH DEBUG] Step 5: Auth service verified - signInWithPopup available');
-                } else {
-                    console.error('[AUTH DEBUG] ERROR: Auth service methods not available');
-                }
-                
-                // Initialize Firestore
-                db = firebase.firestore();
-                console.log('[AUTH DEBUG] Step 6: Firestore initialized successfully');
-            } else {
-                console.error('[AUTH DEBUG] ERROR: Firebase SDK not available. Check if scripts loaded correctly.');
-                showLoadingError('Firebase SDK failed to load. Please check your internet connection and disable any ad-blockers.');
-            }
-        } catch (initErr) {
-            console.error('[AUTH DEBUG] Firebase Initialization Failure:', initErr.message, initErr.stack);
-            showLoadingError('Firebase initialization failed: ' + initErr.message);
-        }
-
-        /************************************************************
-         * FIX #2: GOOGLE AUTHENTICATION FLOW
-         * Complete implementation with popup, redirect, and error handling
-         * VERIFIED: GoogleAuthProvider configured correctly
-         * VERIFIED: signInWithPopup and signInWithRedirect implemented
-         * VERIFIED: Mobile detection for redirect fallback
-         ************************************************************/
-        
-        /**
-         * Detects if the current device is mobile for redirect strategy
-         * FIX: Automatically use redirect on mobile devices
-         */
-        function isMobileDevice() {
-            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-            const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
-            const isMobile = mobileRegex.test(userAgent);
-            console.log('[AUTH DEBUG] Device detection - Is mobile:', isMobile);
-            return isMobile;
-        }
-
-        /**
-         * Displays authentication error messages to the user
-         * FIX: Shows meaningful Firebase error messages
-         */
-        function showAuthError(errorMessage) {
-            console.error('[AUTH DEBUG] Authentication Error:', errorMessage);
-            const errorDisplay = document.getElementById('auth-error-display');
-            if (errorDisplay) {
-                errorDisplay.textContent = errorMessage;
-                errorDisplay.classList.add('visible');
-                
-                // Auto-hide after 8 seconds
-                setTimeout(() => {
-                    errorDisplay.classList.remove('visible');
-                }, 8000);
-            }
-        }
-
-        /**
-         * Sets loading state on the Google sign-in button
-         */
-        function setSignInLoading(isLoading) {
-            const signInBtn = document.getElementById('google-signin-btn');
-            const spinner = document.getElementById('google-signin-spinner');
-            const btnText = signInBtn?.querySelector('.btn-text');
-            const btnIcon = signInBtn?.querySelector('.btn-icon');
-            
-            if (signInBtn) {
-                if (isLoading) {
-                    signInBtn.disabled = true;
-                    if (spinner) spinner.style.display = 'inline-block';
-                    if (btnText) btnText.style.display = 'none';
-                    if (btnIcon) btnIcon.style.display = 'none';
-                    console.log('[AUTH DEBUG] Sign-in button set to loading state');
-                } else {
-                    signInBtn.disabled = false;
-                    if (spinner) spinner.style.display = 'none';
-                    if (btnText) btnText.style.display = 'inline';
-                    if (btnIcon) btnIcon.style.display = 'flex';
-                    console.log('[AUTH DEBUG] Sign-in button reset to normal state');
-                }
-            }
-        }
-
-        /**
-         * FIX #3: MAIN GOOGLE SIGN-IN FUNCTION
-         * Handles both popup and redirect authentication strategies
-         */
-        async function initiateGoogleSignIn() {
-            console.log('[AUTH DEBUG] Step 7: Google Sign-In initiated by user click');
-            
-            // Clear any previous errors
-            const errorDisplay = document.getElementById('auth-error-display');
-            if (errorDisplay) errorDisplay.classList.remove('visible');
-            
-            // Verify auth is available
-            if (!auth) {
-                const errorMsg = 'Authentication service is not available. Please refresh the page.';
-                console.error('[AUTH DEBUG] ERROR:', errorMsg);
-                showAuthError(errorMsg);
-                return;
-            }
-            
-            // Set loading state
-            setSignInLoading(true);
-            
-            try {
-                // FIX #4: Verify GoogleAuthProvider configuration
-                console.log('[AUTH DEBUG] Step 8: Creating GoogleAuthProvider');
-                const provider = new firebase.auth.GoogleAuthProvider();
-                
-                // Add required scopes
-                provider.addScope('profile');
-                provider.addScope('email');
-                console.log('[AUTH DEBUG] Step 9: GoogleAuthProvider configured with scopes:', ['profile', 'email']);
-                
-                // Set custom parameters
-                provider.setCustomParameters({
-                    prompt: 'select_account'
-                });
-                console.log('[AUTH DEBUG] Step 10: Custom parameters set (prompt: select_account)');
-                
-                // FIX #5: Mobile detection for redirect strategy
-                if (isMobileDevice()) {
-                    console.log('[AUTH DEBUG] Step 11a: Mobile detected - Using signInWithRedirect');
-                    await auth.signInWithRedirect(provider);
-                    // Note: On mobile with redirect, the page will reload
-                    // getRedirectResult() will handle the response after reload
-                    console.log('[AUTH DEBUG] Redirect initiated - page will reload');
-                } else {
-                    console.log('[AUTH DEBUG] Step 11b: Desktop detected - Using signInWithPopup');
-                    const result = await auth.signInWithPopup(provider);
-                    console.log('[AUTH DEBUG] Step 12: signInWithPopup completed successfully');
-                    console.log('[AUTH DEBUG] Step 13: User authenticated:', result.user.email);
-                    
-                    // The onAuthStateChanged listener will handle the redirect to dashboard
-                    // No need to manually route here
-                }
-            } catch (error) {
-                console.error('[AUTH DEBUG] Step 14: Sign-in failed with error:', error.code, error.message);
-                
-                // FIX #6: Detailed Firebase error handling with user-friendly messages
-                let userFriendlyMessage = '';
-                
-                switch (error.code) {
-                    case 'auth/popup-closed-by-user':
-                        userFriendlyMessage = 'Sign-in was cancelled. Please try again.';
-                        break;
-                    case 'auth/popup-blocked':
-                        userFriendlyMessage = 'Pop-up was blocked by your browser. Please allow pop-ups for this site.';
-                        break;
-                    case 'auth/cancelled-popup-request':
-                        userFriendlyMessage = 'Another sign-in attempt is in progress. Please wait.';
-                        break;
-                    case 'auth/network-request-failed':
-                        userFriendlyMessage = 'Network error. Please check your internet connection.';
-                        break;
-                    case 'auth/operation-not-allowed':
-                        userFriendlyMessage = 'Google sign-in is not enabled. Please contact support.';
-                        break;
-                    case 'auth/unauthorized-domain':
-                        userFriendlyMessage = 'This domain is not authorized for sign-in. Please add it in Firebase Console.';
-                        break;
-                    case 'auth/internal-error':
-                        userFriendlyMessage = 'An internal error occurred. Please try again.';
-                        break;
-                    default:
-                        userFriendlyMessage = error.message || 'An unknown error occurred during sign-in.';
-                }
-                
-                console.error('[AUTH DEBUG] Formatted error:', userFriendlyMessage);
-                showAuthError(userFriendlyMessage);
-                setSignInLoading(false);
-            }
-        }
-
-        /**
-         * FIX #7: HANDLE REDIRECT RESULT AFTER PAGE RELOAD
-         * This is called when the page loads after a redirect-based sign-in
-         */
-        async function handleRedirectResult() {
-            console.log('[AUTH DEBUG] Step 15: Checking for redirect result');
-            
-            if (!auth) {
-                console.log('[AUTH DEBUG] Auth not available for redirect check');
-                return;
-            }
-            
-            try {
-                const result = await auth.getRedirectResult();
-                
-                if (result && result.user) {
-                    console.log('[AUTH DEBUG] Step 16: Redirect result found - User authenticated:', result.user.email);
-                    // The onAuthStateChanged listener will handle the rest
-                } else {
-                    console.log('[AUTH DEBUG] Step 17: No redirect result found - Normal page load');
-                }
-            } catch (error) {
-                console.error('[AUTH DEBUG] Step 18: Redirect result error:', error.code, error.message);
-                
-                // Handle redirect-specific errors
-                let errorMessage = '';
-                switch (error.code) {
-                    case 'auth/account-exists-with-different-credential':
-                        errorMessage = 'An account already exists with the same email but different sign-in method.';
-                        break;
-                    case 'auth/auth-domain-config-required':
-                        errorMessage = 'Auth domain configuration is required. Please check Firebase Console.';
-                        break;
-                    default:
-                        errorMessage = error.message || 'Redirect sign-in failed.';
-                }
-                
-                showAuthError(errorMessage);
-            }
-        }
-
-        /************************************************************
-         * TRANSLATION ENGINE (ENGLISH, हिन्दी, HINGLISH)
+         * 2. TRANSLATION ENGINE (ENGLISH, हिन्दी, HINGLISH)
          ************************************************************/
         const translations = {
             en: {
@@ -2111,14 +1824,7 @@
                 pop_back: "Back to Console",
                 nav_home: "Home",
                 nav_learn: "Learn",
-                nav_ai: "AI",
-                tool_quiz: "📝 Quiz Gen",
-                tool_pyq: "🎓 PYQ Gen",
-                tool_homework: "✏️ Homework Helper",
-                tool_chapter: "📖 Explanation",
-                tool_doubt: "❓ Doubt Solver",
-                tool_motivation: "🔥 Motivation",
-                tool_planner: "📅 Study Planner"
+                nav_ai: "AI"
             },
             hi: {
                 app_title: "गोलक्वेस्ट.AI",
@@ -2169,14 +1875,7 @@
                 pop_back: "वापस जाएं",
                 nav_home: "होम",
                 nav_learn: "सीखें",
-                nav_ai: "एआई",
-                tool_quiz: "📝 क्विज़ जनरेटर",
-                tool_pyq: "🎓 पीवाईक्यू जनरेटर",
-                tool_homework: "✏️ होमवर्क सहायक",
-                tool_chapter: "📖 अध्याय स्पष्टीकरण",
-                tool_doubt: "❓ संदेह निवारक",
-                tool_motivation: "🔥 प्रेरणा",
-                tool_planner: "📅 अध्ययन योजनाकार"
+                nav_ai: "एआई"
             },
             hn: {
                 app_title: "GoalQuest.AI",
@@ -2227,106 +1926,100 @@
                 pop_back: "Back to Console",
                 nav_home: "Home",
                 nav_learn: "Learn",
-                nav_ai: "AI",
-                tool_quiz: "📝 Quiz Generator",
-                tool_pyq: "🎓 PYQ Generator",
-                tool_homework: "✏️ Homework Helper",
-                tool_chapter: "📖 Chapter Samjhein",
-                tool_doubt: "❓ Doubt Solver",
-                tool_motivation: "🔥 Motivation",
-                tool_planner: "📅 Study Planner"
+                nav_ai: "AI"
             }
         };
 
         function applyLanguage(langCode) {
-            try {
-                if (!translations[langCode]) langCode = 'en';
+            if (!translations[langCode]) langCode = 'en';
+            
+            // Premium smooth shifting transition
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                const dictionary = translations[langCode];
                 
-                document.body.style.opacity = '0';
-                setTimeout(() => {
-                    const dictionary = translations[langCode];
+                document.querySelectorAll('[data-i18n]').forEach(element => {
+                    const translationKey = element.getAttribute('data-i18n');
+                    if (dictionary[translationKey]) {
+                        if (element.tagName === 'INPUT' && element.hasAttribute('placeholder')) {
+                            element.setAttribute('placeholder', dictionary[translationKey]);
+                        } else {
+                            element.innerHTML = dictionary[translationKey];
+                        }
+                    }
+                });
+
+                // Update specific dynamic placeholders
+                const chatInput = document.getElementById('chat-input-el');
+                if (chatInput) {
+                    chatInput.placeholder = dictionary['chat_placeholder'];
+                }
+
+                // Check correct radio selector button inside modal
+                const targetRadio = document.querySelector(`.lang-option input[value="${langCode}"]`);
+                if (targetRadio) {
+                    targetRadio.checked = true;
+                }
+
+                // Update dynamic translated streak count unit
+                if (appProfileContext) {
+                    const currentStreak = appProfileContext.streak || 1;
+                    let calculatedUnit = currentStreak === 1 ? 'Day' : 'Days';
                     
-                    document.querySelectorAll('[data-i18n]').forEach(element => {
-                        const translationKey = element.getAttribute('data-i18n');
-                        if (dictionary[translationKey]) {
-                            if (element.tagName === 'INPUT' && element.hasAttribute('placeholder')) {
-                                element.setAttribute('placeholder', dictionary[translationKey]);
-                            } else {
-                                element.innerHTML = dictionary[translationKey];
-                            }
-                        }
-                    });
-
-                    const chatInput = document.getElementById('chat-input-el');
-                    if (chatInput) {
-                        chatInput.placeholder = dictionary['chat_placeholder'] || "Type your doubt here...";
+                    if (langCode === 'hi') {
+                        calculatedUnit = currentStreak === 1 ? 'दिन' : 'दिनों';
+                    } else if (langCode === 'hn') {
+                        calculatedUnit = currentStreak === 1 ? 'Din' : 'Dino';
                     }
+                    document.getElementById('streak-count-txt').textContent = `${currentStreak} ${calculatedUnit}`;
+                }
 
-                    const targetRadio = document.querySelector(`.lang-option input[value="${langCode}"]`);
-                    if (targetRadio) {
-                        targetRadio.checked = true;
-                    }
-
-                    if (appProfileContext) {
-                        const currentStreak = appProfileContext.streak || 1;
-                        let calculatedUnit = currentStreak === 1 ? 'Day' : 'Days';
-                        
-                        if (langCode === 'hi') {
-                            calculatedUnit = currentStreak === 1 ? 'दिन' : 'दिनों';
-                        } else if (langCode === 'hn') {
-                            calculatedUnit = currentStreak === 1 ? 'Din' : 'Dino';
-                        }
-                        const streakTxt = document.getElementById('streak-count-txt');
-                        if (streakTxt) streakTxt.textContent = `${currentStreak} ${calculatedUnit}`;
-                    }
-
-                    document.body.style.opacity = '1';
-                }, 200);
-            } catch (langErr) {
-                console.error("Language application failure:", langErr);
                 document.body.style.opacity = '1';
-            }
+            }, 200);
         }
 
-        /************************************************************
-         * UNIFIED SYSTEM ROUTER & VIEW CONTROLLER
-         ************************************************************/
-        function routeToSection(targetPageId) {
-            console.log('[AUTH DEBUG] Routing to section:', targetPageId);
-            const pages = ['page-landing', 'page-onboarding', 'page-success', 'page-dashboard'];
-            pages.forEach(pageId => {
-                const pageEl = document.getElementById(pageId);
-                if (pageEl) {
-                    if (pageId === targetPageId) {
-                        pageEl.style.display = 'flex';
-                        pageEl.offsetHeight; // force rendering tick
-                        pageEl.classList.add('active');
-                        if (pageId === 'page-dashboard') {
-                            animateDashboardProgressBars();
-                        }
-                    } else {
-                        pageEl.classList.remove('active');
-                        pageEl.style.display = 'none';
+        // Initialize segmented change events inside Profile view
+        document.querySelectorAll('.lang-option input').forEach(radioButton => {
+            radioButton.addEventListener('change', async (e) => {
+                const selectedLang = e.target.value;
+                applyLanguage(selectedLang);
+
+                // Set local cache immediately
+                localStorage.setItem('gq_language', selectedLang);
+
+                // Sync back to profile collection in cloud
+                if (appUserContext) {
+                    try {
+                        await db.collection("users").doc(appUserContext.uid).update({
+                            language: selectedLang
+                        });
+                    } catch (err) {
+                        console.error("Failed to update language setting in Firestore:", err);
                     }
                 }
             });
-        }
+        });
 
+        /************************************************************
+         * 3. PAGE TRANSITIONS ROUTER MATRIX
+         ************************************************************/
         function transitionToPage(fromPageId, toPageId) {
             const fromPage = document.getElementById(fromPageId);
             const toPage = document.getElementById(toPageId);
 
             if (!fromPage || !toPage) return;
 
+            // Trigger active state change with transitions
             fromPage.classList.remove('active');
             
             setTimeout(() => {
                 fromPage.style.display = 'none';
                 toPage.style.display = 'flex';
                 
-                toPage.offsetHeight; 
+                toPage.offsetHeight; // force rendering engine tick
                 toPage.classList.add('active');
 
+                // If navigating to dashboard workspace, synchronize components
                 if (toPageId === 'page-dashboard') {
                     animateDashboardProgressBars();
                 }
@@ -2334,129 +2027,313 @@
         }
 
         /************************************************************
-         * LOADER DEACTIVATION WORKERS
+         * 4. SIGN-IN & AUTH STATE CHANGE WORKERS
          ************************************************************/
-        function hideLoadingGate() {
-            console.log('[AUTH DEBUG] Hiding loading gate');
-            isInitialized = true;
-            if (initTimeout) clearTimeout(initTimeout);
-            
+        auth.onAuthStateChanged(async (user) => {
             const loadingGate = document.getElementById('app-loading-gate');
-            if (loadingGate) {
+
+            // Fallback language extraction
+            const currentCacheLang = localStorage.getItem('gq_language') || 'en';
+            applyLanguage(currentCacheLang);
+
+            if (user) {
+                appUserContext = user;
+                try {
+                    const profileReference = db.collection("users").doc(user.uid);
+                    const userDoc = await profileReference.get();
+
+                    if (userDoc.exists) {
+                        appProfileContext = userDoc.data();
+                        
+                        // Set persistent language setting if present in db
+                        if (appProfileContext.language) {
+                            applyLanguage(appProfileContext.language);
+                            localStorage.setItem('gq_language', appProfileContext.language);
+                        }
+
+                        // Handle streak compilation
+                        await verifyAndSynchronizeStreak(user.uid);
+                        
+                        // Synchronize UI layouts
+                        synchronizeDashboardHUD();
+
+                        // Route to dashboard
+                        loadingGate.classList.remove('active');
+                        setTimeout(() => {
+                            loadingGate.style.display = 'none';
+                            document.getElementById('page-landing').style.display = 'none';
+                            document.getElementById('page-onboarding').style.display = 'none';
+                            document.getElementById('page-success').style.display = 'none';
+
+                            document.getElementById('page-dashboard').style.display = 'flex';
+                            document.getElementById('page-dashboard').offsetHeight;
+                            document.getElementById('page-dashboard').classList.add('active');
+                            animateDashboardProgressBars();
+                        }, 500);
+
+                    } else {
+                        // Forward to personalization wizard
+                        if (user.displayName) {
+                            document.getElementById('onboard-name').value = user.displayName;
+                        }
+                        loadingGate.classList.remove('active');
+                        setTimeout(() => {
+                            loadingGate.style.display = 'none';
+                            document.getElementById('page-landing').style.display = 'none';
+                            
+                            document.getElementById('page-onboarding').style.display = 'flex';
+                            document.getElementById('page-onboarding').offsetHeight;
+                            document.getElementById('page-onboarding').classList.add('active');
+                        }, 500);
+                    }
+
+                } catch (error) {
+                    console.error("Secure initial fetch failure:", error);
+                    loadingGate.style.display = 'none';
+                    document.getElementById('page-landing').style.display = 'flex';
+                    document.getElementById('page-landing').classList.add('active');
+                }
+            } else {
+                // Clear user contexts and route back to landing
+                appUserContext = null;
+                appProfileContext = null;
                 loadingGate.classList.remove('active');
                 setTimeout(() => {
                     loadingGate.style.display = 'none';
+                    document.getElementById('page-dashboard').style.display = 'none';
+                    document.getElementById('page-dashboard').classList.remove('active');
+
+                    document.getElementById('page-landing').style.display = 'flex';
+                    document.getElementById('page-landing').offsetHeight;
+                    document.getElementById('page-landing').classList.add('active');
                 }, 500);
             }
-        }
-
-        function showLoadingError(message) {
-            console.error('[AUTH DEBUG] Loading error:', message);
-            isInitialized = true;
-            if (initTimeout) clearTimeout(initTimeout);
-            
-            const loaderText = document.getElementById('loading-gate-text');
-            const errorActions = document.getElementById('loading-error-actions');
-            const errorMessage = document.getElementById('loading-error-message');
-            
-            if (loaderText) loaderText.style.display = 'none';
-            if (errorMessage) errorMessage.textContent = message;
-            if (errorActions) errorActions.style.display = 'flex';
-        }
+        });
 
         /************************************************************
-         * STREAK & HISTORICAL METRICS CALCULATOR
+         * 5. AUTH & GOOGLE POPUP TRIGGERS
+         ************************************************************/
+        const ssoButton = document.getElementById('sso-trigger');
+        ssoButton.addEventListener('click', async (e) => {
+            e.preventDefault();
+            ssoButton.style.pointerEvents = 'none';
+            ssoButton.style.opacity = '0.7';
+
+            const authProvider = new firebase.auth.GoogleAuthProvider();
+
+            try {
+                const response = await auth.signInWithPopup(authProvider);
+                appUserContext = response.user;
+
+                const profileReference = db.collection("users").doc(appUserContext.uid);
+                const snapshotDoc = await profileReference.get();
+
+                if (snapshotDoc.exists) {
+                    appProfileContext = snapshotDoc.data();
+                    
+                    if (appProfileContext.language) {
+                        applyLanguage(appProfileContext.language);
+                        localStorage.setItem('gq_language', appProfileContext.language);
+                    }
+
+                    await verifyAndSynchronizeStreak(appUserContext.uid);
+                    synchronizeDashboardHUD();
+                    transitionToPage('page-landing', 'page-success');
+                    triggerConfettiExplosion();
+                } else {
+                    if (appUserContext.displayName) {
+                        document.getElementById('onboard-name').value = appUserContext.displayName;
+                    }
+                    transitionToPage('page-landing', 'page-onboarding');
+                }
+            } catch (err) {
+                console.error("Single Sign On error logs:", err);
+                alert("Sign-in process cancelled or timed out.");
+            } finally {
+                ssoButton.style.pointerEvents = 'all';
+                ssoButton.style.opacity = '1';
+            }
+        });
+
+        /************************************************************
+         * 6. PERSONALIZATION ONBOARDING WORKERS
+         ************************************************************/
+        const onboardForm = document.getElementById('onboard-form');
+        const onboardingName = document.getElementById('onboard-name');
+        const onboardingMobile = document.getElementById('onboard-mobile');
+        const onboardingGoal = document.getElementById('onboard-goal');
+        const onboardingExam = document.getElementById('onboard-exam');
+        const submitOnboardBtn = document.getElementById('onboard-submit');
+        const onboardSpinner = document.getElementById('onboard-spinner');
+
+        // Reset validity on form edits
+        [onboardingName, onboardingMobile, onboardingGoal].forEach(inputEl => {
+            inputEl.addEventListener('input', () => {
+                inputEl.classList.remove('invalid');
+                const errDiv = document.getElementById('error-' + inputEl.id.split('-')[1]);
+                if (errDiv) errDiv.style.display = 'none';
+            });
+        });
+
+        function performFormValidations() {
+            let pass = true;
+
+            if (onboardingName.value.trim().length < 2) {
+                onboardingName.classList.add('invalid');
+                document.getElementById('error-name').style.display = 'block';
+                pass = false;
+            }
+
+            const cleanMobile = onboardingMobile.value.replace(/[\s\-\+\(\)]/g, '');
+            if (cleanMobile.length < 10 || cleanMobile.length > 15 || isNaN(cleanMobile)) {
+                onboardingMobile.classList.add('invalid');
+                document.getElementById('error-mobile').style.display = 'block';
+                pass = false;
+            }
+
+            if (onboardingGoal.value.trim().length < 5) {
+                onboardingGoal.classList.add('invalid');
+                document.getElementById('error-goal').style.display = 'block';
+                pass = false;
+            }
+
+            return pass;
+        }
+
+        onboardForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!performFormValidations()) return;
+
+            submitOnboardBtn.style.pointerEvents = 'none';
+            submitOnboardBtn.querySelector('.btn-text').style.display = 'none';
+            onboardSpinner.style.display = 'inline-block';
+
+            try {
+                if (!appUserContext) throw new Error("Auth session frame dropped. Relog required.");
+
+                const currentCacheLang = localStorage.getItem('gq_language') || 'en';
+
+                const userPayload = {
+                    uid: appUserContext.uid,
+                    name: onboardingName.value.trim(),
+                    email: appUserContext.email || "",
+                    photoURL: appUserContext.photoURL || "",
+                    mobileNumber: onboardingMobile.value.trim(),
+                    goal: onboardingGoal.value.trim(),
+                    board: "CBSE",
+                    class: "10",
+                    exam: onboardingExam.value,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    language: currentCacheLang,
+                    
+                    // Gamified values
+                    streak: 1,
+                    lastActiveDate: new Date().toISOString().split('T')[0],
+                    xp: 120,
+                    coins: 50,
+                    level: 1,
+                    solved: 0,
+                    accuracy: 0,
+                    rank: "Scholar"
+                };
+
+                await db.collection("users").doc(appUserContext.uid).set(userPayload);
+                appProfileContext = userPayload;
+
+                synchronizeDashboardHUD();
+                transitionToPage('page-onboarding', 'page-success');
+                triggerConfettiExplosion();
+
+            } catch (err) {
+                console.error("Firestore serialization failure:", err);
+                alert("Failed to initialize remote database: " + err.message);
+            } finally {
+                submitOnboardBtn.style.pointerEvents = 'all';
+                submitOnboardBtn.querySelector('.btn-text').style.display = 'inline-block';
+                onboardSpinner.style.display = 'none';
+            }
+        });
+
+        document.getElementById('btn-dashboard').addEventListener('click', () => {
+            transitionToPage('page-success', 'page-dashboard');
+        });
+
+        /************************************************************
+         * 7. CALIBRATE STREAKS AND DAILY PROGRESS IN FIRESTORE
          ************************************************************/
         async function verifyAndSynchronizeStreak(uid) {
-            if (!db || !appProfileContext) return;
-            try {
-                const todayDateStr = new Date().toISOString().split('T')[0];
-                let activeStreak = appProfileContext.streak || 1;
-                let lastRecordedActive = appProfileContext.lastActiveDate;
+            const todayDateStr = new Date().toISOString().split('T')[0];
+            let activeStreak = appProfileContext.streak || 1;
+            let lastRecordedActive = appProfileContext.lastActiveDate;
 
-                if (lastRecordedActive) {
-                    const today = new Date(todayDateStr);
-                    const lastActive = new Date(lastRecordedActive);
-                    const elapsedDiff = Math.abs(today - lastActive);
-                    const daysDiff = Math.ceil(elapsedDiff / (1000 * 60 * 60 * 24));
+            if (lastRecordedActive) {
+                const today = new Date(todayDateStr);
+                const lastActive = new Date(lastRecordedActive);
+                const elapsedDiff = Math.abs(today - lastActive);
+                const daysDiff = Math.ceil(elapsedDiff / (1000 * 60 * 60 * 24));
 
-                    if (daysDiff === 1) {
-                        activeStreak += 1;
-                    } else if (daysDiff > 1) {
-                        activeStreak = 1;
-                    }
-                } else {
+                if (daysDiff === 1) {
+                    activeStreak += 1;
+                } else if (daysDiff > 1) {
                     activeStreak = 1;
                 }
-
-                appProfileContext.streak = activeStreak;
-                appProfileContext.lastActiveDate = todayDateStr;
-
-                await db.collection("users").doc(uid).update({
-                    streak: activeStreak,
-                    lastActiveDate: todayDateStr
-                });
-            } catch (err) {
-                console.warn("Could not sync active streak with server database:", err);
+            } else {
+                activeStreak = 1;
             }
+
+            appProfileContext.streak = activeStreak;
+            appProfileContext.lastActiveDate = todayDateStr;
+
+            await db.collection("users").doc(uid).update({
+                streak: activeStreak,
+                lastActiveDate: todayDateStr
+            });
         }
 
         /************************************************************
-         * FRONTEND DATA HUDS MODEL BINDER
+         * 8. FRONTEND MODEL DOM BINDER
          ************************************************************/
         function synchronizeDashboardHUD() {
             if (!appProfileContext) return;
 
-            try {
-                const avatarUrl = appProfileContext.photoURL;
-                const fallbackLetter = appProfileContext.name ? appProfileContext.name.charAt(0).toUpperCase() : 'G';
-                const avatarSlot = document.getElementById('header-avatar-slot');
-                const popAvatarSlot = document.getElementById('pop-avatar-slot');
+            // Header profile settings
+            const avatarUrl = appProfileContext.photoURL;
+            const fallbackLetter = appProfileContext.name ? appProfileContext.name.charAt(0).toUpperCase() : 'G';
+            const avatarSlot = document.getElementById('header-avatar-slot');
+            const popAvatarSlot = document.getElementById('pop-avatar-slot');
 
-                if (avatarUrl) {
-                    const imgHtml = `<img src="${avatarUrl}" alt="Avatar">`;
-                    if (avatarSlot) avatarSlot.innerHTML = imgHtml;
-                    if (popAvatarSlot) popAvatarSlot.innerHTML = imgHtml;
-                } else {
-                    if (avatarSlot) avatarSlot.textContent = fallbackLetter;
-                    if (popAvatarSlot) popAvatarSlot.textContent = fallbackLetter;
-                }
-
-                const currentStreak = appProfileContext.streak || 1;
-                const activeLang = localStorage.getItem('gq_language') || 'en';
-                let calculatedUnit = currentStreak === 1 ? 'Day' : 'Days';
-                if (activeLang === 'hi') {
-                    calculatedUnit = currentStreak === 1 ? 'दिन' : 'दिनों';
-                } else if (activeLang === 'hn') {
-                    calculatedUnit = currentStreak === 1 ? 'Din' : 'Dino';
-                }
-                const streakTxt = document.getElementById('streak-count-txt');
-                if (streakTxt) streakTxt.textContent = `${currentStreak} ${calculatedUnit}`;
-
-                const xpVal = document.getElementById('stats-xp-val');
-                const lvlVal = document.getElementById('stats-level-val');
-                const solvedVal = document.getElementById('stats-solved-val');
-                const accVal = document.getElementById('stats-accuracy-val');
-
-                if (xpVal) xpVal.textContent = appProfileContext.xp || 120;
-                if (lvlVal) lvlVal.textContent = `Level ${appProfileContext.level || 1}`;
-                if (solvedVal) solvedVal.textContent = appProfileContext.solved || 0;
-                if (accVal) accVal.textContent = `${appProfileContext.accuracy || 0}%`;
-
-                const popName = document.getElementById('pop-name-lbl');
-                const popEmail = document.getElementById('pop-email-lbl');
-                const popMobile = document.getElementById('pop-mobile-lbl');
-                const popGoal = document.getElementById('pop-goal-lbl');
-                const popExam = document.getElementById('pop-exam-lbl');
-
-                if (popName) popName.textContent = appProfileContext.name || "Student";
-                if (popEmail) popEmail.textContent = appProfileContext.email || "student@example.com";
-                if (popMobile) popMobile.textContent = appProfileContext.mobileNumber || "N/A";
-                if (popGoal) popGoal.textContent = appProfileContext.goal || "Not Specified";
-                if (popExam) popExam.textContent = appProfileContext.exam || "CBSE Class 10";
-            } catch (hudErr) {
-                console.error("Dashboard synchronization error:", hudErr);
+            if (avatarUrl) {
+                avatarSlot.innerHTML = `<img src="${avatarUrl}" alt="Avatar">`;
+                popAvatarSlot.innerHTML = `<img src="${avatarUrl}" alt="Avatar">`;
+            } else {
+                avatarSlot.textContent = fallbackLetter;
+                popAvatarSlot.textContent = fallbackLetter;
             }
+
+            // Streak pills
+            const currentStreak = appProfileContext.streak || 1;
+            const activeLang = localStorage.getItem('gq_language') || 'en';
+            let calculatedUnit = currentStreak === 1 ? 'Day' : 'Days';
+            if (activeLang === 'hi') {
+                calculatedUnit = currentStreak === 1 ? 'दिन' : 'दिनों';
+            } else if (activeLang === 'hn') {
+                calculatedUnit = currentStreak === 1 ? 'Din' : 'Dino';
+            }
+            document.getElementById('streak-count-txt').textContent = `${currentStreak} ${calculatedUnit}`;
+
+            // Dashboard Metrics Panel Bindings
+            document.getElementById('stats-xp-val').textContent = appProfileContext.xp || 120;
+            document.getElementById('stats-level-val').textContent = `Level ${appProfileContext.level || 1}`;
+            document.getElementById('stats-solved-val').textContent = appProfileContext.solved || 0;
+            document.getElementById('stats-accuracy-val').textContent = `${appProfileContext.accuracy || 0}%`;
+
+            // Glass popup overlays bindings
+            document.getElementById('pop-name-lbl').textContent = appProfileContext.name || "Student";
+            document.getElementById('pop-email-lbl').textContent = appProfileContext.email || "student@example.com";
+            document.getElementById('pop-mobile-lbl').textContent = appProfileContext.mobileNumber || "N/A";
+            document.getElementById('pop-goal-lbl').textContent = appProfileContext.goal || "Not Specified";
+            document.getElementById('pop-exam-lbl').textContent = appProfileContext.exam || "CBSE Class 10";
         }
 
         function animateDashboardProgressBars() {
@@ -2470,233 +2347,144 @@
             });
         }
 
+        /************************************************************
+         * 9. DYNAMIC NAVIGATION CONTROLLER & MAIN ROUTERS
+         ************************************************************/
         function switchMainTab(targetSection) {
-            const container = document.getElementById('dash-scroll-container');
-            if (container) container.scrollTop = 0;
+            // Scroll to top automatically
+            document.getElementById('dash-scroll-container').scrollTop = 0;
 
+            // Deactivate all sections first
             document.querySelectorAll('.section-wrapper').forEach(wrap => {
                 wrap.classList.remove('active');
             });
 
+            // Deactivate all navigation bar items
             document.querySelectorAll('.nav-tab-item').forEach(item => {
                 item.classList.remove('active');
             });
 
+            // Activate corresponding page structures
             if (targetSection === 'home') {
-                const sectionHome = document.getElementById('tab-section-home');
-                const navHome = document.getElementById('nav-item-home');
-                if (sectionHome) sectionHome.classList.add('active');
-                if (navHome) navHome.classList.add('active');
+                document.getElementById('tab-section-home').classList.add('active');
+                document.getElementById('nav-item-home').classList.add('active');
             } else if (targetSection === 'learn') {
-                const sectionLearn = document.getElementById('tab-section-learn');
-                const navLearn = document.getElementById('nav-item-learn');
-                if (sectionLearn) sectionLearn.classList.add('active');
-                if (navLearn) navLearn.classList.add('active');
+                document.getElementById('tab-section-learn').classList.add('active');
+                document.getElementById('nav-item-learn').classList.add('active');
                 animateDashboardProgressBars();
             } else if (targetSection === 'ai') {
-                const sectionAi = document.getElementById('tab-section-ai');
-                const navAi = document.getElementById('nav-item-ai');
-                if (sectionAi) sectionAi.classList.add('active');
-                if (navAi) navAi.classList.add('active');
+                document.getElementById('tab-section-ai').classList.add('active');
+                document.getElementById('nav-item-ai').classList.add('active');
             }
         }
 
         /************************************************************
-         * REUSABLE CLOD AI CORES & SERVICES
+         * 10. DYNAMIC CHAT CONVERSATION WORKER
          ************************************************************/
-        function showAILoader() {
-            const loader = document.getElementById('ai-global-loader');
-            if (loader) loader.style.display = 'flex';
+        const chatScroller = document.getElementById('chat-scroller');
+        const chatInputEl = document.getElementById('chat-input-el');
+        const chatBtnSubmit = document.getElementById('chat-btn-submit');
+
+        chatBtnSubmit.addEventListener('click', () => executeUserChatQuery());
+        chatInputEl.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') executeUserChatQuery();
+        });
+
+        function sendSuggestionChat(promptMsg) {
+            chatInputEl.value = promptMsg;
+            executeUserChatQuery();
         }
 
-        function hideAILoader() {
-            const loader = document.getElementById('ai-global-loader');
-            if (loader) loader.style.display = 'none';
-        }
+        // Google AI Studio API Calling Helper
+        async function callGeminiAPI(userQuery) {
+            const modelName = "gemini-1.5-flash"; // Highly efficient, fast model
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${GEMINI_API_KEY}`;
 
-        async function askAI(userPrompt) {
-            showAILoader();
-            
-            const controller = new AbortController();
-            const signal = controller.signal;
-            const queryTimeout = setTimeout(() => controller.abort(), 15000);
-
+            // Fetch personalization meta parameters
             const studentName = appProfileContext?.name || "Student";
             const targetExam = appProfileContext?.exam || "CBSE Class 10";
             const targetGoal = appProfileContext?.goal || "Academic Excellence";
-            const activeLang = localStorage.getItem('gq_language') || 'en';
 
-            let systemInstructionText = `You are GoalQuest AI Tutor, a highly-competent and encouraging academic mentor specializing in CBSE Class 10 curriculum. The student's name is ${studentName}, and their target is "${targetGoal}". You support Science, Mathematics, English, Hindi, Social Science, and Information Technology. Answer the query step-by-step, explaining concepts beautifully and logically. Generate MCQs, subjective questions, previous year style questions, explanations, step-by-step solutions, hints, and dynamic difficulty levels as requested. Always respond strictly in the user's selected language: `;
-            
-            if (activeLang === 'hi') {
-                systemInstructionText += "Hindi (हिन्दी) language, using clear Devanagari script.";
-            } else if (activeLang === 'hn') {
-                systemInstructionText += "Hinglish language (Hindi language written in Roman script).";
-            } else {
-                systemInstructionText += "English language.";
-            }
+            // Customized system identity
+            const systemInstructionText = `You are GoalQuest AI Tutor, a highly-competent and encouraging academic mentor specializing in ${targetExam} syllabus. The student's name is ${studentName}, and their target is "${targetGoal}". Answer their query step-by-step, explaining concepts beautifully and logically. Always keep responses neat, highly structured, and format math symbols or key codes using readable markdown blockquotes or code blocks. Keep it supportive.`;
 
-            const payload = {
-                model: CLOD_MODEL,
-                messages: [
-                    { role: "system", content: systemInstructionText },
-                    { role: "user", content: userPrompt }
+            const requestBody = {
+                systemInstruction: {
+                    parts: [{ text: systemInstructionText }]
+                },
+                contents: [
+                    {
+                        role: "user",
+                        parts: [{ text: userQuery }]
+                    }
                 ]
             };
 
-            const PROXY_URL = "/.netlify/functions/chat";
-            let useProxy = false;
+            const response = await fetch(endpoint, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(requestBody)
+            });
 
-            try {
-                const checkRes = await Promise.race([
-                    fetch(PROXY_URL, { method: "HEAD", signal }),
-                    new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 3000))
-                ]);
-                if (checkRes && checkRes.status !== 404) {
-                    useProxy = true;
-                }
-            } catch (e) {
-                useProxy = false;
+            if (!response.ok) {
+                const errData = await response.json().catch(() => ({}));
+                const detailedMsg = errData?.error?.message || response.statusText;
+                throw new Error(detailedMsg);
             }
 
-            const url = useProxy ? PROXY_URL : `${CLOD_BASE_URL}/chat/completions`;
-            const headers = { "Content-Type": "application/json" };
+            const data = await response.json();
             
-            if (!useProxy) {
-                headers["Authorization"] = `Bearer ${CLOD_API_KEY}`;
-            }
-
-            let attempt = 0;
-            const maxAttempts = 2;
-
-            while (attempt < maxAttempts) {
-                try {
-                    const response = await fetch(url, {
-                        method: "POST",
-                        headers: headers,
-                        body: JSON.stringify(payload),
-                        signal
-                    });
-
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
-                    }
-
-                    const data = await response.json();
-                    clearTimeout(queryTimeout);
-                    hideAILoader();
-
-                    if (data && data.choices && data.choices[0] && data.choices[0].message) {
-                        return data.choices[0].message.content;
-                    } else {
-                        throw new Error("Invalid response format received from servers.");
-                    }
-                } catch (error) {
-                    attempt++;
-                    console.warn(`CLOD AI Request Attempt ${attempt} failed:`, error);
-                    
-                    if (error.name === 'AbortError') {
-                        clearTimeout(queryTimeout);
-                        hideAILoader();
-                        return `**AI Query Timeout:** The server took too long to respond. Please verify your connection and try again.`;
-                    }
-
-                    if (attempt >= maxAttempts) {
-                        clearTimeout(queryTimeout);
-                        hideAILoader();
-                        return `**API Service Unavailable:** Unable to connect to AI server. Technical details: ${error.message}`;
-                    }
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                }
-            }
-            clearTimeout(queryTimeout);
-            hideAILoader();
-        }
-
-        /************************************************************
-         * CHAT TRANSCRIPT RENDERING ENGINE & MARKDOWN PARSER
-         ************************************************************/
-        function sendSuggestionChat(promptMsg) {
-            const chatInputEl = document.getElementById('chat-input-el');
-            if (chatInputEl) {
-                chatInputEl.value = promptMsg;
-                executeUserChatQuery();
+            if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
+                return data.candidates[0].content.parts[0].text;
+            } else {
+                throw new Error("Unable to retrieve structured content from Gemini API.");
             }
         }
 
-        async function executeUserChatQuery(overrideQuery) {
-            const chatInputEl = document.getElementById('chat-input-el');
-            const queryRaw = overrideQuery || (chatInputEl ? chatInputEl.value.trim() : "");
+        async function executeUserChatQuery() {
+            const queryRaw = chatInputEl.value.trim();
             if (!queryRaw) return;
 
-            if (!overrideQuery && chatInputEl) {
-                chatInputEl.value = '';
-            }
-
-            lastUserQuery = queryRaw;
+            // Render Bubble user
             appendMessageBubble(queryRaw, 'user');
+            chatInputEl.value = '';
 
+            // Inject temporary typing loaders
             const loaderKey = appendChatTypingLoader();
-            const scroller = document.getElementById('chat-scroller');
-            if (scroller) scroller.scrollTop = scroller.scrollHeight;
+            chatScroller.scrollTop = chatScroller.scrollHeight;
 
             try {
-                const aiResponse = await askAI(queryRaw);
+                if (!GEMINI_API_KEY || GEMINI_API_KEY === "YOUR_GEMINI_API_KEY") {
+                    throw new Error("Google AI Studio API Key configured is missing. Please set your 'GEMINI_API_KEY' in the script tag.");
+                }
+
+                const aiResponse = await callGeminiAPI(queryRaw);
                 removeChatTypingLoader(loaderKey);
                 appendMessageBubble(aiResponse, 'system');
             } catch (err) {
-                console.error("CLOD AI Processing Error:", err);
+                console.error("Gemini Request Failure:", err);
                 removeChatTypingLoader(loaderKey);
-                appendMessageBubble(`**Error:** Fail to compile query. Please check your network and settings.`, 'system');
+                appendMessageBubble(`**Error:** ${err.message || "Failed to reach Google Gemini Server. Please verify network status and API Key configuration."}`, 'system');
             } finally {
-                if (scroller) scroller.scrollTop = scroller.scrollHeight;
+                chatScroller.scrollTop = chatScroller.scrollHeight;
             }
         }
 
         function appendMessageBubble(messageText, sender) {
-            const scroller = document.getElementById('chat-scroller');
-            if (!scroller) return;
-
             const bubbleEl = document.createElement('div');
             bubbleEl.className = `chat-bubble chat-bubble-${sender}`;
-            scroller.appendChild(bubbleEl);
-
+            
             if (sender === 'system') {
-                typeMessageHTML(bubbleEl, messageText, 8, () => {
-                    const actionsDiv = document.createElement('div');
-                    actionsDiv.className = 'bubble-actions';
-                    actionsDiv.style.opacity = '0';
-                    actionsDiv.style.transition = 'opacity 0.3s ease';
-
-                    const copyBtn = document.createElement('button');
-                    copyBtn.className = 'action-btn copy-btn';
-                    copyBtn.innerHTML = "📋 Copy";
-                    copyBtn.addEventListener('click', () => copyToClipboard(messageText, copyBtn));
-
-                    const regenBtn = document.createElement('button');
-                    regenBtn.className = 'action-btn regen-btn';
-                    regenBtn.innerHTML = "🔄 Regenerate";
-                    regenBtn.addEventListener('click', () => regenerateLastQuery(regenBtn));
-
-                    actionsDiv.appendChild(copyBtn);
-                    actionsDiv.appendChild(regenBtn);
-                    bubbleEl.appendChild(actionsDiv);
-
-                    setTimeout(() => {
-                        actionsDiv.style.opacity = '1';
-                    }, 50);
-                });
+                bubbleEl.innerHTML = formatMarkdown(messageText);
             } else {
                 bubbleEl.textContent = messageText;
             }
-            scroller.scrollTop = scroller.scrollHeight;
+            chatScroller.appendChild(bubbleEl);
         }
 
         function appendChatTypingLoader() {
-            const scroller = document.getElementById('chat-scroller');
-            if (!scroller) return '';
-
             const loaderDiv = document.createElement('div');
             const rawId = 'tutor-loader-' + Date.now();
             loaderDiv.id = rawId;
@@ -2707,7 +2495,7 @@
                     <div class="typing-dot"></div>
                     <div class="typing-dot"></div>
                 </div>`;
-            scroller.appendChild(loaderDiv);
+            chatScroller.appendChild(loaderDiv);
             return rawId;
         }
 
@@ -2717,548 +2505,98 @@
         }
 
         function formatMarkdown(rawText) {
-            if (!rawText) return "";
             return rawText
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/`(.*?)`/g, '<code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; font-family: monospace; color: var(--neon-blue)">$1</code>')
                 .replace(/\n/g, '<br>');
         }
 
-        function typeMessageHTML(bubbleEl, text, speed = 8, callback) {
-            if (!text || text.trim() === "") {
-                if (callback) callback();
-                return;
-            }
-
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = formatMarkdown(text);
-            const nodes = Array.from(tempDiv.childNodes);
-            bubbleEl.innerHTML = ''; 
-
-            let nodeIndex = 0;
-            const scroller = document.getElementById('chat-scroller');
-
-            function typeNextNode() {
-                if (nodeIndex >= nodes.length) {
-                    if (callback) callback();
-                    return;
-                }
-
-                const currentNode = nodes[nodeIndex];
-
-                if (currentNode.nodeType === Node.TEXT_NODE) {
-                    const textContent = currentNode.textContent;
-                    const textNode = document.createTextNode('');
-                    bubbleEl.appendChild(textNode);
-                    let charIndex = 0;
-
-                    function typeChar() {
-                        if (charIndex < textContent.length) {
-                            textNode.textContent += textContent[charIndex];
-                            charIndex++;
-                            if (scroller) scroller.scrollTop = scroller.scrollHeight;
-                            setTimeout(typeChar, speed);
-                        } else {
-                            nodeIndex++;
-                            typeNextNode();
-                        }
-                    }
-                    typeChar();
-                } else if (currentNode.nodeName === 'BR') {
-                    bubbleEl.appendChild(document.createElement('br'));
-                    nodeIndex++;
-                    typeNextNode();
-                } else {
-                    const elementClone = currentNode.cloneNode(false); 
-                    bubbleEl.appendChild(elementClone);
-                    const elementText = currentNode.textContent;
-                    let charIndex = 0;
-
-                    function typeElementChar() {
-                        if (charIndex < elementText.length) {
-                            elementClone.textContent += elementText[charIndex];
-                            charIndex++;
-                            if (scroller) scroller.scrollTop = scroller.scrollHeight;
-                            setTimeout(typeElementChar, speed);
-                        } else {
-                            nodeIndex++;
-                            typeNextNode();
-                        }
-                    }
-
-                    if (elementText.length > 0) {
-                        typeElementChar();
-                    } else {
-                        nodeIndex++;
-                        typeNextNode();
-                    }
-                }
-            }
-
-            typeNextNode();
-        }
-
-        function copyToClipboard(text, buttonEl) {
-            navigator.clipboard.writeText(text).then(() => {
-                const originalText = buttonEl.textContent;
-                buttonEl.textContent = "✅ Copied!";
-                setTimeout(() => {
-                    buttonEl.textContent = originalText;
-                }, 2000);
-            }).catch(err => {
-                console.error("Clipboard write failure:", err);
-            });
-        }
-
-        function regenerateLastQuery(buttonEl) {
-            if (!lastUserQuery) {
-                alert("No previous query to regenerate.");
-                return;
-            }
-            buttonEl.textContent = "⏳ Regenerating...";
-            executeUserChatQuery(lastUserQuery);
-        }
-
-        function triggerAISpecialist(type) {
-            const activeLang = localStorage.getItem('gq_language') || 'en';
-            const examTarget = appProfileContext?.exam || "CBSE Class 10";
-            const studentGoal = appProfileContext?.goal || "Academic Excellence";
-
-            let prompt = "";
-            if (type === 'quiz') {
-                if (activeLang === 'hi') {
-                    prompt = `कृपया ${examTarget} पाठ्यक्रम के लिए एक सुंदर 5-प्रश्नों का बहुविकल्पीय क्विज़ (MCQ) तैयार करें। अंत में उत्तर कुंजी और स्पष्टीकरण प्रदान करें।`;
-                } else if (activeLang === 'hn') {
-                    prompt = `Mere liye ${examTarget} syllabus ka ek mast 5-questions ka MCQ Quiz generate karo. End mein answer key aur clear explanations bhi dena.`;
-                } else {
-                    prompt = `Generate a high-quality 5-question MCQ Quiz for ${examTarget} syllabus. Provide options (A, B, C, D) and a complete answer key with short explanations at the end.`;
-                }
-            } else if (type === 'pyq') {
-                if (activeLang === 'hi') {
-                    prompt = `कृपया ${examTarget} के लिए 3 महत्वपूर्ण पिछले वर्षों के स्टाइल वाले विषयपरक प्रश्न (PYQs) अंकन योजना और संकेतों के साथ तैयार करें।`;
-                } else if (activeLang === 'hn') {
-                    prompt = `Mere exam ${examTarget} ke liye 3 important Previous Year style subjective questions (PYQs) marking scheme aur hints ke sath generate karo.`;
-                } else {
-                    prompt = `Generate 3 high-probability CBSE Class 10/exam-style Previous Year Questions (PYQs) with subjective format, marking scheme, and precise solution hints.`;
-                }
-            } else if (type === 'homework') {
-                if (activeLang === 'hi') {
-                    prompt = `नमस्ते! मैं गृहकार्य में सहायता चाहता हूँ। मुझे समझाएं कि भौतिकी, रसायन विज्ञान या गणित के जटिल प्रश्नों को हल करने का सही चरण-दर-चरण तरीका क्या है।`;
-                } else if (activeLang === 'hn') {
-                    prompt = `Hi! Mujhe homework solve karne mein help chahiye. Complex science ya math problems ko step-by-step solve karne ka best approach batao ek example ke sath.`;
-                } else {
-                    prompt = `Hello! I need a homework helper. Explain the step-by-step methodology to solve analytical academic problems, demonstrating with an excellent example.`;
-                }
-            } else if (type === 'chapter') {
-                if (activeLang === 'hi') {
-                    prompt = `कृपया ${examTarget} के किसी एक महत्वपूर्ण कठिन अध्याय (जैसे 'कार्बन और उसके यौगिक' या 'द्विघात समीकरण') को संक्षेप में मुख्य सूत्रों और बुलेट पॉइंट्स के साथ समझाएं।`;
-                } else if (activeLang === 'hn') {
-                    prompt = `Mere syllabus ${examTarget} ka koi bhi ek tough chapter (jaise Science ka Carbon compounds ya Math ka Quadratic Equations) key formulas aur concepts ke sath easy language mein samjhao.`;
-                } else {
-                    prompt = `Provide a comprehensive conceptual explanation of an essential ${examTarget} chapter/topic. Highlight key chemical equations or mathematical formulas and list core takeaways.`;
-                }
-            } else if (type === 'doubt') {
-                if (activeLang === 'hi') {
-                    prompt = `मुझे एक संदेह है। कृपया स्पष्ट करें कि हम विद्युत परिपथों में 'ओम का नियम' या रासायनिक प्रतिक्रियाओं को संतुलित करने की प्रक्रिया को कैसे आसानी से समझ सकते हैं।`;
-                } else if (activeLang === 'hn') {
-                    prompt = `Mujhe ek doubt hai. Humein simple terms mein samjhao ki 'Ohm's Law' ya biological pathways kaise work karte hain step-by-step.`;
-                } else {
-                    prompt = `Act as an expert doubt solver. Address a commonly misunderstood concept in ${examTarget} (such as Balancing Redox Reactions or how electricity flows) with step-by-step clarity.`;
-                }
-            } else if (type === 'motivation') {
-                if (activeLang === 'hi') {
-                    prompt = `मुझे अपनी पढ़ाई और परीक्षा लक्ष्य "${studentGoal}" को पूरा करने के लिए एक अत्यधिक ऊर्जावान प्रेरक भाषण और 3 व्यावहारिक अध्ययन टिप्स दें।`;
-                } else if (activeLang === 'hn') {
-                    prompt = `Mujhe exam preparation ke liye tagda motivational booster chahiye. Apne goal "${studentGoal}" ko achieve karne ke liye actionable study habits batao.`;
-                } else {
-                    prompt = `Provide an intense, highly encouraging motivational speech tailored to help me crush my target exam goals: "${studentGoal}". Include 3 practical high-performance study habits.`;
-                }
-            } else if (type === 'planner') {
-                if (activeLang === 'hi') {
-                    prompt = `मेरे परीक्षा लक्ष्य "${studentGoal}" को ध्यान में रखते हुए ${examTarget} के लिए एक संपूर्ण 7-दिवसीय दैनिक अध्ययन योजनाकार (Schedule) तैयार करें।`;
-                } else if (activeLang === 'hn') {
-                    prompt = `Mere exam target "${studentGoal}" ko dhayan mein rakh kar ek high-performance 7-day study schedule banao, jo math aur science balanced tarike se cover kare.`;
-                } else {
-                    prompt = `Design a rigorous, high-efficiency 7-Day Study Planner/Schedule tailored to help me achieve my objective: "${studentGoal}". Ensure a balance of Math, Science, and active revision daily.`;
-                }
-            }
-
-            if (prompt) {
-                const chatInputEl = document.getElementById('chat-input-el');
-                if (chatInputEl) {
-                    chatInputEl.value = prompt;
-                    executeUserChatQuery();
-                }
-            }
-        }
-
-        function explainSubjectConcept(subject) {
-            const activeLang = localStorage.getItem('gq_language') || 'en';
-            let prompt = "";
-            if (subject === 'Math') {
-                if (activeLang === 'hi') prompt = "मुझे कक्षा 10 गणित के महत्वपूर्ण सूत्र और अभ्यास प्रश्न समझाएं।";
-                else if (activeLang === 'hn') prompt = "Mujhe Class 10 Math ke important formulas aur questions samjhao.";
-                else prompt = "Explain the most critical formulas and concepts of Class 10 Advanced Mathematics with an example problem.";
-            } else {
-                if (activeLang === 'hi') prompt = "मुझे कक्षा 10 विज्ञान (भौतिकी/जीव विज्ञान) का एक महत्वपूर्ण विषय चित्र सहित समझाएं।";
-                else if (activeLang === 'hn') prompt = "Class 10 Science (Physics/Biology) ka ek important topic simple steps mein samjhao.";
-                else prompt = "Explain an essential concept of Class 10 Science (Physics or Biology) step-by-step with formulas and neat formatting.";
-            }
-            const chatInputEl = document.getElementById('chat-input-el');
-            if (chatInputEl) {
-                chatInputEl.value = prompt;
-                executeUserChatQuery();
-            }
-        }
-
         /************************************************************
-         * FIX #8: DOM INITIALIZATION WITH AUTH EVENT LISTENERS
-         * All auth-related events are wired up here
+         * 11. SYSTEM MODALS OVERLAY CONTROLLERS (PROFILE VIEW)
          ************************************************************/
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('[AUTH DEBUG] DOM Content Loaded - Setting up authentication');
-            
-            // Set safety maximum loading timeout (8 seconds)
-            initTimeout = setTimeout(() => {
-                if (!isInitialized) {
-                    console.warn('[AUTH DEBUG] Initialization timed out after 8 seconds');
-                    showLoadingError("Connection to database timed out. You can proceed offline to verify site navigation.");
-                }
-            }, 8000);
+        const headerProfileBtn = document.getElementById('header-profile-btn');
+        const profilePopupOverlay = document.getElementById('profile-popup-overlay');
+        const popCloseBtn = document.getElementById('pop-close-btn');
+        const popLogoutBtn = document.getElementById('pop-logout-btn');
 
-            // Set up fallback loading state click triggers
-            const btnRetryInit = document.getElementById('btn-retry-init');
-            const btnSkipInit = document.getElementById('btn-skip-init');
-
-            if (btnRetryInit) {
-                btnRetryInit.addEventListener('click', () => {
-                    window.location.reload();
-                });
-            }
-
-            if (btnSkipInit) {
-                btnSkipInit.addEventListener('click', () => {
-                    hideLoadingGate();
-                    routeToSection('page-landing');
-                });
-            }
-
-            // FIX #9: WIRE UP GOOGLE SIGN-IN BUTTON
-            // This was the MAIN missing piece - the button had no click handler
-            const googleSignInBtn = document.getElementById('google-signin-btn');
-            if (googleSignInBtn) {
-                console.log('[AUTH DEBUG] Google sign-in button found, attaching click listener');
-                googleSignInBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    console.log('[AUTH DEBUG] Google sign-in button CLICKED');
-                    initiateGoogleSignIn();
-                });
-            } else {
-                console.error('[AUTH DEBUG] CRITICAL: Google sign-in button NOT FOUND in DOM');
-            }
-
-            // FIX #10: HANDLE REDIRECT RESULT ON PAGE LOAD
-            // This ensures mobile redirect authentication works
-            handleRedirectResult();
-
-            // FIX #11: onAuthStateChanged LISTENER
-            // VERIFIED: This properly handles all auth state changes
-            if (auth) {
-                console.log('[AUTH DEBUG] Setting up onAuthStateChanged listener');
-                
-                auth.onAuthStateChanged(async (user) => {
-                    console.log('[AUTH DEBUG] Auth state changed:', user ? `User: ${user.email}` : 'No user');
-                    
-                    clearTimeout(initTimeout);
-                    
-                    const currentCacheLang = localStorage.getItem('gq_language') || 'en';
-                    applyLanguage(currentCacheLang);
-
-                    if (user) {
-                        console.log('[AUTH DEBUG] User is authenticated - loading profile');
-                        appUserContext = user;
-                        
-                        try {
-                            if (!db) {
-                                console.error('[AUTH DEBUG] Firestore not available');
-                                throw new Error("Firestore database service is unavailable.");
-                            }
-                            
-                            const profileReference = db.collection("users").doc(user.uid);
-                            
-                            const userDoc = await Promise.race([
-                                profileReference.get(),
-                                new Promise((_, reject) => setTimeout(() => reject(new Error("Database fetch timeout")), 5000))
-                            ]);
-
-                            if (userDoc.exists) {
-                                console.log('[AUTH DEBUG] User profile found in Firestore');
-                                appProfileContext = userDoc.data();
-                                
-                                if (appProfileContext.language) {
-                                    applyLanguage(appProfileContext.language);
-                                    localStorage.setItem('gq_language', appProfileContext.language);
-                                }
-
-                                try {
-                                    await verifyAndSynchronizeStreak(user.uid);
-                                } catch (streakErr) {
-                                    console.warn('[AUTH DEBUG] Streak verification bypassed:', streakErr);
-                                }
-                                
-                                synchronizeDashboardHUD();
-                                console.log('[AUTH DEBUG] Redirecting to DASHBOARD');
-                                routeToSection('page-dashboard');
-                            } else {
-                                // New user - need onboarding
-                                console.log('[AUTH DEBUG] New user - redirecting to ONBOARDING');
-                                if (user.displayName) {
-                                    const nameEl = document.getElementById('onboard-name');
-                                    if (nameEl) nameEl.value = user.displayName;
-                                }
-                                routeToSection('page-onboarding');
-                            }
-                        } catch (error) {
-                            console.error('[AUTH DEBUG] Profile sync failed:', error);
-                            // Still route to onboarding even if profile fetch fails
-                            routeToSection('page-onboarding');
-                        } finally {
-                            hideLoadingGate();
-                            setSignInLoading(false);
-                        }
-                    } else {
-                        // No user signed in
-                        console.log('[AUTH DEBUG] No user - showing LANDING page');
-                        appUserContext = null;
-                        appProfileContext = null;
-                        routeToSection('page-landing');
-                        hideLoadingGate();
-                        setSignInLoading(false);
-                    }
-                });
-            } else {
-                console.error('[AUTH DEBUG] Auth service not initialized - showing error');
-                showLoadingError("Authentication service unavailable. Please check your connection and disable ad-blockers.");
-            }
-
-            // FIX #12: DASHBOARD ENTER BUTTON
-            const btnDashboard = document.getElementById('btn-dashboard');
-            if (btnDashboard) {
-                btnDashboard.addEventListener('click', () => {
-                    console.log('[AUTH DEBUG] Dashboard enter button clicked');
-                    if (appUserContext) {
-                        synchronizeDashboardHUD();
-                        transitionToPage('page-success', 'page-dashboard');
-                    } else {
-                        routeToSection('page-landing');
-                    }
-                });
-            }
-
-            // Bind profile modals triggers
-            const headerProfileBtn = document.getElementById('header-profile-btn');
-            const profilePopupOverlay = document.getElementById('profile-popup-overlay');
-            const popCloseBtn = document.getElementById('pop-close-btn');
-            const popLogoutBtn = document.getElementById('pop-logout-btn');
-
-            if (headerProfileBtn && profilePopupOverlay) {
-                headerProfileBtn.addEventListener('click', () => {
-                    profilePopupOverlay.classList.add('show');
-                });
-            }
-
-            if (popCloseBtn && profilePopupOverlay) {
-                popCloseBtn.addEventListener('click', () => {
-                    profilePopupOverlay.classList.remove('show');
-                });
-            }
-
-            if (profilePopupOverlay) {
-                profilePopupOverlay.addEventListener('click', (e) => {
-                    if (e.target === profilePopupOverlay) {
-                        profilePopupOverlay.classList.remove('show');
-                    }
-                });
-            }
-
-            if (popLogoutBtn && profilePopupOverlay) {
-                popLogoutBtn.addEventListener('click', async () => {
-                    if (confirm("Sign out of current active session?")) {
-                        try {
-                            if (auth) {
-                                console.log('[AUTH DEBUG] Signing out user');
-                                await auth.signOut();
-                            }
-                            profilePopupOverlay.classList.remove('show');
-                            routeToSection('page-landing');
-                        } catch (err) {
-                            alert("Session close failure: " + err.message);
-                        }
-                    }
-                });
-            }
-
-            // Onboarding form submittal listener
-            const onboardForm = document.getElementById('onboard-form');
-            if (onboardForm) {
-                onboardForm.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-
-                    const onboardingName = document.getElementById('onboard-name');
-                    const onboardingMobile = document.getElementById('onboard-mobile');
-                    const onboardingGoal = document.getElementById('onboard-goal');
-                    const onboardingExam = document.getElementById('onboard-exam');
-                    const submitOnboardBtn = document.getElementById('onboard-submit');
-                    const onboardSpinner = document.getElementById('onboard-spinner');
-
-                    // Reset form invalidation displays
-                    [onboardingName, onboardingMobile, onboardingGoal].forEach(inputEl => {
-                        if (inputEl) {
-                            inputEl.classList.remove('invalid');
-                            const errDiv = document.getElementById('error-' + inputEl.id.split('-')[1]);
-                            if (errDiv) errDiv.style.display = 'none';
-                        }
-                    });
-
-                    let pass = true;
-
-                    if (onboardingName && onboardingName.value.trim().length < 2) {
-                        onboardingName.classList.add('invalid');
-                        const err = document.getElementById('error-name');
-                        if (err) err.style.display = 'block';
-                        pass = false;
-                    }
-
-                    const cleanMobile = onboardingMobile ? onboardingMobile.value.replace(/[\s\-\+\(\)]/g, '') : '';
-                    if (cleanMobile.length < 10 || cleanMobile.length > 15 || isNaN(cleanMobile)) {
-                        if (onboardingMobile) onboardingMobile.classList.add('invalid');
-                        const err = document.getElementById('error-mobile');
-                        if (err) err.style.display = 'block';
-                        pass = false;
-                    }
-
-                    if (onboardingGoal && onboardingGoal.value.trim().length < 5) {
-                        onboardingGoal.classList.add('invalid');
-                        const err = document.getElementById('error-goal');
-                        if (err) err.style.display = 'block';
-                        pass = false;
-                    }
-
-                    if (!pass) return;
-
-                    if (submitOnboardBtn) {
-                        submitOnboardBtn.style.pointerEvents = 'none';
-                        const btnTxt = submitOnboardBtn.querySelector('.btn-text');
-                        if (btnTxt) btnTxt.style.display = 'none';
-                    }
-                    if (onboardSpinner) onboardSpinner.style.display = 'inline-block';
-
-                    try {
-                        if (!appUserContext) throw new Error("Authentication context dropped. Please sign in again.");
-
-                        const currentCacheLang = localStorage.getItem('gq_language') || 'en';
-
-                        const userPayload = {
-                            uid: appUserContext.uid,
-                            name: onboardingName ? onboardingName.value.trim() : "",
-                            email: appUserContext.email || "",
-                            photoURL: appUserContext.photoURL || "",
-                            mobileNumber: onboardingMobile ? onboardingMobile.value.trim() : "",
-                            goal: onboardingGoal ? onboardingGoal.value.trim() : "",
-                            board: "CBSE",
-                            class: "10",
-                            exam: onboardingExam ? onboardingExam.value : "CBSE Class 10",
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                            language: currentCacheLang,
-                            streak: 1,
-                            lastActiveDate: new Date().toISOString().split('T')[0],
-                            xp: 120,
-                            coins: 50,
-                            level: 1,
-                            solved: 0,
-                            accuracy: 0,
-                            rank: "Scholar"
-                        };
-
-                        if (!db) throw new Error("Firestore instance inaccessible.");
-                        await db.collection("users").doc(appUserContext.uid).set(userPayload);
-                        appProfileContext = userPayload;
-
-                        synchronizeDashboardHUD();
-                        transitionToPage('page-onboarding', 'page-success');
-                        triggerConfettiExplosion();
-
-                    } catch (err) {
-                        console.error("Personalization storage failure:", err);
-                        alert("Storage integration error: " + err.message);
-                    } finally {
-                        if (submitOnboardBtn) {
-                            submitOnboardBtn.style.pointerEvents = 'all';
-                            const btnTxt = submitOnboardBtn.querySelector('.btn-text');
-                            if (btnTxt) btnTxt.style.display = 'inline-block';
-                        }
-                        if (onboardSpinner) onboardSpinner.style.display = 'none';
-                    }
-                });
-            }
-
-            // Chat input event listeners
-            const chatInputEl = document.getElementById('chat-input-el');
-            const chatBtnSubmit = document.getElementById('chat-btn-submit');
-            
-            if (chatBtnSubmit) {
-                chatBtnSubmit.addEventListener('click', () => executeUserChatQuery());
-            }
-            
-            if (chatInputEl) {
-                chatInputEl.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        executeUserChatQuery();
-                    }
-                });
-            }
-
-            // Language segment inputs logic
-            document.querySelectorAll('.lang-option input').forEach(radioButton => {
-                radioButton.addEventListener('change', async (e) => {
-                    try {
-                        const selectedLang = e.target.value;
-                        applyLanguage(selectedLang);
-                        localStorage.setItem('gq_language', selectedLang);
-
-                        if (appUserContext && db) {
-                            await db.collection("users").doc(appUserContext.uid).update({
-                                language: selectedLang
-                            });
-                        }
-                    } catch (err) {
-                        console.warn("Language synchronization failure:", err);
-                    }
-                });
-            });
-
-            // Initialize particle viewport logic
-            initializeParticlesSystem();
-            executionAnimationLoop();
-            
-            console.log('[AUTH DEBUG] DOM initialization complete - All listeners attached');
+        headerProfileBtn.addEventListener('click', () => {
+            profilePopupOverlay.classList.add('show');
         });
 
+        popCloseBtn.addEventListener('click', () => {
+            profilePopupOverlay.classList.remove('show');
+        });
+
+        profilePopupOverlay.addEventListener('click', (e) => {
+            if (e.target === profilePopupOverlay) {
+                profilePopupOverlay.classList.remove('show');
+            }
+        });
+
+        popLogoutBtn.addEventListener('click', async () => {
+            if (confirm("Sign out of current active session?")) {
+                try {
+                    await auth.signOut();
+                    profilePopupOverlay.classList.remove('show');
+                    transitionToPage('page-dashboard', 'page-landing');
+                } catch (err) {
+                    alert("Auth termination error: " + err.message);
+                }
+            }
+        });
+
+        // Debug alerts helper
+        function triggerMockAlert(msgText) {
+            alert(msgText);
+        }
+
         /************************************************************
-         * CANVAS PARTICLE RENDERING CONTROLLER (60FPS FLUID PHYSICS)
+         * 12. CUSTOM SYSTEM CLICK FEEDBACKS (RIPPLES)
+         ************************************************************/
+        document.addEventListener('click', function (e) {
+            let targetEl = e.target;
+            while (targetEl && targetEl !== document.body) {
+                if (targetEl.classList.contains('ripple-trigger') || targetEl.classList.contains('premium-menu-card')) {
+                    createClickRipple(e, targetEl);
+                    break;
+                }
+                targetEl = targetEl.parentNode;
+            }
+        });
+
+        function createClickRipple(event, element) {
+            const rippleSpan = document.createElement('span');
+            rippleSpan.className = 'ripple';
+            
+            const dimensions = Math.max(element.clientWidth, element.clientHeight);
+            rippleSpan.style.width = rippleSpan.style.height = `${dimensions}px`;
+            
+            const elementRect = element.getBoundingClientRect();
+            const rippleX = event.clientX - elementRect.left - (dimensions / 2);
+            const rippleY = event.clientY - elementRect.top - (dimensions / 2);
+            
+            rippleSpan.style.left = `${rippleX}px`;
+            rippleSpan.style.top = `${rippleY}px`;
+            
+            element.appendChild(rippleSpan);
+            
+            rippleSpan.addEventListener('animationend', () => {
+                rippleSpan.remove();
+            });
+        }
+
+        /************************************************************
+         * 13. CANVAS PARTICLE RENDERING CONTROLLER (60FPS FLUID PHYSICS)
          ************************************************************/
         const particlesCanvas = document.getElementById('particles');
-        const ctx2d = particlesCanvas ? particlesCanvas.getContext('2d') : null;
+        const ctx2d = particlesCanvas.getContext('2d');
 
         let elementsRegistry = [];
         const configLimit = 40;
 
         function setViewportSpecs() {
-            if (particlesCanvas) {
-                particlesCanvas.width = window.innerWidth;
-                particlesCanvas.height = window.innerHeight;
-            }
+            particlesCanvas.width = window.innerWidth;
+            particlesCanvas.height = window.innerHeight;
         }
         window.addEventListener('resize', setViewportSpecs);
         setViewportSpecs();
@@ -3274,19 +2612,19 @@
             }
 
             initBackgroundParticle() {
-                this.x = Math.random() * (particlesCanvas ? particlesCanvas.width : window.innerWidth);
-                this.y = Math.random() * (particlesCanvas ? particlesCanvas.height : window.innerHeight);
+                this.x = Math.random() * particlesCanvas.width;
+                this.y = Math.random() * particlesCanvas.height;
                 this.size = Math.random() * 2 + 0.4;
                 this.speedX = (Math.random() - 0.5) * 0.15;
-                this.speedY = (Math.random() - 0.5) * 0.15 - 0.15;
+                this.speedY = (Math.random() - 0.5) * 0.15 - 0.15; // Slow drift upward
                 this.color = this.getRandomBrandColor();
                 this.alpha = Math.random() * 0.3 + 0.1;
                 this.pulseFactor = Math.random() * 0.003 + 0.001;
             }
 
             initConfetti() {
-                this.x = (particlesCanvas ? particlesCanvas.width : window.innerWidth) / 2;
-                this.y = (particlesCanvas ? particlesCanvas.height : window.innerHeight) / 2;
+                this.x = particlesCanvas.width / 2;
+                this.y = particlesCanvas.height / 2;
                 this.size = Math.random() * 7 + 4;
                 
                 const angle = Math.random() * Math.PI * 2;
@@ -3304,19 +2642,19 @@
 
             getRandomBrandColor() {
                 const colors = [
-                    'rgba(0, 242, 254, ',  
-                    'rgba(79, 172, 254, ',  
-                    'rgba(155, 81, 224, '   
+                    'rgba(0, 242, 254, ',  // Cyan
+                    'rgba(79, 172, 254, ',  // Soft Blue
+                    'rgba(155, 81, 224, '   // Purple
                 ];
                 return colors[Math.floor(Math.random() * colors.length)];
             }
 
             getSuccessColors() {
                 const colors = [
-                    'rgba(16, 185, 129, ',  
-                    'rgba(0, 242, 254, ',   
-                    'rgba(155, 81, 224, ',  
-                    'rgba(245, 158, 11, '   
+                    'rgba(16, 185, 129, ',  // Emerald Green
+                    'rgba(0, 242, 254, ',   // Blue
+                    'rgba(155, 81, 224, ',  // Purple
+                    'rgba(245, 158, 11, '   // Gold
                 ];
                 return colors[Math.floor(Math.random() * colors.length)];
             }
@@ -3332,15 +2670,14 @@
                     this.x += this.speedX;
                     this.y += this.speedY;
 
-                    const activeWidth = particlesCanvas ? particlesCanvas.width : window.innerWidth;
-                    const activeHeight = particlesCanvas ? particlesCanvas.height : window.innerHeight;
-
-                    if (this.x < 0 || this.x > activeWidth) this.speedX *= -1;
+                    // Standard bounding box bounce
+                    if (this.x < 0 || this.x > particlesCanvas.width) this.speedX *= -1;
                     if (this.y < -10) {
-                        this.y = activeHeight + 10;
-                        this.x = Math.random() * activeWidth;
+                        this.y = particlesCanvas.height + 10;
+                        this.x = Math.random() * particlesCanvas.width;
                     }
 
+                    // Breathing alpha cycles
                     this.alpha += this.pulseFactor;
                     if (this.alpha > 0.6 || this.alpha < 0.1) {
                         this.pulseFactor *= -1;
@@ -3349,7 +2686,6 @@
             }
 
             draw() {
-                if (!ctx2d) return;
                 ctx2d.save();
                 if (this.isConfetti) {
                     ctx2d.translate(this.x, this.y);
@@ -3382,7 +2718,6 @@
         }
 
         function executionAnimationLoop() {
-            if (!ctx2d || !particlesCanvas) return;
             ctx2d.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
             for (let i = 0; i < elementsRegistry.length; i++) {
                 elementsRegistry[i].update();
@@ -3395,6 +2730,9 @@
             }
             requestAnimationFrame(executionAnimationLoop);
         }
+
+        initializeParticlesSystem();
+        executionAnimationLoop();
     </script>
 </body>
 </html>
